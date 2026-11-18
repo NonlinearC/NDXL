@@ -13,7 +13,7 @@
 #include "unicpp_compiler.h"
 #include "unicpp_cpu.h"
 
-#if UNI_PLATFORM == UNI_PLATFORM_MACOS
+#if UNI_PLATFORM == UNI_PLATFORM_MACAARCH64
 	#include <arm_neon.h>
 #endif // macOS
 

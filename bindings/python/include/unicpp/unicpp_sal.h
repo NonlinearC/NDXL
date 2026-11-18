@@ -96,6 +96,10 @@
 	#define _In_reads_opt_(expr)
 	#endif
 
+	#if !defined(_In_reads_bytes_opt_)
+	#define _In_reads_bytes_opt_(expr)
+	#endif
+
 	#if !defined(_Out_writes_to_opt_)
 	#define _Out_writes_to_opt_(length, lengthwritten)
 	#endif

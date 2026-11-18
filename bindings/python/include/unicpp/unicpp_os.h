@@ -17,11 +17,12 @@
 #define UNI_PLATFORM_NONE			0
 #define UNI_PLATFORM_WIN64			1
 #define UNI_PLATFORM_WIN32			2
-#define UNI_PLATFORM_MACOS			4
-#define UNI_PLATFORM_LINUX64		8
-#define UNI_PLATFORM_LINUX32		16
-#define UNI_PLATFORM_UNIX64			32
-#define UNI_PLATFORM_UNIX32			64
+#define UNI_PLATFORM_MACAARCH64		4
+#define UNI_PLATFORM_MACX8664		8
+#define UNI_PLATFORM_LINUX64		16
+#define UNI_PLATFORM_LINUX32		32
+#define UNI_PLATFORM_UNIX64			64
+#define UNI_PLATFORM_UNIX32			128
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)	// All (supported) Windows clients define at least one of these macros
 	#include <Windows.h>
@@ -41,13 +42,21 @@
 		return (((uintptr_t)ptr < stack_low) || ((uintptr_t)ptr >= stack_high));
 	}
 #else
-	#if defined(__APPLE__)
+	#if defined(__APPLE__) && defined(__MACH__)
 		#include <pthread.h>
 		#include <TargetConditionals.h>
 
 		#if TARGET_OS_MAC
-			#define UNI_PLATFORM		UNI_PLATFORM_MACOS
-			#define UNI_PLATFORM_NAME	"macOS"
+			#if defined (__arm64__)
+				#define UNI_PLATFORM		UNI_PLATFORM_MACAARCH64
+				#define UNI_PLATFORM_NAME	"aarch64-macOS"
+			#elif defined (__x86_64__)
+				#define UNI_PLATFORM		UNI_PLATFORM_MACX8664
+				#define UNI_PLATFORM_NAME	"x86_64-macOS"
+			#else
+				#define UNI_PLATFORM		UNI_PLATFORM_UNSUPPORTED
+				#define UNI_PLATFORM_NAME	"u/Apple"
+			#endif
 		#else
 			#define UNI_PLATFORM		UNI_PLATFORM_UNSUPPORTED
 			#define UNI_PLATFORM_NAME	"u/Apple"
@@ -66,7 +75,7 @@
 		#define UNI_PLATFORM		UNI_PLATFORM_UNSUPPORTED
 		#define UNI_PLATFORM_NAME	"Android"
 
-		static inline const char isHeapPointer(void* ptr)
+		static inline const char uniIsHeapPointer(void* ptr)
 		{
 			int dummy;
 			uintptr_t mask = 0xFFFFFF0000000000ULL;
@@ -132,7 +141,7 @@
 		#define UNI_PLATFORM		UNI_PLATFORM_NONE
 		#define UNI_PLATFORM_NAME	"unsupported"
 		
-		static inline const char isHeapPointer(void* ptr)
+		static inline const char uniIsHeapPointer(void* ptr)
 		{
 			int dummy;
 			uintptr_t mask = 0xFFFFFF0000000000ULL;

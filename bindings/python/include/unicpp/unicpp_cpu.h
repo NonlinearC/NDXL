@@ -11,12 +11,17 @@
 #ifndef _UNICPP_CPU_
 #define _UNICPP_CPU_
 
-#include "unicpp_core.h"
+#include "unicpp_os.h"
 
 #if UNI_COMPILER == UNI_COMPILER_MSVC
 	#include <intrin.h>
 #endif // MSVC compiler
-#include <immintrin.h>
+
+#if UNI_PLATFORM == UNI_PLATFORM_MACX8664
+    #include <cpuid.h>
+#else
+    #include <immintrin.h>
+#endif // macOS
 
 // Advanced Bit Manipulation
 #define  CPU_FEATURE_MMX            BIT(0)
@@ -86,8 +91,10 @@ static inline void uniCpuid(int _Info[4], int _Id)
 {
 #if UNI_COMPILER == UNI_COMPILER_MSVC
 	__cpuid(_Info, _Id);
+#elif UNI_PLATFORM == UNI_PLATFORM_MACX8664
+    __get_cpuid(0, _Info, _Info + 1, _Info + 2, _Info + 3);
 #else
-	asm volatile(
+	__asm__ __volatile__(
         "cpuid"
         : "=a"(_Info[0]), "=b"(_Info[1]), "=c"(_Info[2]), "=d"(_Info[3])
         : "a"(_Id)

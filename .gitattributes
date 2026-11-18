@@ -1,0 +1,13 @@
+# Normalise text files to LF in the repository
+* text=auto eol=lf
+
+# Explicitly mark binary files
+*.dll binary
+*.so binary
+*.a binary
+*.lib binary
+*.pdb binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary

@@ -19,6 +19,7 @@
 #include "unicpp_os.h"
 #include "unicpp_sal.h"
 #include "unicpp_simd.h"
+#include "unicpp_sys.h"
 #include "unicpp_vals.h"
 
 #endif // _UNICPP_
