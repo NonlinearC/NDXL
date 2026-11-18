@@ -1,0 +1,82 @@
+# Experimental projects and testing playgrounds
+/examples/
+
+# Personal build script
+/NDXL/build.py
+
+# Visual Studio and MSBuild project/configuration files
+.vs/
+*.sln
+*.slnx
+*.vcproj
+*.vcxproj
+*.vcxproj.*
+*.props
+*.targets
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+*.sln.docstates
+
+# Compiler and linker intermediate output
+bin-int/
+*.obj
+*.o
+*.pdb
+*.ilk
+*.iobj
+*.ipdb
+*.pch
+*.exp
+*.recipe
+*.lastbuildstate
+*.tlog/
+
+# Generated compiler dependency/module information
+*.obj.dt.d.json
+*.obj.dt.module.json
+*.obj.dt.module.json.command
+*.c.obj.dt.d.json
+*.c.obj.dt.module.json
+*.c.obj.dt.module.json.command
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python packaging artefacts
+*.egg-info/
+bindings/python/dist/
+bindings/python/build/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+htmlcov/
+
+# Temporary files and logs
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61", "numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ndxl"
+version = "1.0.4"
+description = "Network Dynamics eXperimentation Library"
+authors = [
+    {name = "Ethan Codron"}
+]
+readme = "README.md"
+requires-python = ">=3.7"
+
+[tool.setuptools]
+package-dir = {""="src"}
+
+[tool.setuptools.packages.find]
+where=["src"]
+
+[tool.setuptools.package-data]
+ndxl=["lib/*.dll","lib/*.so"]
