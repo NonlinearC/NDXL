@@ -110,13 +110,13 @@ int main(int argc, char** argv)
         oscillators[i] = ndxlCreateVertex(
             nwk,        // Host network
             &theta0,    // Initial state vector
-            1,            // Number of elements in state vector
-            kuramoto,    // Dynamics
-            NULL,        // No noise
-            NULL,        // Noise channels array - must be NULL if noise is NULL
-            0,            // Number of elements in noise channels array - must be 0 if noise is NULL
-            NULL,        // No vertex discrete callback
-            &omega        // Arbitrary extra parameters pointer (NOT COPIED!!)
+            1,          // Number of elements in state vector
+            kuramoto,   // Dynamics
+            NULL,       // No noise
+            NULL,       // Noise channels array - must be NULL if noise is NULL
+            0,          // Number of elements in noise channels array - must be 0 if noise is NULL
+            NULL,       // No vertex discrete callback
+            &omega      // Arbitrary extra parameters pointer (NOT COPIED!!)
         );
     }
     
@@ -127,17 +127,17 @@ int main(int argc, char** argv)
         for (int j = i + 1; j < 4; j++)
         {
             ndxlCreateEdge(
-                oscillators[i],    // 'Source' vertex of edge
-                oscillators[j],    // 'Destination' vertex of edge
-                &K,                // Initial state vector
-                1,                // Length of state vector
+                oscillators[i], // 'Source' vertex of edge
+                oscillators[j], // 'Destination' vertex of edge
+                &K,             // Initial state vector
+                1,              // Length of state vector
                 0.0,            // Delay (for defining DDEs)
-                0,                // Not directed (any truthy value makes the edge directed)
-                NULL,            // No dynamics (static edge)
-                NULL,            // No noise
-                NULL,            // Noise channels array - must be NULL if noise is NULL
-                0,                // Number of elements in noise channels array - must be 0 if noise is NULL
-                NULL,            // No edge discrete callback
+                0,              // Not directed (any truthy value makes the edge directed)
+                NULL,           // No dynamics (static edge)
+                NULL,           // No noise
+                NULL,           // Noise channels array - must be NULL if noise is NULL
+                0,              // Number of elements in noise channels array - must be 0 if noise is NULL
+                NULL,           // No edge discrete callback
                 NULL            // Arbitrary extra parameters pointer (NOT COPIED!!)
             );
         }
@@ -146,15 +146,15 @@ int main(int argc, char** argv)
     // Simulate using Dormand-Prince Runge-Kutta pair of order 5(4)
     ndxlNetworkSimulate(
         nwk,    // Target network to simulate
-        10.0,    // Length of simulation (starts at ndxlGetNetworkTime(nwk), which is 0 when created)
-        1e-6,    // Absolute tolerance
-        1e-3,    // Relative tolerance
-        NULL,    // No time-stops array (forced evaluation points)
-        0,        // Length of time stops array - must be 0 if time stops is NULL
+        10.0,   // Length of simulation (starts at ndxlGetNetworkTime(nwk), which is 0 when created)
+        1e-6,   // Absolute tolerance
+        1e-3,   // Relative tolerance
+        NULL,   // No time-stops array (forced evaluation points)
+        0,      // Length of time stops array - must be 0 if time stops is NULL
         NULL    // No discrete network callback
     );
     
-    // // Remaining NDXL objects are automatically destroyed at program termination
+    // Remaining NDXL objects are automatically destroyed at program termination
     return 0;
 }
 ```
