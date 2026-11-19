@@ -1,7 +1,7 @@
 # NDXL
-![Network Dynamics eXperimentation Library](NDXL-logo.png)
+![Network Dynamics eXperimentation Library](../NDXL-logo.png)
 
-This page serves as a brief introduction to the raw C API; for a more detailed explanation and understanding of the library architecture, functions, objects, and tutorials, see the [documentation](https://github.com/NonlinearC/NDXL).
+This page serves as a brief introduction to the raw C API.
 We will proceed assuming you have acquired the precompiled binaries and header files, and that your working tree looks something like this:
 
 ```mermaid
@@ -30,6 +30,7 @@ graph LR
     Src --> Main[main.c]
 ```
 
+## Writing
 To use NDXL, we need to do two things: initialise the library (which registers garbage collection and initialises internal state variables), and create a host network for our agents to exist on.
 In `main.c`, we achieve this by calling `ndxlInit()` and `ndxlCreateNetwork()`, respectively.
 
@@ -74,8 +75,9 @@ int kuramoto(NDXLVertex* vert, double* dtheta, const double* theta, double time,
 ```
 
 The function above indicates our intent to have the eigenfrequency of an oscillator passed as its user-defined `void* params`.
-In NDXL, this pointer is not copied, so we must ensure that the data pointed thereto persists over the lifetime of the object using it.
+In NDXL, this pointer is not copied, so we must ensure that the data pointed to by this pointer persists over the lifetime of the object using it.
 Conversely, the state vector for a vertex is copied, so it does not matter where we create it.
+We extend our `main()` above to include oscillator creation.
 
 ```C
 int main(int argc, char** argv)
@@ -111,7 +113,7 @@ int main(int argc, char** argv)
 }
 ```
 
-We now define the topology by constructing edges between the vertices.
+We now define the topology by constructing edges between the vertices created in `main()`.
 In this example, we will create a ring network with uniform coupling `K`.
 
 ```C
@@ -163,7 +165,7 @@ int main(int argc, char** argv)
 ```
 
 One last thing before we can simulate the network is to define how outputs are captured.
-For this, we use a discrete network callback, which is called once at `t=0`, then again after each successful simulation step.
+For this, we use a discrete network callback, also defined before `main()`, which is called once at `t=0`, then again after each successful simulation step.
 In our callback, we will write the oscillator phases to an output file.
 
 ```C
@@ -172,7 +174,7 @@ In our callback, we will write the oscillator phases to an output file.
 int cb(NDXLNetwork* nwk, double time, void* params)
 {
     // Extract file pointer from params
-    FILE* f_output = *(FILE*)params;
+    FILE* f_output = (FILE*)params;
     
     // Write current time to file
     fprintf(f_output, "%f", time);
@@ -187,19 +189,24 @@ int cb(NDXLNetwork* nwk, double time, void* params)
 }
 ```
 
-In `main()` we will create the file, write some headers, and then pass the callback to the simulation function.
-We will simulate the network using the Dormand-Prince Runge-Kutta pair of order 5(4).
+We modify `main()` one last time to: create the file, write the CSV headers, simulate the network, and pass the callback to the simulation function.
+Simulation will be done using the Dormand-Prince Runge-Kutta pair of order 5(4).
 
 ```C
 int main(int argc, char** argv)
 {
     ndxlInit();
-    FILE* f_output = open("phases.csv", "w");
+	
+	// Create file pointer and write headers
+    FILE* f_output = fopen("phases.csv", "w");
+	if (f_output == NULL)
+		return 1;
+	fprintf(f_output, "time,phase0,phase1,phase2,phase3,phase4\n");
     
     // Change our network's `void* params` to contain the file
     NDXLNetwork* nwk = ndxlCreateNetwork(f_output);
     
-    // ----- SAME AS ABOVE -----
+    // ----- INSERT VERTEX AND EDGE CREATION CODE FROM ABOVE HERE -----
     
     ndxlNetworkSimulate(
         nwk,    // Target network to simulate
@@ -210,10 +217,37 @@ int main(int argc, char** argv)
         0,      // Length of time stops array - must be 0 if time stops is NULL
         cb      // Discrete callback
     );
+	
+	// Cleanup
+	fclose(f_output);
+
+	// Because we called ndxlInit(), all remaining NDXL objects are automatically and safely released when the program terminates
+	// You can still manually destroy objects using their destructors, as detailed in the documentation
+	return 0;
 }
 ```
 
+## Compiling
+For compiling with MSVC, see [how to compile and link against libraries](https://learn.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-static-library-cpp?view=msvc-170).
+Note that if you are linking against the dynamic library `NDXL.dll`, the dll must be in the same directory as the executable else it will not run!
+
+If compiling with `gcc`, make sure to supply the path to the library files using the `-L` flag, and to link against both NDXL and the standard math library.
+We will use the Unix static library as an example here, though the process is identical for the macOS and dynamic libraries.
+
+```
+gcc -o my-project.out src/main.c -Iinclude -Llib/Unix/Static -lNDXL -lm
+```
+
+As with MSVC, if you are linking against the dynamic library `libNDXL.so/dylib`, ensure the library is discoverable by the operating system's runtime loader when executing.
+
+## Output
 Congratulations! You now have an output file, "phases.csv", containing the simulated outputs of all five oscillators over time.
+
+With this example, we have covered the fundamental steps involved in using NDXL: initialising the library, creating a network, defining agent dynamics, constructing network topology, and executing a simulation with custom output handling.
+
+This is, of course, only a small demonstration of what NDXL can do. Vertices and edges can have independent dynamics, state vectors can have arbitrary dimensions, and simulations can incorporate stochastic processes, delays, and dynamically changing network structures.
+
+For a more comprehensive understanding of the library, including its architecture, available functions, numerical methods, and additional examples, please refer to the [documentation](https://github.com/NonlinearC/NDXL).
 
 ## License
 NDXL is released under the GNU GPL-3.0 license, allowing users to create their own derivative works and distribute them under the same licensing conditions.
