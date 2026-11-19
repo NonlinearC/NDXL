@@ -123,7 +123,7 @@ plt.legend()
 plt.savefig("example.png", bbox_inches='tight')
 ```
 
-[Kuramoto oscillators](./examples/getting-started/example.png)
+![Kuramoto oscillators](./examples/getting-started/example.png)
 
 ## Output
 Congratulations! You now have an output figure showing the simulated outputs of all five oscillators over time.
