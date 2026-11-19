@@ -1,4 +1,3 @@
-# NDXL
 ![Network Dynamics eXperimentation Library](../NDXL-logo.png)
 
 This page serves as a brief introduction to the raw C API.
@@ -184,12 +183,12 @@ Simulation will be done using the Dormand-Prince Runge-Kutta pair of order 5(4).
 int main(int argc, char** argv)
 {
     ndxlInit();
-	
-	// Create file pointer and write headers
+    
+    // Create file pointer and write headers
     FILE* f_output = fopen("phases.csv", "w");
-	if (f_output == NULL)
-		return 1;
-	fprintf(f_output, "time,phase0,phase1,phase2,phase3,phase4\n");
+    if (f_output == NULL)
+        return 1;
+    fprintf(f_output, "time,phase0,phase1,phase2,phase3,phase4\n");
     
     // Change our network's `void* params` to contain the file
     NDXLNetwork* nwk = ndxlCreateNetwork(f_output);
@@ -205,13 +204,13 @@ int main(int argc, char** argv)
         0,      // Length of time stops array - must be 0 if time stops is NULL
         cb      // Discrete callback
     );
-	
-	// Cleanup
-	fclose(f_output);
+    
+    // Cleanup
+    fclose(f_output);
 
-	// Because we called ndxlInit(), all remaining NDXL objects are automatically and safely released when the program terminates
-	// You can still manually destroy objects using their destructors, as detailed in the documentation
-	return 0;
+    // Because we called ndxlInit(), all remaining NDXL objects are automatically and safely released when the program terminates
+    // You can still manually destroy objects using their destructors, as detailed in the documentation
+    return 0;
 }
 ```
 

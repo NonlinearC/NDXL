@@ -1,4 +1,3 @@
-# NDXL
 ![Network Dynamics eXperimentation Library](NDXL-logo.png)
 
 This page serves as a brief introduction to the Python wrapper for NDXL; for the C API and source code, see the [C API](https://github.com/NonlinearC/NDXL).
@@ -85,9 +84,9 @@ NOTE: simply using the `state` property without an index or `.copy()` will store
 
 ```python
 def cb(net, t, t_eval, p_eval):
-	t_eval.append(t)
-	for i, vert in enumerate(net.vertices):
-		p_eval[i].append(vert.state[0])
+    t_eval.append(t)
+    for i, vert in enumerate(net.vertices):
+        p_eval[i].append(vert.state[0])
 ```
 
 Here, `t_eval` and `p_eval` correspond to the `args` provided to `nwk` during creation, so we must go back and modify that line to include these lists.
@@ -105,8 +104,8 @@ nwk = ndxl.create_network(([], [[], [], [], [], []]))
 
 # Simulate the network
 nwk.simulate(
-	10.0,	# Simulation duration (starts at nwk.time, which is 0 when created)
-	cb=cb	# Use the output-capturuing callback we just defined
+    10.0,    # Simulation duration (starts at nwk.time, which is 0 when created)
+    cb=cb    # Use the output-capturuing callback we just defined
 )
 ```
 
@@ -117,12 +116,14 @@ Outputs can now be accessed using the `params` property of the network.
 import matplotlib.pyplot as plt
 
 for i in range(5):
-	plt.plot(nwk.params[0], nwk.params[1][i], label=f"Oscillator {i+1}")
+    plt.plot(nwk.params[0], nwk.params[1][i], label=f"Oscillator {i+1}")
 plt.xlabel("Time, $t$")
 plt.ylabel("Phase, $\\theta$")
 plt.legend()
-plt.show()
+plt.savefig("example.png", bbox_inches='tight')
 ```
+
+[Kuramoto oscillators](./examples/getting-started/example.png)
 
 ## Output
 Congratulations! You now have an output figure showing the simulated outputs of all five oscillators over time.

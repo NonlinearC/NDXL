@@ -1,4 +1,3 @@
-# NDXL
 ![Network Dynamics eXperimentation Library](NDXL-logo.png)
 
 Network Dynamics eXperimentation Library (NDXL) is a cross-platform, language-independent C library for simulating complex networks and their dynamics.
