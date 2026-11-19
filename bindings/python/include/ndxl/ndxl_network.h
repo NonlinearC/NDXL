@@ -727,6 +727,7 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
  * - NDXL_VALUE_ERR: _Step <= 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -766,6 +767,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRalston(
  * - NDXL_VALUE_ERR: _Step <= 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -819,6 +821,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateNystrom(
  * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -875,6 +878,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateDopri(
  * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -917,6 +921,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRkck(
  * - NDXL_VALUE_ERR: _Step <= 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains no stochastic agents, one of the deterministic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateRalston
@@ -973,6 +978,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateEuler(
  * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains no stochastic agents, one of the deterministic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateRalston
@@ -1041,6 +1047,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateHeun(
  * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
  * - NDXL_SIM_ERR: _Network contains no agents.
  * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler

@@ -148,18 +148,6 @@ int main(int argc, char** argv)
         );
     }
     
-    // Simulate using Dormand-Prince Runge-Kutta pair of order 5(4)
-    ndxlNetworkSimulate(
-        nwk,    // Target network to simulate
-        10.0,   // Length of simulation (starts at ndxlGetNetworkTime(nwk), which is 0 when created)
-        1e-6,   // Absolute tolerance
-        1e-3,   // Relative tolerance
-        NULL,   // No time-stops array (forced evaluation points)
-        0,      // Length of time stops array - must be 0 if time stops is NULL
-        NULL    // No discrete network callback
-    );
-    
-    // Remaining NDXL objects are automatically destroyed at program termination
     return 0;
 }
 ```

@@ -19,7 +19,7 @@ if _sysname == "Windows":
 	libname = "NDXL.dll"
 elif _sysname == "Linux":
 	libname = "libNDXL.so"
-elif _sysname == "Darwin":
+elif (_sysname == "Darwin") and (platform.machine() == "x86_64"):
 	libname = "libNDXL.dylib"
 else:
 	raise OSError(f"Unsupported platform: {_sysname}")

@@ -1,0 +1,43 @@
+using NetworkDynamics
+using Graphs
+
+function swing_equation(dv, v, esum, p,t)
+    P, I, γ = p
+    dv[1] = v[2]
+    dv[2] = P - γ * v[2] .+ esum[1]
+    dv[2] = dv[2] / I
+    nothing
+end
+vertex = VertexModel(f=swing_equation, g=1, sym=[:δ, :ω], psym=[:P_ref, :I=>1, :γ=>0.1])
+
+function simple_edge(e, v_s, v_d, (K,), t)
+    e[1] = K * sin(v_s[1] - v_d[1])
+end
+edge = EdgeModel(;g=AntiSymmetric(simple_edge), outsym=:P, psym=[:K=>1.63, :limit=>1])
+
+g = SimpleGraph([0 1 1 0 1;
+                 1 0 1 1 0;
+                 1 1 0 1 0;
+                 0 1 1 0 1;
+                 1 0 0 1 0])
+nw = Network(g, vertex, edge; dealias=true)
+
+set_default!(nw, VIndex(1, :P_ref), -1.0) # load
+set_default!(nw, VIndex(2, :P_ref),  1.5) # generator
+set_default!(nw, VIndex(3, :P_ref), -1.0) # load
+set_default!(nw, VIndex(4, :P_ref), -1.0) # load
+set_default!(nw, VIndex(5, :P_ref),  1.5) # generator
+
+u0 = find_fixpoint(nw)
+set_defaults!(nw, u0)
+println(fieldnames(typeof(u0)))
+println(u0.p)
+println()
+println(fieldnames(typeof(u0.p)))
+println()
+println(u0.p.pflat)
+println()
+println(u0.uflat)
+println()
+U0 = NWState(nw)
+println(U0.uflat)
