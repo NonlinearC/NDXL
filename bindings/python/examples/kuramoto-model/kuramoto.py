@@ -53,11 +53,13 @@ for i in range(N):
 
 def cb(net, t, t_eval, *v_states):
 	global N
+	print(f"{t=}")
 	t_eval.append(t)
 	for i in range(N):
 		v_states[i].append(net.vertex_list[i].state[0])
 
-nwk.simulate(5., method="rkck", cb=cb)
+nwk.simulate(5., cb=cb)
+print()
 
 
 # Perturbation callback
@@ -79,7 +81,7 @@ nwk2.simulate(5., tstops=2.5, cb=cb)
 
 
 # Plotting
-fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+fig, ax = plt.subplots(1, 2, figsize=(6, 4))
 for i in range(N):
 	ax[0].plot(sol.t, sol.y[i, :], ls='--', c='g', lw=2., label="$SciPy$" if not i else None)
 	ax[0].plot(nwk.params[0], nwk.params[i + 1], ms=2, lw=0.5, marker='o', c='b', label="$NDXL$" if not i else None)
