@@ -39,7 +39,7 @@ For getting started with the C API, see the [C API](./NDXL/).
 Language-specific bindings and their installation guides can be found in [bindings](./bindings/).
 For getting started with the Python API, see the [Python bindings](./bindings/python/).
 
-The NDXL [documentation](https://github.com/NonlinearC/NDXL) provides detailed explanations of the library's architecture, concepts, API functions and usage, together with tutorials covering its functionality.
+The [C API documentation](https://nonlinearc.github.io/NDXL/) provides detailed explanations of the library's architecture, concepts, API functions and usage, together with tutorials covering its functionality.
 
 ## Contributing
 Questions and bug reports on this page are welcome; for details, see [how to contribute](CONTRIBUTING.md).
@@ -50,4 +50,4 @@ pls add me to paper
 ## License
 NDXL is released under the GNU GPL-3.0 license, allowing users to create their own derivative works and distribute them under the same licensing conditions.
 Official language bindings are distributed under the same licence.
-Users are also welcome to develop their own external wrappers for NDXL (see the [documentation](https://github.com/NonlinearC/NDXL) for details).
+Users are also welcome to develop their own external wrappers for NDXL (see the [documentation](https://nonlinearc.github.io/NDXL/) for details).

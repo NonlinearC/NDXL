@@ -234,9 +234,9 @@ With this example, we have covered the fundamental steps involved in using NDXL:
 
 This is, of course, only a small demonstration of what NDXL can do. Vertices and edges can have independent dynamics, state vectors can have arbitrary dimensions, and simulations can incorporate stochastic processes, delays, and dynamically changing network structures.
 
-For a more comprehensive understanding of the library, including its architecture, available functions, numerical methods, and additional examples, please refer to the [documentation](https://github.com/NonlinearC/NDXL).
+For a more comprehensive understanding of the library, including its architecture, available functions, numerical methods, and additional examples, please refer to the [documentation](https://nonlinearc.github.io/NDXL/).
 
 ## License
 NDXL is released under the GNU GPL-3.0 license, allowing users to create their own derivative works and distribute them under the same licensing conditions.
 Official language bindings are distributed under the same licence.
-Users are also welcome to develop their own external wrappers for NDXL (see the [documentation](https://github.com/NonlinearC/NDXL) for details).
+Users are also welcome to develop their own external wrappers for NDXL (see the [documentation](https://nonlinearc.github.io/NDXL/) for details).
