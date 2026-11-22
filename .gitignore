@@ -68,6 +68,10 @@ bindings/python/build/
 .coverage
 htmlcov/
 
+# Doxygen generated output
+docs/c/build/
+docs/python/build/
+
 # Temporary files and logs
 *.log
 *.tmp
