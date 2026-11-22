@@ -1,0 +1,64 @@
+
+name: Build and Deploy C Documentation
+
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Doxygen 1.18.0
+        run: |
+          curl -fsSL \
+            https://www.doxygen.nl/files/doxygen-1.18.0.linux.bin.tar.gz \
+            -o doxygen.tar.gz
+
+          echo "14fa81bdc34171edb5f1f02b1d60e74802f0439b77fa44e592565d517d72df90  doxygen.tar.gz" \
+            | sha256sum --check
+
+          tar -xzf doxygen.tar.gz
+
+          cd doxygen-1.18.0
+          sudo make install
+
+          doxygen --version
+
+      - name: Build documentation
+        run: doxygen Doxyfile
+        working-directory: docs/c
+
+      - name: Prepare GitHub Pages
+        run: touch docs/c/build/html/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload documentation
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/c/build/html
+
+      - name: Deploy documentation
+        id: deployment
+        uses: actions/deploy-pages@v4
