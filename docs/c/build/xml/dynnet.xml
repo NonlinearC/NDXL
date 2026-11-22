@@ -7,9 +7,9 @@
     </briefdescription>
     <detaileddescription>
 <para><anchor id="dynnet_1md_src_2examples_2dynnet"/></para>
-<para><simplesect kind="note"><para>This page assumes familiarity with the basic layout and API usage described in the main <ref refid="examples" kindref="compound">Examples</ref> page. </para>
+<para><simplesect kind="note"><para>This page assumes familiarity with the basic layout and API usage described in the main <ref refid="examples" kindref="compound">Examples</ref> page.</para>
 </simplesect>
-</para>
+The main network class </para>
     </detaileddescription>
     <location file="src/examples/dynnet.md"/>
   </compounddef>

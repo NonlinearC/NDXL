@@ -9,6 +9,8 @@
     <programlisting>
 <codeline><highlight class="normal">#<sp/>Simulating<sp/>Networks<sp/>With<sp/>Dynamic<sp/>Topologies<sp/>{#dynnet}</highlight></codeline>
 <codeline><highlight class="normal">\note<sp/>This<sp/>page<sp/>assumes<sp/>familiarity<sp/>with<sp/>the<sp/>basic<sp/>layout<sp/>and<sp/>API<sp/>usage<sp/>described<sp/>in<sp/>the<sp/>main<sp/>@ref<sp/>examples<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>main<sp/>network<sp/>class<sp/></highlight></codeline>
     </programlisting>
     <location file="src/examples/dynnet.md"/>
   </compounddef>

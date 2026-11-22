@@ -11,6 +11,10 @@
 <codeline><highlight class="normal">Welcome<sp/>to<sp/>the<sp/>Network<sp/>Dynamics<sp/>eXperimentation<sp/>Library<sp/>(NDXL)<sp/>documentation.</highlight></codeline>
 <codeline><highlight class="normal">If<sp/>this<sp/>is<sp/>your<sp/>first<sp/>visit,<sp/>we<sp/>recommend<sp/>treating<sp/>the<sp/>documentation<sp/>as<sp/>a<sp/>book,<sp/>going<sp/>from<sp/>basic<sp/>concepts<sp/>to<sp/>advanced<sp/>tutorials<sp/>and<sp/>implementation<sp/>details.</highlight></codeline>
 <codeline></codeline>
+<codeline><highlight class="normal">**Documentation<sp/>version:**<sp/>@NDXL_VERSION@</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">[View<sp/>documentation<sp/>for<sp/>other<sp/>releases](https://nonlinearc.github.io/NDXL/)</highlight></codeline>
+<codeline></codeline>
 <codeline><highlight class="normal">##<sp/>What<sp/>is<sp/>NDXL?</highlight></codeline>
 <codeline><highlight class="normal">NDXL<sp/>is<sp/>a<sp/>cross-platform<sp/>and<sp/>programming<sp/>language-independent<sp/>package<sp/>for<sp/>simulating<sp/>complex<sp/>network<sp/>dynamics,<sp/>with<sp/>an<sp/>emphasis<sp/>on<sp/>dynamic<sp/>topologies.</highlight></codeline>
 <codeline><highlight class="normal">What<sp/>this<sp/>simply<sp/>means<sp/>is:</highlight></codeline>

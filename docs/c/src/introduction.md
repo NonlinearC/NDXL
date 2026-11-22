@@ -1,10 +1,9 @@
 # Introduction
-Welcome to the Network Dynamics eXperimentation Library (NDXL) documentation.
+Welcome to the Network Dynamics eXperimentation Library (NDXL) documentation @NDXL_VERSION@.
+
+Looking for another release? Visit the [documentation version index](https://nonlinearc.github.io/NDXL/).
+
 If this is your first visit, we recommend treating the documentation as a book, going from basic concepts to advanced tutorials and implementation details.
-
-**Documentation version:** v@NDXL_VERSION@
-
-[View documentation for other releases](https://nonlinearc.github.io/NDXL/)
 
 ## What is NDXL?
 NDXL is a cross-platform and programming language-independent package for simulating complex network dynamics, with an emphasis on dynamic topologies.
