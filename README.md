@@ -4,6 +4,9 @@ Network Dynamics eXperimentation Library (NDXL) is a cross-platform, language-in
 NDXL places particular emphasis on networks whose topologies — the number of agents and their connectivity — evolve over time.
 The library is written in C using only primitive and opaque types, making it straightforward to interface with from other programming languages (see, for example, the [Python implementation](https://pypi.org/project/ndxl/)).
 
+## Documentation
+The documentation for the C API can be found here: [](https://nonlinearc.github.io/NDXL/).
+
 ## Features
 The core object in NDXL, `NDXLNetwork`, serves as the basis for building a network from vertices (`NDXLVertex`; resident components) and edges (`NDXLEdge`; coupling between components) representing a complex system, which can then be numerically simulated.
 Vertex and edge dynamics are defined independently, allowing heterogeneous components and combinations of different dynamical behaviours.
