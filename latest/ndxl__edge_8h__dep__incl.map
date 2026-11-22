@@ -1,8 +1,0 @@
-<map id="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" name="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h">
-<area shape="rect" id="Node000001" title="Public API for NDXL edge creation, state and parameter management, and vertex inspection." alt="" coords="22,5,204,64"/>
-<area shape="rect" id="Node000002" href="$ndxl_8h.html" title="Public API for NDXL." alt="" coords="5,219,221,261"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,75,77,113,72,141,77,170,87,195,100,219,95,218,82,197,72,171,67,141,72,111,86,80"/>
-<area shape="rect" id="Node000003" href="$ndxl__network_8h.html" title="Public API for NDXL network management and simulation." alt="" coords="86,112,268,171"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="139,75,162,112,157,112,138,80"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="152,182,128,220,125,217,147,185"/>
-</map>
