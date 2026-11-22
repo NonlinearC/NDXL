@@ -1,0 +1,7 @@
+<map id="NDXLChannel" name="NDXLChannel">
+<area shape="rect" id="Node000003" href="$group__channel__creation.html" title="Functions for creating and destroying noise channels." alt="" coords="359,5,538,32"/>
+<area shape="rect" id="Node000004" href="$group__channel__getters.html" title="Getter functions for querying noise channel properties." alt="" coords="416,56,481,83"/>
+<area shape="rect" id="Node000005" href="$group__channel__setters.html" title="Setter functions for updating channel properties." alt="" coords="417,107,480,133"/>
+<area shape="rect" id="Node000001" title="Noise channel object representing a Wiener process." alt="" coords="206,56,311,83"/>
+<area shape="rect" id="Node000002" href="$group__ndxl__objects.html" title="Opaque type declarations of the objects defined by NDXL, and detailed explanations on the functions t..." alt="" coords="5,56,158,83"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" name="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h">
+<area shape="rect" id="Node000001" title="Public API for NDXL vertex creation, state and parameter management, and nearest neighbour traversal." alt="" coords="5,5,187,64"/>
+<area shape="rect" id="Node000002" href="$ndxl__channel_8h.html" title="Public API for NDXL noise channel creation and querying." alt="" coords="42,112,150,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,62,99,97,93,96,95,67"/>
+<area shape="rect" id="Node000003" href="$ndxlcore_8h.html" title="Public API for NDXL error codes and functions, and object definitions." alt="" coords="49,187,143,213"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="97,137,99,172,93,170,95,142"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="40,261,152,288"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="98,212,99,247,93,245,94,216"/>
+</map>
