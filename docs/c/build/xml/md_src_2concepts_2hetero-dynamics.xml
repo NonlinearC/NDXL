@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="md_src_2concepts_2hetero-dynamics" kind="page">
+    <compoundname>md_src_2concepts_2hetero-dynamics</compoundname>
+    <title>hetero-dynamics</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="md_src_2concepts_2hetero-dynamics_1autotoc_md6"/></para>
+    </detaileddescription>
+    <location file="src/concepts/hetero-dynamics.md"/>
+  </compounddef>
+</doxygen>

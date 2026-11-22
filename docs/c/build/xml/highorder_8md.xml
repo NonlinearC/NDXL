@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="highorder_8md" kind="file" language="Markdown">
+    <compoundname>highorder.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Simulating<sp/>Higher-Order<sp/>Dynamics<sp/>{#highorder}</highlight></codeline>
+<codeline><highlight class="normal">\note<sp/>This<sp/>page<sp/>assumes<sp/>familiarity<sp/>with<sp/>the<sp/>basic<sp/>layout<sp/>and<sp/>API<sp/>usage<sp/>described<sp/>in<sp/>the<sp/>main<sp/>@ref<sp/>examples<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Suppose<sp/>we<sp/>want<sp/>to<sp/>simulate<sp/>a<sp/>network<sp/>of<sp/>interacting<sp/>objects<sp/>whose<sp/>dynamics<sp/>are<sp/>defined<sp/>by<sp/>second-order<sp/>differential<sp/>equations<sp/>\f$\frac{d^2\vec{x}}{dt^2}\f$.</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>famous<sp/>example<sp/>of<sp/>this<sp/>is<sp/>the<sp/>\f$N\f$-body<sp/>problem,<sp/>in<sp/>which<sp/>the<sp/>motion<sp/>of<sp/>each<sp/>body<sp/>is<sp/>driven<sp/>by<sp/>the<sp/>forces<sp/>exerted<sp/>on<sp/>it<sp/>by<sp/>the<sp/>other<sp/>\f$N-1\f$<sp/>bodies,<sp/>similar<sp/>to<sp/>the<sp/>Kuramoto<sp/>model<sp/>(though<sp/>the<sp/>coupling<sp/>is<sp/>fundamentally<sp/>different).</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>\f$i^{th}\f$<sp/>body&apos;s<sp/>position<sp/>vector<sp/>\f$\vec{r}\f$<sp/>evolves<sp/>according<sp/>to</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\frac{d^2\vec{r}_i}{dt^2}<sp/>=<sp/>-G<sp/>\sum_{\substack{j=1<sp/>\\<sp/>j<sp/>\neq<sp/>i}}^{N}{m_j<sp/>\frac{\vec{r}_i<sp/>-<sp/>\vec{r}_j}{|\vec{r}_i<sp/>-<sp/>\vec{r}_j|^3}},</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">where<sp/>\f$G\f$<sp/>is<sp/>the<sp/>&lt;b&gt;[gravitational<sp/>constant](https://physics.nist.gov/cgi-bin/cuu/Value?bg)&lt;/b&gt;,<sp/>and<sp/>\f$m\f$<sp/>is<sp/>the<sp/>mass<sp/>of<sp/>the<sp/>body.</highlight></codeline>
+<codeline><highlight class="normal">To<sp/>solve<sp/>this,<sp/>we<sp/>transform<sp/>the<sp/>second-order<sp/>equation<sp/>into<sp/>a<sp/>set<sp/>of<sp/>two<sp/>coupled<sp/>first-order<sp/>differential<sp/>equations,<sp/>by<sp/>means<sp/>of<sp/>a<sp/>change<sp/>of<sp/>variables,<sp/>where<sp/>the<sp/>derivative<sp/>of<sp/>the<sp/>first<sp/>variable<sp/>will<sp/>be<sp/>fed<sp/>into<sp/>the<sp/>solution<sp/>of<sp/>the<sp/>second.</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>define<sp/>two<sp/>auxillary<sp/>variables<sp/>\f$u\f$<sp/>and<sp/>\f$v\f$<sp/>such<sp/>that</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\vec{u}=\vec{r},</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">and</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\vec{v}=d\vec{u}=d^2\vec{r}.</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Then<sp/>the<sp/>chain<sp/>rule<sp/>gives<sp/>their<sp/>derivatives</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>d\vec{u}=d\vec{r}=\vec{v}</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">and</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>d\vec{v}<sp/>=<sp/>-G<sp/>\sum_{\substack{j=1<sp/>\\<sp/>j<sp/>\neq<sp/>i}}^{N}{m_j<sp/>\frac{\vec{u}_i<sp/>-<sp/>\vec{u}_j}{|\vec{u}_i<sp/>-<sp/>\vec{u}_j|^3}},</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">which<sp/>are<sp/>coupled<sp/>and<sp/>first-order.</highlight></codeline>
+<codeline><highlight class="normal">Because<sp/>we<sp/>now<sp/>have<sp/>effectively<sp/>twice<sp/>the<sp/>number<sp/>of<sp/>differential<sp/>equations,<sp/>our<sp/>state<sp/>vector<sp/>also<sp/>doubles<sp/>in<sp/>size;<sp/>instead<sp/>of<sp/>simply<sp/>describing<sp/>position,<sp/>it<sp/>must<sp/>describe<sp/>the<sp/>position<sp/>and<sp/>velocity.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\note<sp/>This<sp/>process<sp/>can<sp/>be<sp/>generalised<sp/>to<sp/>\f$n^{th}\f$-order<sp/>equations,<sp/>where<sp/>the<sp/>derivative<sp/>of<sp/>the<sp/>\f$i^{th}\f$<sp/>variable<sp/>is<sp/>used<sp/>to<sp/>solve<sp/>the<sp/>derivative<sp/>of<sp/>the<sp/>\f$(i+1)^{th}\f$<sp/>variable.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Since<sp/>\f$G\f$<sp/>is<sp/>constant<sp/>for<sp/>all<sp/>bodies,<sp/>it<sp/>does<sp/>not<sp/>make<sp/>sense<sp/>to<sp/>assign<sp/>the<sp/>`void*<sp/>params`<sp/>of<sp/>each<sp/>vertex<sp/>to<sp/>the<sp/>same<sp/>`G`<sp/>pointer,<sp/>and<sp/>we<sp/>will<sp/>reserve<sp/>those<sp/>for<sp/>the<sp/>mass<sp/>of<sp/>the<sp/>bodies.</highlight></codeline>
+<codeline><highlight class="normal">Instead,<sp/>we<sp/>will<sp/>make<sp/>\f$G\f$<sp/>part<sp/>of<sp/>the<sp/>network&apos;s<sp/>parameters<sp/>by<sp/>introducing<sp/>a<sp/>custom<sp/>struct<sp/>and<sp/>passing<sp/>a<sp/>pointer<sp/>to<sp/>it.</highlight></codeline>
+<codeline><highlight class="normal">Additionally,<sp/>the<sp/>scale<sp/>of<sp/>the<sp/>variables<sp/>involved<sp/>differ<sp/>by<sp/>several<sp/>orders<sp/>of<sp/>magnitude,<sp/>making<sp/>numerical<sp/>stability<sp/>over<sp/>even<sp/>short<sp/>simulations<sp/>becomes<sp/>difficult<sp/>to<sp/>achieve,<sp/>so<sp/>we<sp/>shift<sp/>to<sp/>a<sp/>unitised<sp/>reference<sp/>frame<sp/><sp/>where<sp/>\f$G=m_1=m_2=\dots=m_N=1\f$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;stdio.h&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">typedef<sp/>struct</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>G,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>f_output</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>nbody_params;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Initialise<sp/>custom<sp/>params<sp/>struct</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>nbody_params<sp/>params;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>params.G<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>params.f_output<sp/>=<sp/>fopen(&quot;nbody.csv&quot;,<sp/>&quot;w&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(!params.f_output)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Print<sp/>&quot;time&quot;<sp/>header<sp/>to<sp/>output<sp/>file,<sp/>we<sp/>will<sp/>do<sp/>the<sp/>rest<sp/>later<sp/>in<sp/>the<sp/>vertex<sp/>creation<sp/>loop</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(params.f_output,<sp/>&quot;t&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Assign<sp/>params<sp/>to<sp/>network</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLNetwork*<sp/>nwk<sp/>=<sp/>ndxlCreateNetwork(&amp;params);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>demonstrate<sp/>here<sp/>the<sp/>\f$N\f$-body<sp/>problem<sp/>in<sp/>two<sp/>dimensions,<sp/>meaning<sp/>our<sp/>state<sp/>vector<sp/>has<sp/>four<sp/>elements:<sp/>the<sp/>first<sp/>two<sp/>are<sp/>the<sp/>position<sp/>coordinates,<sp/>and<sp/>the<sp/>second<sp/>two<sp/>are<sp/>the<sp/>velocities<sp/>along<sp/>those<sp/>axes.</highlight></codeline>
+<codeline><highlight class="normal">Because<sp/>each<sp/>body<sp/>depends<sp/>on<sp/>all<sp/>other<sp/>bodies,<sp/>it<sp/>would<sp/>be<sp/>a<sp/>waste<sp/>of<sp/>memory<sp/>and<sp/>time<sp/>to<sp/>explicitly<sp/>define<sp/>the<sp/>all-to-all<sp/>coupling<sp/>topology;<sp/>instead,<sp/>we<sp/>shall<sp/>query<sp/>each<sp/>body&apos;s<sp/>&quot;parent<sp/>network&quot;<sp/>using<sp/>@ref<sp/>ndxlGetVertexNetwork(),<sp/>which<sp/>we<sp/>can<sp/>then<sp/>use<sp/>to<sp/>iterate<sp/>over<sp/>all<sp/>other<sp/>bodies<sp/>to<sp/>compute<sp/>the<sp/>interaction<sp/>sum.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">typedef<sp/>struct</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>G;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>f_output;</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>nbody_params;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>dynamics(NDXLVertex*<sp/>body,<sp/>double*<sp/>dr_i,<sp/>const<sp/>double*<sp/>r_i,<sp/>double<sp/>t,<sp/>void*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Get<sp/>parent<sp/>network<sp/>and<sp/>unravel<sp/>state<sp/>vector<sp/>components</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLNetwork*<sp/>parent<sp/>=<sp/>ndxlGetVertexNetwork(body);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>u_xi<sp/>=<sp/>r_i[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>u_yi<sp/>=<sp/>r_i[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>v_xi<sp/>=<sp/>r_i[2];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>v_yi<sp/>=<sp/>r_i[3];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Iterate<sp/>over<sp/>all<sp/>vertices<sp/>in<sp/>the<sp/>parent<sp/>network</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>coupling[2]<sp/>=<sp/>{<sp/>0.0,<sp/>0.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(NDXLVertex*<sp/>vert<sp/>=<sp/>ndxlGetNetworkFirstVertex(parent);<sp/>vert;<sp/>vert<sp/>=<sp/>ndxlGetNetworkNextVertex(vert))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Ensure<sp/>`vert`<sp/>does<sp/>not<sp/>refer<sp/>to<sp/>the<sp/>current<sp/>vertex<sp/>`body`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(body<sp/>!=<sp/>vert)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>ndxlVertexState(vert)<sp/>provides<sp/>direct<sp/>access<sp/>to<sp/>the<sp/>Runge-Kutta<sp/>stage<sp/>vector,<sp/>making<sp/>these<sp/>operations<sp/>inexpensive</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>u_xj<sp/>=<sp/>ndxlVertexState(vert)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>u_yj<sp/>=<sp/>ndxlVertexState(vert)[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Calculate<sp/>difference<sp/>and<sp/>magnitude<sp/>of<sp/>difference</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>diff[2]<sp/>=<sp/>{<sp/>u_xi<sp/>-<sp/>u_xj,<sp/>u_yi<sp/>-<sp/>u_yj<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>mag<sp/>=<sp/>sqrt(diff[0]<sp/>*<sp/>diff[0]<sp/>+<sp/>diff[1]<sp/>*<sp/>diff[1]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Extract<sp/>mass<sp/>of<sp/>`vert`<sp/>from<sp/>its<sp/>`void*<sp/>params`<sp/>pointer</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>m_j<sp/>=<sp/>*(double*)ndxlGetVertexParams(vert);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Update<sp/>coupling<sp/>sums</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>coupling[0]<sp/>+=<sp/>m_j<sp/>*<sp/>diff[0]<sp/>/<sp/>(mag<sp/>*<sp/>mag<sp/>*<sp/>mag);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>coupling[1]<sp/>+=<sp/>m_j<sp/>*<sp/>diff[1]<sp/>/<sp/>(mag<sp/>*<sp/>mag<sp/>*<sp/>mag);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Write<sp/>out<sp/>the<sp/>position<sp/>and<sp/>velocity<sp/>derivatives</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dr_i[0]<sp/>=<sp/>v_xi;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dr_i[1]<sp/>=<sp/>v_yi;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dr_i[2]<sp/>=<sp/>-(*(nbody_params*)ndxlGetNetworkParams(parent)).G<sp/>*<sp/>coupling[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dr_i[3]<sp/>=<sp/>-(*(nbody_params*)ndxlGetNetworkParams(parent)).G<sp/>*<sp/>coupling[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>define<sp/>our<sp/>bodies<sp/>with<sp/>random<sp/>uniform<sp/>initial<sp/>positions<sp/>on<sp/>a<sp/>circular<sp/>orbit<sp/>between<sp/>$8$<sp/>and<sp/>$10$<sp/>distance<sp/>units<sp/>away,<sp/>and<sp/>initial<sp/>velocities<sp/>perpendicular<sp/>to<sp/>the<sp/>initial<sp/>position<sp/>vectors<sp/>from<sp/>the<sp/>origin.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;math.h&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>m=1<sp/>for<sp/>all<sp/>agents<sp/>so<sp/>we<sp/>can<sp/>define<sp/>it<sp/>once<sp/>here</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>mass<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>10;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>dist<sp/>=<sp/>randdbl(8.0,<sp/>10.0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>ang<sp/>=<sp/>0.2<sp/>*<sp/>i<sp/>*<sp/>PI;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>r0[4]<sp/>=<sp/>{<sp/>dist<sp/>*<sp/>cos(ang),<sp/>dist<sp/>*<sp/>sin(ang),<sp/>0.5<sp/>*<sp/>dist<sp/>*<sp/>cos(ang<sp/>+<sp/>0.5<sp/>*<sp/>PI),<sp/>0.5<sp/>*<sp/>dist<sp/>*<sp/>sin(ang<sp/>+<sp/>0.5<sp/>*<sp/>PI)<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndxlCreateVertex(nwk,<sp/>r0,<sp/>4,<sp/>dynamics,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>&amp;mass);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Write<sp/>headers<sp/>to<sp/>output<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(params.f_output,<sp/>&quot;,x%d,y%d,vx%d,vy%d&quot;,<sp/>i,<sp/>i,<sp/>i,<sp/>i);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Remember<sp/>to<sp/>append<sp/>a<sp/>newline<sp/>to<sp/>the<sp/>output<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(params.f_output,<sp/>&quot;\n&quot;);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>then<sp/>simulate<sp/>the<sp/>network<sp/>for<sp/>a<sp/>duration<sp/>of<sp/>\f$4.5\f$,<sp/>with<sp/>time<sp/>stops<sp/>at<sp/>\f$1.5\f$<sp/>and<sp/>\f$3\f$<sp/>to<sp/>get<sp/>four<sp/>evenly<sp/>spaced<sp/>snapshots<sp/>of<sp/>the<sp/>bodies&apos;<sp/>orbits.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>cb(NDXLNetwork*<sp/>nwk,<sp/>double<sp/>t,<sp/>void*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Check<sp/>if<sp/>we<sp/>are<sp/>at<sp/>a<sp/>time<sp/>stop<sp/>before<sp/>writing<sp/>out<sp/>to<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>((t<sp/>==<sp/>0.0)<sp/>||<sp/>(t<sp/>==<sp/>1.5)<sp/>||<sp/>(t<sp/>==<sp/>3.0)<sp/>||<sp/>(t<sp/>==<sp/>4.5))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Get<sp/>handle<sp/>from<sp/>network&apos;s<sp/>`void*<sp/>params`<sp/>and<sp/>print<sp/>the<sp/>current<sp/>time<sp/>to<sp/>it</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>FILE*<sp/>handle<sp/>=<sp/>(*(nbody_params*)p).f_output;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(handle,<sp/>&quot;%f&quot;,<sp/>t);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Iterate<sp/>over<sp/>vertices<sp/>and<sp/>write<sp/>output<sp/>to<sp/>the<sp/>file</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(NDXLVertex*<sp/>body<sp/>=<sp/>ndxlGetNetworkFirstVertex(nwk);<sp/>body;<sp/>body<sp/>=<sp/>ndxlGetNetworkNextVertex(body))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(handle,<sp/>&quot;,%f,%f,%f,%f&quot;,<sp/>ndxlVertexState(body)[0],<sp/>ndxlVertexState(body)[1],<sp/>ndxlVertexState(body)[2],<sp/>ndxlVertexState(body)[3]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Append<sp/>newline</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(handle,<sp/>&quot;\n&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Return<sp/>success<sp/>indicator</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Define<sp/>our<sp/>time<sp/>stops</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>tstops[2]<sp/>=<sp/>{<sp/>1.5,<sp/>3.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>We<sp/>will<sp/>use<sp/>the<sp/>Cash-Karp<sp/>method<sp/>this<sp/>time<sp/>for<sp/>variety<sp/>:)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlNetworkSimulateRkck(nwk,<sp/>4.5,<sp/>1e-6,<sp/>1e-3,<sp/>tstops,<sp/>2,<sp/>cb);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Close<sp/>the<sp/>file<sp/>handle<sp/>before<sp/>exiting</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fclose((*(nbody_params*)ndxlGetNetworkParams(nwk)).f_output);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](@ref<sp/>nbody.png)</highlight></codeline>
+    </programlisting>
+    <location file="src/examples/highorder.md"/>
+  </compounddef>
+</doxygen>

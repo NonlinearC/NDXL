@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="introduction_8md" kind="file" language="Markdown">
+    <compoundname>introduction.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Introduction</highlight></codeline>
+<codeline><highlight class="normal">Welcome<sp/>to<sp/>the<sp/>Network<sp/>Dynamics<sp/>eXperimentation<sp/>Library<sp/>(NDXL)<sp/>documentation.</highlight></codeline>
+<codeline><highlight class="normal">If<sp/>this<sp/>is<sp/>your<sp/>first<sp/>visit,<sp/>we<sp/>recommend<sp/>treating<sp/>the<sp/>documentation<sp/>as<sp/>a<sp/>book,<sp/>going<sp/>from<sp/>basic<sp/>concepts<sp/>to<sp/>advanced<sp/>tutorials<sp/>and<sp/>implementation<sp/>details.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>What<sp/>is<sp/>NDXL?</highlight></codeline>
+<codeline><highlight class="normal">NDXL<sp/>is<sp/>a<sp/>cross-platform<sp/>and<sp/>programming<sp/>language-independent<sp/>package<sp/>for<sp/>simulating<sp/>complex<sp/>network<sp/>dynamics,<sp/>with<sp/>an<sp/>emphasis<sp/>on<sp/>dynamic<sp/>topologies.</highlight></codeline>
+<codeline><highlight class="normal">What<sp/>this<sp/>simply<sp/>means<sp/>is:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>NDXL<sp/>can<sp/>be<sp/>used<sp/>on<sp/>Windows,<sp/>Linux,<sp/>and<sp/>x86-64<sp/>macOS</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>It<sp/>can<sp/>be<sp/>integrated<sp/>into<sp/>any<sp/>programming<sp/>language<sp/>capable<sp/>of<sp/>interfacing<sp/>with<sp/>compiled<sp/>C<sp/>libraries</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>It<sp/>facilitates<sp/>simulation<sp/>of<sp/>networks<sp/>whose<sp/>number<sp/>and<sp/>arrangement<sp/>of<sp/>vertices<sp/>and<sp/>edges<sp/>change<sp/>over<sp/>time</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>It<sp/>supports<sp/>a<sp/>wide<sp/>range<sp/>of<sp/>network<sp/>structures<sp/>and<sp/>systems<sp/>of<sp/>differential<sp/>equations,<sp/>including<sp/>ordinary,<sp/>delayed,<sp/>and<sp/>stochastic<sp/>dynamics</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Why<sp/>use<sp/>NDXL?</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>wide<sp/>variety<sp/>of<sp/>scientific<sp/>disciplines<sp/>rely<sp/>on<sp/>network-based<sp/>modelling<sp/>to<sp/>simulate<sp/>complex<sp/>systems<sp/>composed<sp/>of<sp/>interacting,<sp/>potentially<sp/>heterogeneous<sp/>components.</highlight></codeline>
+<codeline><highlight class="normal">These<sp/>include,<sp/>but<sp/>are<sp/>not<sp/>limited<sp/>to:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Physics/chemistry:<sp/>gas-particle<sp/>ensembles,<sp/>solid<sp/>atomic<sp/>lattices,<sp/>many-body<sp/>problem</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Engineering:<sp/>power<sp/>grids,<sp/>oscillator<sp/>networks,<sp/>heat<sp/>flow,<sp/>Josephson<sp/>junctions</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Biology:<sp/>predator-prey<sp/>communities,<sp/>algal<sp/>clusters,<sp/>viral<sp/>infection</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Sociology:<sp/>follower<sp/>networks,<sp/>friend<sp/>groups</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Information<sp/>technology:<sp/>client-server<sp/>interactions,<sp/>internet<sp/>of<sp/>things</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">These<sp/>networks<sp/>often<sp/>exhibit<sp/>behaviour<sp/>which<sp/>is<sp/>difficult/impossible<sp/>to<sp/>capture<sp/>in<sp/>most<sp/>other<sp/>simulation<sp/>software,<sp/>for<sp/>example:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>power<sp/>grid<sp/>with<sp/>generators<sp/>and<sp/>loads<sp/>constantly<sp/>being<sp/>added/removed</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>An<sp/>individual-based<sp/>ecological<sp/>model<sp/>in<sp/>which<sp/>organisms<sp/>reproduce,<sp/>die,<sp/>and<sp/>interact<sp/>with<sp/>a<sp/>changing<sp/>population</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>computer<sp/>network<sp/>with<sp/>servers<sp/>going<sp/>up/down<sp/>and<sp/>clients<sp/>connecting/disconnecting</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>An<sp/>ensemble<sp/>of<sp/>gas<sp/>particles<sp/>that<sp/>slowly<sp/>leak<sp/>into<sp/>the<sp/>environment</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">NDXL<sp/>makes<sp/>simulating<sp/>these<sp/>easy,<sp/>as<sp/>vertices<sp/>and<sp/>edges<sp/>can<sp/>be<sp/>added<sp/>to/removed<sp/>from/changed<sp/>in<sp/>the<sp/>network<sp/>while<sp/>a<sp/>simulation<sp/>is<sp/>running.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>process<sp/>is<sp/>detailed<sp/>in<sp/>the<sp/>@ref<sp/>dyntop<sp/>section.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Unfortunately,<sp/>supporting<sp/>dynamic<sp/>topologies<sp/>introduces<sp/>additional<sp/>computational<sp/>and<sp/>memory-management<sp/>overhead<sp/>compared<sp/>with<sp/>implementations<sp/>designed<sp/>exclusively<sp/>for<sp/>static<sp/>networks.</highlight></codeline>
+<codeline><highlight class="normal">NDXL<sp/>is<sp/>continuously<sp/>being<sp/>optimised<sp/>to<sp/>minimise<sp/>this<sp/>overhead.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Where<sp/>to<sp/>begin?</highlight></codeline>
+<codeline><highlight class="normal">Instructions<sp/>for<sp/>acquiring,<sp/>installing,<sp/>and<sp/>compiling<sp/>against<sp/>the<sp/>NDXL<sp/>library<sp/>and<sp/>header<sp/>files<sp/>can<sp/>be<sp/>found<sp/>in<sp/>the<sp/>@ref<sp/>installation<sp/>section.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>@ref<sp/>concepts<sp/>section<sp/>then<sp/>explains<sp/>the<sp/>terminology<sp/>used<sp/>throughout<sp/>NDXL<sp/>and<sp/>network<sp/>dynamics,<sp/>and<sp/>the<sp/>@ref<sp/>ndxl_err<sp/>section<sp/>provides<sp/>details<sp/>on<sp/>how<sp/>and<sp/>when<sp/>errors<sp/>are<sp/>raised<sp/>and<sp/>handled<sp/>in<sp/>NDXL.</highlight></codeline>
+<codeline><highlight class="normal">After<sp/>that,<sp/>the<sp/>@ref<sp/>examples<sp/>section<sp/>will<sp/>walk<sp/>you<sp/>through<sp/>how<sp/>to<sp/>construct<sp/>and<sp/>simulate<sp/>different<sp/>kinds<sp/>of<sp/>networks<sp/>in<sp/>NDXL.</highlight></codeline>
+<codeline><highlight class="normal">Finally,<sp/>the<sp/>&lt;b&gt;[API](topics.html)&lt;/b&gt;<sp/>section<sp/>provides<sp/>detailed<sp/>descriptions<sp/>on<sp/>the<sp/>objects<sp/>and<sp/>functions<sp/>available<sp/>in<sp/>NDXL.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>FAQ</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>How<sp/>do<sp/>I<sp/>use<sp/>NDXL<sp/>from<sp/>other<sp/>programming<sp/>languages?</highlight></codeline>
+<codeline><highlight class="normal">Through<sp/>language-specific<sp/>bindings<sp/>that<sp/>expose<sp/>NDXL&apos;s<sp/>compiled<sp/>C<sp/>library<sp/>to<sp/>the<sp/>target<sp/>programming<sp/>language.</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>example,<sp/>the<sp/>official<sp/>Python<sp/>version<sp/>is<sp/>available<sp/>on<sp/>PyPI<sp/>&lt;b&gt;[here](https://pypi.org/project/ndxl/)&lt;/b&gt;.</highlight></codeline>
+<codeline><highlight class="normal">Future<sp/>work<sp/>on<sp/>NDXL<sp/>will<sp/>involve<sp/>creating<sp/>language-specific<sp/>bindings<sp/>for<sp/>other<sp/>languages<sp/>like<sp/>Julia.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Can<sp/>I<sp/>write<sp/>my<sp/>own<sp/>language-specific<sp/>wrappers?</highlight></codeline>
+<codeline><highlight class="normal">Of<sp/>course!<sp/>This<sp/>is<sp/>one<sp/>of<sp/>the<sp/>intended<sp/>uses<sp/>of<sp/>the<sp/>API,<sp/>and<sp/>why<sp/>it<sp/>was<sp/>written<sp/>in<sp/>C<sp/>using<sp/>only<sp/>the<sp/>C<sp/>standard<sp/>library,<sp/>primitive,<sp/>and<sp/>opaque<sp/>types.</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>a<sp/>detailed<sp/>guide<sp/>on<sp/>how<sp/>to<sp/>import<sp/>NDXL<sp/>into<sp/>another<sp/>programming<sp/>language<sp/>(using<sp/>the<sp/>Python<sp/>version<sp/>as<sp/>an<sp/>example),<sp/>see<sp/>@subpage<sp/>crosslang.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\note<sp/>NDXL<sp/>is<sp/>distributed<sp/>under<sp/>the<sp/>&lt;b&gt;[GNU<sp/>General<sp/>Public<sp/>License,<sp/>version<sp/>3<sp/>(GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.en.html)&lt;/b&gt;.<sp/>You<sp/>are<sp/>free<sp/>to<sp/>develop<sp/>and<sp/>distribute<sp/>your<sp/>own<sp/>language<sp/>bindings<sp/>and<sp/>derivative<sp/>works,<sp/>provided<sp/>that<sp/>you<sp/>comply<sp/>with<sp/>the<sp/>applicable<sp/>terms<sp/>of<sp/>the<sp/>licence.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Should<sp/>I<sp/>use<sp/>NDXL<sp/>from<sp/>C?</highlight></codeline>
+<codeline><highlight class="normal">Situationally.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>API<sp/>is<sp/>designed<sp/>to<sp/>provide<sp/>the<sp/>user<sp/>with<sp/>as<sp/>much<sp/>control<sp/>as<sp/>possible<sp/>over<sp/>the<sp/>underlying<sp/>mechanics<sp/>of<sp/>the<sp/>network.</highlight></codeline>
+<codeline><highlight class="normal">Because<sp/>the<sp/>C<sp/>API<sp/>exposes<sp/>many<sp/>configuration<sp/>parameters<sp/>directly,<sp/>constructing<sp/>and<sp/>configuring<sp/>objects<sp/>can<sp/>become<sp/>rather<sp/>verbose,<sp/>particularly<sp/>when<sp/>many<sp/>optional<sp/>parameters<sp/>are<sp/>set<sp/>to<sp/>`0`<sp/>or<sp/>`NULL`.</highlight></codeline>
+<codeline><highlight class="normal">Languages<sp/>with<sp/>features<sp/>such<sp/>as<sp/>default<sp/>arguments<sp/>and<sp/>function<sp/>overloading<sp/>can<sp/>provide<sp/>more<sp/>convenient<sp/>interfaces<sp/>to<sp/>the<sp/>same<sp/>underlying<sp/>functionality.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>why<sp/>the<sp/>library<sp/>is<sp/>also<sp/>designed<sp/>with<sp/>cross-language<sp/>interoperability<sp/>in<sp/>mind<sp/>-<sp/>it<sp/>is<sp/>much<sp/>easier,<sp/>from<sp/>a<sp/>user<sp/>perspective,<sp/>to<sp/>use<sp/>the<sp/>[Python<sp/>version](https://pypi.org/project/ndxl/),<sp/>for<sp/>example.</highlight></codeline>
+<codeline><highlight class="normal">With<sp/>that<sp/>said,<sp/>language-specific<sp/>wrappers<sp/>can<sp/>introduce<sp/>their<sp/>own<sp/>significant<sp/>amount<sp/>of<sp/>overhead,<sp/>depending<sp/>on<sp/>how<sp/>many<sp/>inter-language<sp/>translations<sp/>need<sp/>to<sp/>be<sp/>done<sp/>during<sp/>simulation.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">A<sp/>general<sp/>rule<sp/>of<sp/>thumb<sp/>would<sp/>therefore<sp/>be:</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Use<sp/>C<sp/>when<sp/>performance<sp/>is<sp/>important<sp/>e.g.,<sp/>simulating<sp/>a<sp/>10&lt;sup&gt;7&lt;/sup&gt;<sp/>node<sp/>algal<sp/>cluster.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Use<sp/>another<sp/>language<sp/>wrapper<sp/>if<sp/>the<sp/>simulation<sp/>is<sp/>small<sp/>and<sp/>convenience<sp/>matters<sp/>more<sp/>than<sp/>control.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>What<sp/>kinds<sp/>of<sp/>networks<sp/>can<sp/>NDXL<sp/>simulate?</highlight></codeline>
+<codeline><highlight class="normal">Almost<sp/>everything.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">There<sp/>are<sp/>certain<sp/>classes<sp/>of<sp/>differential<sp/>equation<sp/>that<sp/>NDXL<sp/>does<sp/>not<sp/>directly<sp/>support<sp/>(yet),<sp/>for<sp/>example,<sp/>differential<sp/>algebraic<sp/>equations<sp/>(DAEs).</highlight></codeline>
+<codeline><highlight class="normal">NDXL<sp/>requires<sp/>the<sp/>dynamics<sp/>to<sp/>be<sp/>in<sp/>a<sp/>standard<sp/>ODE/DDE/SDE<sp/>form<sp/>(see<sp/>@ref<sp/>network_simulation<sp/>&quot;Network<sp/>Simulation&quot;).</highlight></codeline>
+<codeline><highlight class="normal">So,<sp/>if<sp/>the<sp/>conditions<sp/>of<sp/>the<sp/>differential<sp/>equation<sp/>allow<sp/>the<sp/>network<sp/>dynamics<sp/>can<sp/>be<sp/>transformed<sp/>into<sp/>an<sp/>ODE/DDE/SDE,<sp/>then<sp/>NDXL<sp/>can<sp/>simulate<sp/>the<sp/>network.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">There<sp/>are<sp/>also<sp/>certain<sp/>solvers<sp/>that<sp/>NDXL<sp/>does<sp/>not<sp/>directly<sp/>support<sp/>(yet),<sp/>such<sp/>as<sp/>implicit<sp/>stochastic<sp/>solvers.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>available<sp/>explicit<sp/>stochastic<sp/>methods<sp/>may<sp/>be<sp/>inefficient<sp/>or<sp/>unsuitable<sp/>for<sp/>certain<sp/>stiff<sp/>stochastic<sp/>systems,<sp/>for<sp/>which<sp/>implicit<sp/>methods<sp/>would<sp/>be<sp/>more<sp/>appropriate.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">So,<sp/>it<sp/>is<sp/>often<sp/>more<sp/>a<sp/>case<sp/>of<sp/>&quot;some<sp/>networks<sp/>might<sp/>be<sp/>more<sp/>difficult<sp/>to<sp/>solve<sp/>than<sp/>others&quot;,<sp/>and<sp/>this<sp/>is<sp/>something<sp/>we<sp/>intend<sp/>to<sp/>tackle<sp/>in<sp/>future<sp/>updates.</highlight></codeline>
+    </programlisting>
+    <location file="src/introduction.md"/>
+  </compounddef>
+</doxygen>

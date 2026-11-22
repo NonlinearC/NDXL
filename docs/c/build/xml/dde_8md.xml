@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="dde_8md" kind="file" language="Markdown">
+    <compoundname>dde.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Adding<sp/>Delays<sp/>{#dde}</highlight></codeline>
+<codeline><highlight class="normal">\note<sp/>This<sp/>page<sp/>assumes<sp/>familiarity<sp/>with<sp/>the<sp/>basic<sp/>layout<sp/>and<sp/>API<sp/>usage<sp/>described<sp/>in<sp/>the<sp/>main<sp/>@ref<sp/>examples<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Delay<sp/>differential<sp/>equations<sp/>(DDEs)<sp/>are<sp/>characterised<sp/>by<sp/>delayed<sp/>(historical)<sp/>states<sp/>influencing<sp/>the<sp/>current<sp/>state<sp/>of<sp/>an<sp/>agent,<sp/>written<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\frac{d\vec{Y}}{dt}<sp/>=<sp/>\vec{F}(\vec{Y}(t),~\vec{Y}(t-\vec{\tau}_1),~\vec{Y}(t-\vec{\tau}_2),~\dots~\vec{Y}(t-\vec{\tau}_n),~t),</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">where<sp/>the<sp/>\f$\tau_i\f$<sp/>are<sp/>the<sp/>delay<sp/>terms.</highlight></codeline>
+<codeline><highlight class="normal">Since<sp/>ODE<sp/>systems<sp/>are<sp/>only<sp/>defined<sp/>for<sp/>\f$t\ge<sp/>t_0\f$<sp/>(with<sp/>\f$t_0=0\f$<sp/>in<sp/>NDXL),<sp/>one<sp/>inevitably<sp/>encounters<sp/>the<sp/>situation<sp/>where<sp/>\f$t-\tau&lt;t_0\f$.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>solved<sp/>by<sp/>use<sp/>of<sp/>a<sp/>history<sp/>function,<sp/>which<sp/>is<sp/>a<sp/>special<sp/>function<sp/>in<sp/>DDEs<sp/>defined<sp/>for<sp/>the<sp/>interval<sp/>\f$t_0-\tau\f$<sp/>that<sp/>returns<sp/>the<sp/>historical<sp/>states<sp/>over<sp/>that<sp/>time<sp/>period<sp/>i.e.,<sp/>&quot;what<sp/>was<sp/>the<sp/>system<sp/>doing<sp/>before<sp/>we<sp/>started<sp/>modelling/tracking<sp/>it?&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>NDXL,<sp/>delays<sp/>have<sp/>a<sp/>physical<sp/>interpretation<sp/>as<sp/>being<sp/>the<sp/>time<sp/>taken<sp/>for<sp/>information<sp/>to<sp/>travel<sp/>from<sp/>vertex<sp/>\f$i\f$<sp/>to<sp/>\f$j\f$<sp/>along<sp/>edge<sp/>\f$ij\f$<sp/>i.e.,<sp/>the<sp/>stage<sp/>state<sp/>is<sp/>only<sp/>delayed<sp/>because<sp/>the<sp/>edge<sp/>propagates<sp/>that<sp/>information<sp/>at<sp/>a<sp/>finite<sp/>speed.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>interpretation<sp/>has<sp/>several<sp/>important<sp/>implications:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Delays<sp/>are<sp/>a<sp/>property<sp/>of<sp/>an<sp/>edge,<sp/>with<sp/>idealised<sp/>instantaneous<sp/>information<sp/>transfer<sp/>occuring<sp/>only<sp/>along<sp/>edges<sp/>whose<sp/>delay<sp/>is<sp/>zero</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Information<sp/>has<sp/>not<sp/>yet<sp/>propagated<sp/>between<sp/>vertices<sp/>\f$i\f$<sp/>and<sp/>\f$j\f$<sp/>along<sp/>edge<sp/>\f$ij\f$<sp/>for<sp/>\f$t&lt;\tau_{ij}\f$</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Historical<sp/>states<sp/>for<sp/>vertices<sp/>\f$i\f$<sp/>and<sp/>\f$j\f$<sp/>need<sp/>only<sp/>be<sp/>stored<sp/>up<sp/>to<sp/>\f$t-\tau_{ij}\f$</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>first<sp/>inference<sp/>means<sp/>that<sp/>only<sp/>vertex<sp/>dynamics,<sp/>never<sp/>edge<sp/>dynamics,<sp/>can<sp/>be<sp/>described<sp/>by<sp/>DDEs<sp/>in<sp/>NDXL,<sp/>and<sp/>vertex<sp/>\f$i\f$<sp/>can<sp/>only<sp/>ever<sp/>depend<sp/>on<sp/>the<sp/>delayed<sp/>state<sp/>of<sp/>vertex<sp/>\f$j\f$;<sp/>for<sp/>vertex<sp/>\f$i\f$<sp/>to<sp/>depend<sp/>on<sp/>its<sp/>own<sp/>delayed<sp/>state,<sp/>vertex<sp/>\f$i\f$<sp/>and<sp/>vertex<sp/>\f$j\f$<sp/>must<sp/>be<sp/>the<sp/>same<sp/>vertex<sp/>i.e.,<sp/>a<sp/>self-coupled<sp/>node.</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>vertex<sp/>\f$i\f$<sp/>to<sp/>be<sp/>affected<sp/>by<sp/>multiple<sp/>delayed<sp/>terms<sp/>from<sp/>vertex<sp/>\f$j\f$,<sp/>mutliple<sp/>edges<sp/>\f$ij\f$<sp/>must<sp/>exist,<sp/>each<sp/>with<sp/>its<sp/>own<sp/>unique<sp/>delay.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>second<sp/>inference<sp/>implies<sp/>that<sp/>the<sp/>history<sp/>function<sp/>for<sp/>vertices<sp/>is<sp/>\f$\vec{x}_0\f$,<sp/>and<sp/>for<sp/>edges<sp/>is<sp/>\f$\vec{0}\f$,<sp/>for<sp/>\f$t&lt;\tau\f$;<sp/>this<sp/>is<sp/>what<sp/>the<sp/>functions<sp/>@ref<sp/>ndxlGetVertexNeighbourState()<sp/>@ref<sp/>ndxlGetEdgeRelativeState()<sp/>do,<sp/>and<sp/>is<sp/>why<sp/>they<sp/>should<sp/>almost<sp/>always<sp/>be<sp/>used<sp/>over<sp/>retrieving<sp/>agent<sp/>states<sp/>directly.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>third<sp/>inference<sp/>is<sp/>more<sp/>of<sp/>a<sp/>concern<sp/>for<sp/>memory<sp/>management,<sp/>where<sp/>an<sp/>indefinite<sp/>number<sp/>of<sp/>historical<sp/>states<sp/>cannot<sp/>be<sp/>stored<sp/>on<sp/>a<sp/>finite<sp/>amount<sp/>of<sp/>memory,<sp/>meaning<sp/>NDXL<sp/>only<sp/>preserves<sp/>historical<sp/>states<sp/>up<sp/>to<sp/>\f$t-\tau_{ij}\f$.</highlight></codeline>
+<codeline><highlight class="normal">Historical<sp/>states<sp/>are<sp/>further<sp/>used<sp/>to<sp/>perform<sp/>a<sp/>cubic<sp/>hermite<sp/>interpolation<sp/>when<sp/>\f$t-\tau_{ij}\f$<sp/>does<sp/>not<sp/>correspond<sp/>directly<sp/>to<sp/>a<sp/>discrete<sp/>stored<sp/>state<sp/>(we<sp/>opted<sp/>for<sp/>cubic<sp/>hermite<sp/>interpolation<sp/>due<sp/>to<sp/>its<sp/>curvature<sp/>preservation<sp/>properties).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Optimal<sp/>Velocity<sp/>Model<sp/>{#ovm}</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>consider<sp/>a<sp/>delayed<sp/>optimal<sp/>velocity<sp/>model<sp/>(OVM)<sp/>with<sp/>\f$20\f$<sp/>cars<sp/>travelling<sp/>in<sp/>a<sp/>circle,<sp/>where<sp/>the<sp/>position<sp/>\f$x\f$<sp/>and<sp/>velocity<sp/>\f$v\f$<sp/>of<sp/>car<sp/>\f$i\f$<sp/>are<sp/>given<sp/>by<sp/>the<sp/>already-deconstructed<sp/>second-order<sp/>ODE</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\frac{dx_i}{dt}<sp/>=<sp/>v_i,</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\frac{dv_i}{dt}<sp/>=<sp/>a_i\left[V\left(\Delta<sp/>x_i(t-\tau_{ii})\right)<sp/>-<sp/>v_i\right].</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>delays<sp/>here<sp/>refer<sp/>to<sp/>the<sp/>drivers&apos;<sp/>reaction<sp/>times,<sp/>and<sp/>the<sp/>optimal<sp/>velocity<sp/>function<sp/>\f$V\f$<sp/>typically<sp/>takes<sp/>on<sp/>a<sp/>sigmoid<sp/>curve<sp/>such<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>V\left(\Delta<sp/>x\right)<sp/>=<sp/>v_{max}\frac{\tanh{(\Delta<sp/>x<sp/>-<sp/>d)}<sp/>+<sp/>\tanh{(d)}}{1<sp/>+<sp/>\tanh{(d)}},</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">where<sp/>\f$\Delta<sp/>x(t-\tau_{ij})\f$<sp/>is<sp/>the<sp/>distance<sp/>between<sp/>cars<sp/>\f$i\f$<sp/>and<sp/>\f$j\f$,<sp/>\f$\tau_{ij}\f$<sp/>time<sp/>ago.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>see<sp/>that<sp/>each<sp/>car<sp/>(vertex)<sp/>depends<sp/>on<sp/>a<sp/>delayed<sp/>state<sp/>from<sp/>the<sp/>car<sp/>in<sp/>front<sp/>of<sp/>it,<sp/>and<sp/>of<sp/>itself.</highlight></codeline>
+<codeline><highlight class="normal">Furthermore,<sp/>each<sp/>car<sp/>is<sp/>not<sp/>influenced<sp/>by<sp/>the<sp/>car<sp/>behind<sp/>it;<sp/>our<sp/>network<sp/>therefore<sp/>consists<sp/>of<sp/>vertices<sp/>each<sp/>with<sp/>a<sp/>directed<sp/>edge<sp/>to<sp/>the<sp/>vertex<sp/>&quot;behind&quot;<sp/>it,<sp/>and<sp/>a<sp/>directed<sp/>edge<sp/>to<sp/>itself<sp/>(it<sp/>is<sp/>usually<sp/>a<sp/>good<sp/>idea<sp/>to<sp/>make<sp/>self-loops<sp/>directed<sp/>to<sp/>avoid<sp/>duplicate<sp/>state<sp/>storage<sp/>and<sp/>wasted<sp/>memory).</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>define<sp/>the<sp/>car<sp/>dynamics<sp/>function<sp/>with<sp/>this<sp/>structure<sp/>in<sp/>mind,<sp/>remembering<sp/>also<sp/>that<sp/>the<sp/>order<sp/>in<sp/>which<sp/>edges<sp/>are<sp/>added<sp/>is<sp/>preserved.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>our<sp/>dynamics<sp/>function,<sp/>we<sp/>therefore<sp/>query<sp/>each<sp/>edge<sp/>for<sp/>its<sp/>neighbouring<sp/>vertex,<sp/>and<sp/>query<sp/>the<sp/>network<sp/>for<sp/>common<sp/>parameters<sp/>like<sp/>\f$v_{max}\f$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>We<sp/>again<sp/>use<sp/>a<sp/>custom<sp/>struct<sp/>to<sp/>combine<sp/>numerical<sp/>network<sp/>parameters<sp/>with<sp/>a<sp/>file<sp/>handle</highlight></codeline>
+<codeline><highlight class="normal">typedef<sp/>struct</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>vmax;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>d;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>tanhd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>handle;</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>nwkparams;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>acc(NDXLVertex*<sp/>car,<sp/>double*<sp/>dxv_i,<sp/>const<sp/>double*<sp/>xv_i,<sp/>double<sp/>t,<sp/>void*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>vmax<sp/>=<sp/>(*(nwkparams*)ndxlGetNetworkParams(ndxlGetVertexNetwork(car))).vmax;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>d<sp/>=<sp/>(*(nwkparams*)ndxlGetNetworkParams(ndxlGetVertexNetwork(car))).d;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>tanhd<sp/>=<sp/>(*(nwkparams*)ndxlGetNetworkParams(ndxlGetVertexNetwork(car))).tanhd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>a<sp/>=<sp/>*(double*)p;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>x_ahead,<sp/>x_delayed;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Since<sp/>each<sp/>vertex<sp/>has<sp/>three<sp/>edges<sp/>(one<sp/>incoming,<sp/>one<sp/>outgoing,<sp/>and<sp/>one<sp/>self-loop),<sp/>we<sp/>iterate<sp/>over<sp/>all<sp/>three<sp/>to<sp/>appropriately<sp/>populate<sp/>x_ahead<sp/>and<sp/>x_delayed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(NDXLEdge*<sp/>edge<sp/>=<sp/>ndxlGetVertexFirstEdge(car);<sp/>edge;<sp/>edge<sp/>=<sp/>ndxlGetVertexNextEdge(car,<sp/>edge))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Check<sp/>for<sp/>self-loop</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(ndxlGetVertexNeighbour(car,<sp/>edge)<sp/>==<sp/>car)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Because<sp/>the<sp/>equations<sp/>are<sp/>delayed,<sp/>we<sp/>must<sp/>use<sp/>ndxlGetVertexNeighbourState()<sp/>to<sp/>factor<sp/>in<sp/>those<sp/>delays</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>This<sp/>is<sp/>even<sp/>true<sp/>for<sp/>the<sp/>self-loop,<sp/>as<sp/>the<sp/>historical<sp/>state<sp/>information<sp/>for<sp/>the<sp/>&quot;neighbour&quot;<sp/>is<sp/>what<sp/>we<sp/>want<sp/>to<sp/>query<sp/>(just<sp/>that<sp/>the<sp/>&quot;neighbour&quot;<sp/>happens<sp/>to<sp/>be<sp/>the<sp/>vertex<sp/>itself)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_delayed<sp/>=<sp/>ndxlGetVertexNeighbourState(car,<sp/>edge)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Check<sp/>for<sp/>`car`<sp/>being<sp/>the<sp/>&quot;destination&quot;<sp/>vertex<sp/>along<sp/>`edge`<sp/>i.e.,<sp/>information<sp/>flows<sp/>&quot;to&quot;<sp/>`car`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>else<sp/>if<sp/>(car<sp/>==<sp/>ndxlGetEdgeSecondVertex(edge))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_ahead<sp/>=<sp/>ndxlGetVertexNeighbourState(car,<sp/>edge)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Calculate<sp/>optimal<sp/>velocity<sp/>and<sp/>write<sp/>out<sp/>derivatives</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>V<sp/>=<sp/>vmax<sp/>*<sp/>(tanh(x_ahead<sp/>-<sp/>x_delayed<sp/>-<sp/>d)<sp/>+<sp/>tanhd)<sp/>/<sp/>(1.0<sp/>+<sp/>tanhd);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dxv_i[0]<sp/>=<sp/>xv_i[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dxv_i[1]<sp/>=<sp/>a<sp/>*<sp/>(V<sp/>-<sp/>xv_i[1]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Over<sp/>in<sp/>`main()`,<sp/>we<sp/>will<sp/>create<sp/>our<sp/>cars<sp/>and<sp/>the<sp/>edges<sp/>between<sp/>them,<sp/>baring<sp/>in<sp/>mind<sp/>that<sp/>`directed`<sp/>edges<sp/>allow<sp/>information<sp/>to<sp/>travel<sp/>from<sp/>its<sp/>source<sp/>vertex<sp/>to<sp/>its<sp/>destination<sp/>vertex,<sp/>but<sp/>not<sp/>the<sp/>other<sp/>way<sp/>around.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>order<sp/>in<sp/>which<sp/>we<sp/>specify<sp/>the<sp/>vertices<sp/>in<sp/>the<sp/>@ref<sp/>ndxlCreateEdge()<sp/>&quot;edge<sp/>constructor&quot;<sp/>therefore<sp/>becomes<sp/>important,<sp/>although<sp/>their<sp/>states<sp/>can<sp/>still<sp/>be<sp/>left<sp/>as<sp/>`NULL`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Define<sp/>network-wide<sp/>parameters<sp/>and<sp/>create<sp/>network</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>nwkparams<sp/>p;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>p.vmax<sp/>=<sp/>60.<sp/>*<sp/>(1000.<sp/>/<sp/>3600.);<sp/>//<sp/>Speed<sp/>limit<sp/>of<sp/>60<sp/>kph<sp/>in<sp/>m/s</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>p.d<sp/>=<sp/>1.5;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Safe<sp/>bumber-to-bumber<sp/>distance<sp/>in<sp/>m</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>p.tanhd<sp/>=<sp/>tanh(p.d);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Precalculate<sp/>tanh(d)<sp/>to<sp/>save<sp/>time<sp/>in<sp/>function<sp/>evaluations</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Prepare<sp/>output<sp/>file<sp/>and<sp/>create<sp/>network</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>p.handle<sp/>=<sp/>fopen(&quot;cars.csv&quot;,<sp/>&quot;w&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(!p.handle)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(p.handle,<sp/>&quot;t&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLNetwork*<sp/>nwk<sp/>=<sp/>ndxlCreateNetwork(&amp;p);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>car<sp/>vertices,<sp/>recalling<sp/>that<sp/>their<sp/>`void*<sp/>params`<sp/>pointers<sp/>must<sp/>persist<sp/>in<sp/>memory</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>a[20];<sp/><sp/><sp/>//<sp/>Reaction<sp/>sensitivity</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>tau[20];<sp/>//<sp/>Reaction<sp/>time<sp/>(will<sp/>be<sp/>used<sp/>in<sp/>edge<sp/>creation<sp/>so<sp/>we<sp/>need<sp/>to<sp/>populate<sp/>them<sp/>now)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLVertex*<sp/>cars[20];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>20;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Cars<sp/>start<sp/>uniformly<sp/>spaced<sp/>around<sp/>a<sp/>circle<sp/>of<sp/>circumference<sp/>100</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>xv0[2]<sp/>=<sp/>{<sp/>5.0<sp/>*<sp/>i,<sp/>randdbl(10.0,<sp/>15.0)<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>a[i]<sp/>=<sp/>randdbl(0.1,<sp/>0.3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tau[i]<sp/>=<sp/>randdbl(0.5,<sp/>1.5);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cars[i]<sp/>=<sp/>ndxlCreateVertex(nwk,<sp/>xv0,<sp/>2,<sp/>acc,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>&amp;a[i]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Write<sp/>header<sp/>to<sp/>csv</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(p.handle,<sp/>&quot;,x%d&quot;,<sp/>i);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(p.handle,<sp/>&quot;\n&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>edges<sp/>according<sp/>to<sp/>the<sp/>topology<sp/>described<sp/>above</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>20;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>self-loop</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndxlCreateEdge(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cars[i],<sp/><sp/><sp/><sp/>//<sp/>`Source`<sp/>vertex</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cars[i],<sp/><sp/><sp/><sp/>//<sp/>`Destination`<sp/>vertex</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>State<sp/>vector</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Will<sp/>be<sp/>forced<sp/>to<sp/>a<sp/>minimum<sp/>of<sp/>1<sp/>by<sp/>default</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tau[i],<sp/><sp/><sp/><sp/><sp/>//<sp/>Delay</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Directed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>No<sp/>dynamics</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>No<sp/>noise</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>No<sp/>noise<sp/>channels<sp/>(must<sp/>be<sp/>NULL<sp/>if<sp/>noise<sp/>is<sp/>NULL)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Number<sp/>of<sp/>noise<sp/>channels<sp/>(must<sp/>be<sp/>0<sp/>if<sp/>noise<sp/>is<sp/>NULL)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>No<sp/>discrete<sp/>callback</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>No<sp/>`void*<sp/>params`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>edge<sp/>from<sp/>car<sp/>ahead</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndxlCreateEdge(cars[(i<sp/>+<sp/>1)<sp/>%<sp/>20],<sp/>cars[i],<sp/>NULL,<sp/>0,<sp/>tau[i],<sp/>1,<sp/>NULL,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>NULL);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Since<sp/>the<sp/>governing<sp/>equation<sp/>is<sp/>fundamentally<sp/>second-order,<sp/>we<sp/>will<sp/>use<sp/>the<sp/>@ref<sp/>ndxlNetworkSimulateNystrom<sp/>&quot;static<sp/>Nystr&amp;ouml;m<sp/>method&quot;<sp/>to<sp/>simulate<sp/>the<sp/>network,<sp/>as<sp/>it<sp/>is<sp/>better<sp/>suited<sp/>than<sp/>the<sp/>@ref<sp/>ndxlNetworkSimulateRalston<sp/>&quot;static<sp/>Ralston<sp/>method&quot;<sp/>to<sp/>second-order<sp/>equations.</highlight></codeline>
+<codeline><highlight class="normal">Outputs<sp/>are<sp/>plotted<sp/>on<sp/>a<sp/>circle<sp/>with<sp/>circumference<sp/>\f$100\f$<sp/>as<sp/>that<sp/>ringlike<sp/>structure<sp/>is<sp/>how<sp/>we<sp/>defined<sp/>our<sp/>network<sp/>in<sp/>the<sp/>first<sp/>place.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlNetworkSimulateNystrom(nwk,<sp/>100.0,<sp/>0.1,<sp/>cb);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fclose(p.handle);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](@ref<sp/>cars.png)</highlight></codeline>
+    </programlisting>
+    <location file="src/examples/dde.md"/>
+  </compounddef>
+</doxygen>

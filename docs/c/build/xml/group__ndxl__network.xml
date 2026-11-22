@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__ndxl__network" kind="group">
+    <compoundname>ndxl_network</compoundname>
+    <title>NDXLNetwork</title>
+    <innergroup refid="group__network__callbacks">Callbacks</innergroup>
+    <innergroup refid="group__network__creation">Constructor and Destructor</innergroup>
+    <innergroup refid="group__network__getters">Getters</innergroup>
+    <innergroup refid="group__network__setters">Setters</innergroup>
+    <innergroup refid="group__network__traversal">Network Traversal</innergroup>
+    <innergroup refid="group__network__simulation">Simulation</innergroup>
+    <briefdescription>
+<para>Network object representing a complete simulation system. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The central object in NDXL. Each network is its own state machine, managing its constituent vertices, edges, and noise channels, and serving as the target of network simulation functions. Multiple networks can exist simultaneously, but only one can be simulated at a time.</para>
+<para><simplesect kind="warning"><para>Destroying a network also destroys all channels, vertices, and edges residing within that network, invalidating any pointers to those objects.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__creation_1gaceb794444113eebd20d8a6fabdc2e2f9" kindref="member">ndxlCreateNetwork</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__creation_1ga41c3dace543bac6ff2d0597bd5cb03e1" kindref="member">ndxlDestroyNetwork</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

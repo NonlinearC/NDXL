@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__network__setters" kind="group">
+    <compoundname>network_setters</compoundname>
+    <title>Setters</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__network__setters_1ga1aa3081179a1aedb081b59578eab0345" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlSetNetworkParams</definition>
+        <argsstring>(NDXLNetwork *_Network, void *_Params)</argsstring>
+        <name>ndxlSetNetworkParams</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>_Params</declname>
+        </param>
+        <briefdescription>
+<para>Sets the user-defined <computeroutput>void* _Params</computeroutput> of a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to update the parameters of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to extra memory used by the network. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise updates the parameters of _Network, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="warning"><para>NDXL stores the supplied <computeroutput>void* _Params</computeroutput> pointer without copying the associated data or managing its lifetime. The pointed-to memory must remain valid for as long as the network uses it.</para>
+</simplesect>
+<simplesect kind="warning"><para>This function replaces the networks&apos;s existing parameter pointer without freeing or otherwise managing the memory it previously referenced. The user remains responsible for managing both the previous and new allocations.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__getters_1ga995644f99e39725649115b8080f5f486" kindref="member">ndxlGetNetworkParams</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="353" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="353" declcolumn="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Setter functions for updating network properties. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

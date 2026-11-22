@@ -1,0 +1,804 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__network__simulation" kind="group">
+    <compoundname>network_simulation</compoundname>
+    <title>Simulation</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__network__simulation_1ga86f19459b1504a9cc772383d5adc6556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateRalston</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Step, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateRalston</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Step</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the static explicit Ralston method of order 4. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Step</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Step size. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Step &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains stochastic agents, one of the stochastic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="764" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="764" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1gafb26d16d894bd6dc45fdd7b69c6c06f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateNystrom</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Step, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateNystrom</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Step</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the static explicit Nystr<oumlaut/>m method of order 5. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Step</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Step size. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Step &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains stochastic agents, one of the stochastic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="804" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="804" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateDopri</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateDopri</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Atol</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Rtol</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>_Tstops</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>_Tcount</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the adaptive explicit Dormand-Prince method of order 5(4). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Atol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Absolute tolerance (number of correct decimal places). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Rtol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative tolerance (number of correct digits). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tstops</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array containing times the solver must evaluate. May be 0, in which case _Tcount must also be 0.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tcount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Atol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Rtol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains stochastic agents, one of the stochastic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="858" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="858" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1ga4bbb15e23be3b5823fe6e0b572e2f7f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateRkck</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateRkck</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Atol</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Rtol</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>_Tstops</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>_Tcount</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the adaptive explicit Cash-Karp method of order 5(4). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Atol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Absolute tolerance (number of correct decimal places). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Rtol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative tolerance (number of correct digits). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tstops</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tcount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Atol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Rtol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains stochastic agents, one of the stochastic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="915" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="915" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateEuler</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Step, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateEuler</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Step</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the static explicit Euler-Maruyama method of strong order 0.5. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Step</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Step size. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains no stochastic agents as it is a stochastic method.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Step &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no stochastic agents, one of the deterministic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga86f19459b1504a9cc772383d5adc6556" kindref="member">ndxlNetworkSimulateRalston</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gafb26d16d894bd6dc45fdd7b69c6c06f8" kindref="member">ndxlNetworkSimulateNystrom</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" kindref="member">ndxlNetworkSimulateDopri</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga4bbb15e23be3b5823fe6e0b572e2f7f3" kindref="member">ndxlNetworkSimulateRkck</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga29e43fa5832c6f5dbc41bd42dc0827fa" kindref="member">ndxlNetworkSimulateRadau</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="961" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="961" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateHeun</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateHeun</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Atol</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Rtol</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>_Tstops</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>_Tcount</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the adaptive explicit Euler-Heun method of strong order 1(0.5). Uses rejection sampling with memory (RSwM) to preserve Wiener path distributions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Atol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Absolute tolerance (number of correct decimal places). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Rtol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative tolerance (number of correct digits). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tstops</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tcount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains no stochastic agents as it is a stochastic method.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Atol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Rtol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no stochastic agents, one of the deterministic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga86f19459b1504a9cc772383d5adc6556" kindref="member">ndxlNetworkSimulateRalston</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gafb26d16d894bd6dc45fdd7b69c6c06f8" kindref="member">ndxlNetworkSimulateNystrom</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" kindref="member">ndxlNetworkSimulateDopri</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga4bbb15e23be3b5823fe6e0b572e2f7f3" kindref="member">ndxlNetworkSimulateRkck</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga29e43fa5832c6f5dbc41bd42dc0827fa" kindref="member">ndxlNetworkSimulateRadau</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="1018" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="1018" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__simulation_1ga29e43fa5832c6f5dbc41bd42dc0827fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlNetworkSimulateRadau</definition>
+        <argsstring>(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</argsstring>
+        <name>ndxlNetworkSimulateRadau</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Time</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Atol</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>_Rtol</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>_Tstops</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>_Tcount</declname>
+        </param>
+        <param>
+          <type><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref></type>
+          <declname>_Callback</declname>
+        </param>
+        <briefdescription>
+<para>Simulates a network using the adaptive implicit Radau IIA method of order 5(3). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to simulate.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Duration of the simulation. Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Atol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Absolute tolerance (number of correct decimal places). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Rtol</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative tolerance (number of correct digits). Must be greater than zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tstops</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Tcount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Callback</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="note"><para>This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+This method relies on network-wide Jacobian evaluations, meaning memory usage scales with the number of agents squared, as opposed to the linear scaling seen in explicit methods.</para>
+<para><simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Time &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Atol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Rtol &lt;= 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains no agents.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : _Network contains stochastic agents, one of the stochastic methods should be used.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> : A dynamics, noise, or callback function returned a nonzero value during simulation.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="1084" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="1084" declcolumn="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Functions for simulating networks. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title>Simulation Behaviour</title><para>Simulation starts at the local simulation time of a network i.e., the first simulation starts at t = 0, and subsequent simulations on the same network start at whatever time the previous simulation finished. Each network essentially functions as its own state machine, and because networks can dynamically change during simulation, only the current simulation state is preserved. Any errors encountered during simulation thus leave the network in the state it was in before the error occured. The evaluation order for a single Runge-Kutta stage is all vertices from ndxlGetNetworkFirstVertex to ndxlGetNetworkLastVertex, followed by all edges from ndxlGetNetworkFirstEdge to ndxlGetNetworkLastEdge.</para>
+</simplesect>
+<simplesect kind="par"><title>Callback Invocation</title><para>Network callbacks are invoked once at local simulation time t = 0, before integration begins, and subsequently after every successful integration step. The initial callback is only invoked once during the lifetime of a network; repeated calls to simulation functions do not invoke it again. Agent callbacks are invoked after every successful integration step, but are not invoked at the initial simulation time. Like stepping, vertex callbacks are evaluated first, then edge callbacks, in the same order as described above.</para>
+</simplesect>
+<simplesect kind="par"><title>External Failure</title><para>Any callback, dynamics, or noise function returning any nonzero value indicates failure. NDXL immediately terminates the simulation upon receiving this signal. The network state is not rolled back following a callback failure. Instead, it remains at the state reached when the callback was invoked, with all previously completed integration steps and the network configuration preserved.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga654f02fad350c904b773221e86d687a8" kindref="member">ndxlGetNetworkFirstVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga641b925b0b36c357e6a0ea46fe8e1603" kindref="member">ndxlGetNetworkLastVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga79f79750160fc6971dd000da2181c7e6" kindref="member">ndxlGetNetworkFirstEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga503cf6b4175046f3896ff33e3379253d" kindref="member">ndxlGetNetworkLastEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__dnc_1ga1140d9424f744e76f6ae10fde2d3329e" kindref="member">NDXLVertexDynamics</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__dnc_1ga0e85c54f67da8f77c7ff75720724fab0" kindref="member">NDXLVertexNoise</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__dnc_1ga8157fab181cba9d4fc99244e4179cbfb" kindref="member">NDXLVertexCallback</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__dnc_1gaaa6e3ed5b81b15dcfafe1c21d41815a4" kindref="member">NDXLEdgeDynamics</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__dnc_1ga751f34e2abaa42c496447193f3480e80" kindref="member">NDXLEdgeNoise</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__dnc_1ga497617ccf30d07fdb6e08f13fb35ef05" kindref="member">NDXLEdgeCallback</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

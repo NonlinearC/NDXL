@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="installation_8md" kind="file" language="Markdown">
+    <compoundname>installation.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Installation<sp/>{#installation}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">NDXL<sp/>can<sp/>be<sp/>obtained<sp/>from<sp/>the<sp/>library&apos;s<sp/>&lt;b&gt;[GitHub<sp/>repository](https://github.com/NonlinearC/NDXL/tree/main/NDXL)&lt;/b&gt;.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>`C/C++`<sp/>header<sp/>files<sp/>are<sp/>located<sp/>inside<sp/>the<sp/>`include`<sp/>folder,<sp/>and<sp/>the<sp/>precompiled<sp/>libraries<sp/>are<sp/>located<sp/>inside<sp/>the<sp/>`lib`<sp/>folder.</highlight></codeline>
+<codeline><highlight class="normal">Copy<sp/>these<sp/>folders<sp/>directly<sp/>into<sp/>the<sp/>working<sp/>directory<sp/>of<sp/>your<sp/>project,<sp/>which<sp/>we<sp/>will<sp/>assume<sp/>has<sp/>the<sp/>following<sp/>structure:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">@dot</highlight></codeline>
+<codeline><highlight class="normal">digraph<sp/>FileStructure<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>rankdir=LR;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ordering=&quot;out&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>node<sp/>[shape=folder,<sp/>style=filled,<sp/>fillcolor=&quot;#eef4fa&quot;,<sp/>fontname=&quot;Helvetica&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>root<sp/>[label=&quot;my-project/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>include<sp/>[label=&quot;include/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>lib<sp/>[label=&quot;lib/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>src<sp/>[label=&quot;src/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxl<sp/>[label=&quot;ndxl/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unicpp<sp/>[label=&quot;unicpp/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64<sp/>[label=&quot;x64/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unix<sp/>[label=&quot;Unix/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macos<sp/>[label=&quot;macOS/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64static<sp/>[label=&quot;Static/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64dynamic<sp/>[label=&quot;Dynamic/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixstatic<sp/>[label=&quot;Static/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixdynamic<sp/>[label=&quot;Dynamic/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macosstatic<sp/>[label=&quot;Static/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macosdynamic<sp/>[label=&quot;Dynamic/&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>node<sp/>[shape=note,<sp/>fillcolor=&quot;#ffffff&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxlh<sp/>[label=&quot;ndxl.h&quot;]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxlcoreh<sp/>[label=&quot;ndxlcore.h&quot;]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>mainc<sp/>[label=&quot;main.c&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>channelh<sp/>[label=&quot;ndxl_channel.h&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>edgeh<sp/>[label=&quot;ndxl_edge.h&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>networkh<sp/>[label=&quot;ndxl_network.h&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>vertexh<sp/>[label=&quot;ndxl_vertex.h&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unicppheaders<sp/>[label=&quot;...&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64lib<sp/>[label=&quot;NDXL.lib&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64lib2<sp/>[label=&quot;NDXL.lib&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64dll<sp/>[label=&quot;NDXL.dll&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixlib<sp/>[label=&quot;libNDXL.a&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixdll<sp/>[label=&quot;libNDXL.so&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>maclib<sp/>[label=&quot;libNDXL.a&quot;];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macdll<sp/>[label=&quot;libNDXL.dylib&quot;];</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>root<sp/>-&gt;<sp/>include;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>root<sp/>-&gt;<sp/>lib;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>root<sp/>-&gt;<sp/>src;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>include<sp/>-&gt;<sp/>ndxl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>include<sp/>-&gt;<sp/>unicpp;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>include<sp/>-&gt;<sp/>ndxlh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>include<sp/>-&gt;<sp/>ndxlcoreh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxl<sp/>-&gt;<sp/>channelh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxl<sp/>-&gt;<sp/>edgeh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxl<sp/>-&gt;<sp/>networkh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>ndxl<sp/>-&gt;<sp/>vertexh;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unicpp<sp/>-&gt;<sp/>unicppheaders;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>lib<sp/>-&gt;<sp/>x64;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>lib<sp/>-&gt;<sp/>unix;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>lib<sp/>-&gt;<sp/>macos;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64<sp/>-&gt;<sp/>x64static;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64<sp/>-&gt;<sp/>x64dynamic;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unix<sp/>-&gt;<sp/>unixstatic;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unix<sp/>-&gt;<sp/>unixdynamic;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macos<sp/>-&gt;<sp/>macosstatic;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macos<sp/>-&gt;<sp/>macosdynamic;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64static<sp/>-&gt;<sp/>x64lib;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64dynamic<sp/>-&gt;<sp/>x64lib2;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x64dynamic<sp/>-&gt;<sp/>x64dll;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixstatic<sp/>-&gt;<sp/>unixlib;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>unixdynamic<sp/>-&gt;<sp/>unixdll;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macosstatic<sp/>-&gt;<sp/>maclib;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>macosdynamic<sp/>-&gt;<sp/>macdll;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>src<sp/>-&gt;<sp/>mainc;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">@enddot</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>`main.c`,<sp/>we<sp/>will<sp/>define<sp/>a<sp/>minimal<sp/>working<sp/>program<sp/>calling<sp/>@ref<sp/>ndxlInit(),<sp/>which<sp/>&lt;b&gt;must&lt;/b&gt;<sp/>be<sp/>called<sp/>before<sp/>using<sp/>any<sp/>NDXL<sp/>functionality.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;../include/ndxl.h&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>cover<sp/>here<sp/>the<sp/>installation<sp/>and<sp/>linking<sp/>guides<sp/>for<sp/>both<sp/>the<sp/>static<sp/>and<sp/>dynamic<sp/>libraries<sp/>in<sp/>`MSVC`<sp/>and<sp/>`gcc`.</highlight></codeline>
+<codeline><highlight class="normal">Whether<sp/>you<sp/>use<sp/>the<sp/>static<sp/>or<sp/>dynamic<sp/>version<sp/>depends<sp/>on<sp/>you:</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Use<sp/>the<sp/>static<sp/>version<sp/>for<sp/>faster<sp/>runtime<sp/>execution<sp/>but<sp/>a<sp/>larger<sp/>executable</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Use<sp/>the<sp/>dynamic<sp/>version<sp/>for<sp/>a<sp/>smaller<sp/>executable<sp/>but<sp/>slower<sp/>runtime<sp/>execution</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Compiling<sp/>with<sp/>MSVC</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>the<sp/>solution<sp/>explorer,<sp/>right-click<sp/>your<sp/>project<sp/>file,<sp/>and<sp/>click<sp/>&quot;Properties&quot;<sp/>at<sp/>the<sp/>very<sp/>bottom.</highlight></codeline>
+<codeline><highlight class="normal">At<sp/>the<sp/>top<sp/>of<sp/>the<sp/>&quot;Properties&quot;<sp/>dialogue,<sp/>ensure<sp/>the<sp/>&quot;Configuration&quot;<sp/>is<sp/>set<sp/>to<sp/>&quot;All<sp/>Configurations&quot;,<sp/>and<sp/>&quot;Platform&quot;<sp/>is<sp/>set<sp/>to<sp/>&quot;All<sp/>Platforms&quot;.</highlight></codeline>
+<codeline><highlight class="normal">On<sp/>the<sp/>left,<sp/>click<sp/>the<sp/>&quot;Linker&quot;<sp/>dropdown,<sp/>then<sp/>click<sp/>on<sp/>&quot;Input&quot;.</highlight></codeline>
+<codeline><highlight class="normal">At<sp/>the<sp/>top<sp/>of<sp/>the<sp/>page,<sp/>the<sp/>&quot;Additional<sp/>Dependencies&quot;<sp/>field<sp/>will<sp/>likely<sp/>contain:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">$(CoreLibraryDependencies);%(AdditionalDependencies)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>your<sp/>project<sp/>uses<sp/>other<sp/>libraries,<sp/>they<sp/>will<sp/>likely<sp/>already<sp/>be<sp/>linked<sp/>here<sp/>too.</highlight></codeline>
+<codeline><highlight class="normal">Add<sp/>NDXL.lib<sp/>to<sp/>the<sp/>end<sp/>preceeded<sp/>by<sp/>a<sp/>semicolon:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">$(CoreLibraryDependencies);%(AdditionalDependencies);NDXL.lib</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>the<sp/>field<sp/>is<sp/>empty,<sp/>simply<sp/>set<sp/>it<sp/>to<sp/>```NDXL.lib```,<sp/>then<sp/>click<sp/>onto<sp/>another<sp/>field<sp/>so<sp/>that<sp/>Visual<sp/>Studio<sp/>processes<sp/>the<sp/>input.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Linking<sp/>against<sp/>the<sp/>static<sp/>version<sp/>(.lib)</highlight></codeline>
+<codeline><highlight class="normal">Again<sp/>under<sp/>&quot;Linker&quot;,<sp/>navigate<sp/>to<sp/>&quot;General&quot;,<sp/>and<sp/>search<sp/>for<sp/>the<sp/>&quot;Additional<sp/>Library<sp/>Directories&quot;<sp/>field.</highlight></codeline>
+<codeline><highlight class="normal">If<sp/>it<sp/>is<sp/>empty,<sp/>simply<sp/>paste:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">$(ProjectDir)lib\x64\Static\</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>the<sp/>field<sp/>contains<sp/>next,<sp/>click<sp/>the<sp/>drop-down<sp/>arrow<sp/>on<sp/>the<sp/>right,<sp/>then<sp/>click<sp/>&lt;Edit...&gt;.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>the<sp/>window<sp/>that<sp/>pops<sp/>up<sp/>click<sp/>the<sp/>icon<sp/>showing<sp/>a<sp/>folder<sp/>with<sp/>a<sp/>star<sp/>(&quot;New<sp/>Line&quot;),<sp/>then<sp/>paste<sp/>the<sp/>above<sp/>text<sp/>in<sp/>that<sp/>line,<sp/>and<sp/>click<sp/>&quot;OK&quot;.</highlight></codeline>
+<codeline><highlight class="normal">Finally,<sp/>click<sp/>the<sp/>&quot;C/C++&quot;<sp/>dropdown<sp/>on<sp/>the<sp/>left,<sp/>and<sp/>navigate<sp/>to<sp/>the<sp/>&quot;Preprocessor&quot;<sp/>tab.</highlight></codeline>
+<codeline><highlight class="normal">Under<sp/>&quot;Preprocessor<sp/>Definitions&quot;,<sp/>add:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">NDXL_STATIC</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">As<sp/>before,<sp/>if<sp/>this<sp/>field<sp/>already<sp/>contains<sp/>text,<sp/>append<sp/>a<sp/>semicolon<sp/>before<sp/>adding<sp/>the<sp/>above<sp/>text.</highlight></codeline>
+<codeline><highlight class="normal">Click<sp/>&quot;OK&quot;<sp/>in<sp/>the<sp/>bottom<sp/>right<sp/>of<sp/>the<sp/>&quot;Properties&quot;<sp/>window,<sp/>and,<sp/>assuming<sp/>your<sp/>file<sp/>structure<sp/>is<sp/>correctly<sp/>reflected<sp/>in<sp/>MSVC,<sp/>the<sp/>static<sp/>version<sp/>of<sp/>NDXL<sp/>should<sp/>be<sp/>successfully<sp/>linked.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Linking<sp/>against<sp/>the<sp/>dynamic<sp/>version<sp/>(.dll)</highlight></codeline>
+<codeline><highlight class="normal">Repeat<sp/>the<sp/>first<sp/>step<sp/>of<sp/>the<sp/>prebvious<sp/>section,<sp/>but<sp/>under<sp/>&quot;Additional<sp/>Library<sp/>Directories&quot;,<sp/>instead<sp/>paste:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">$(ProjectDir)lib\x64\Dynamic\</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;b&gt;Do<sp/>not&lt;/b&gt;<sp/>define<sp/>the<sp/>`NDXL_STATIC`<sp/>preprocessor<sp/>definition<sp/>as<sp/>it<sp/>will<sp/>attempt<sp/>to<sp/>import<sp/>static<sp/>symbols.</highlight></codeline>
+<codeline><highlight class="normal">Finally,<sp/>ensure<sp/>that<sp/>`NDXL.dll`<sp/>is<sp/>in<sp/>the<sp/>same<sp/>path<sp/>as<sp/>your<sp/>executable<sp/>at<sp/>runtime,<sp/>otherwise<sp/>you<sp/>will<sp/>run<sp/>into<sp/>a<sp/>&quot;dll<sp/>not<sp/>found<sp/>error&quot;.</highlight></codeline>
+<codeline><highlight class="normal">Either<sp/>copy<sp/>the<sp/>file<sp/>manually<sp/>to<sp/>your<sp/>target<sp/>directory,<sp/>or<sp/>automate<sp/>the<sp/>process<sp/>using<sp/>a<sp/>[build<sp/>event](https://learn.microsoft.com/en-us/cpp/build/how-to-use-build-events-in-msbuild-projects?view=msvc-170).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Compiling<sp/>with<sp/>gcc</highlight></codeline>
+<codeline><highlight class="normal">Ensure<sp/>your<sp/>terminal<sp/>is<sp/>currently<sp/>in<sp/>the<sp/>root<sp/>directory<sp/>of<sp/>your<sp/>project:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">user@pc:~$<sp/>cd<sp/>path/to/my-project</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Always<sp/>remember<sp/>to<sp/>link<sp/>against<sp/>the<sp/>standard<sp/>math<sp/>library<sp/>`-lm`.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Linking<sp/>against<sp/>the<sp/>static<sp/>version<sp/>(.a)</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>your<sp/>terminal,<sp/>type:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">gcc<sp/>-o<sp/>my-project.out<sp/>src/main.c<sp/>-Llib/Unix/Static<sp/>-lNDXL<sp/>-lm</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Linking<sp/>against<sp/>the<sp/>dynamic<sp/>version<sp/>(.so)</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>your<sp/>terminal,<sp/>type:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">gcc<sp/>-o<sp/>my-project.out<sp/>src/main.c<sp/>-Llib/Unix/Dynamic<sp/>-lNDXL<sp/>-lm</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Ensure<sp/>that<sp/>`libNDXL.so`<sp/>is<sp/>discoverable<sp/>by<sp/>your<sp/>runtime<sp/>loader<sp/>when<sp/>you<sp/>execute<sp/>the<sp/>program.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>do<sp/>this<sp/>is<sp/>to<sp/>copy<sp/>the<sp/>file<sp/>into<sp/>the<sp/>same<sp/>directory<sp/>as<sp/>`my-project.out`<sp/>and<sp/>run<sp/>the<sp/>executable<sp/>from<sp/>that<sp/>directory.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>References</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>a<sp/>detailed<sp/>guide<sp/>on<sp/>linking<sp/>libraries<sp/>in<sp/>`MSVC`,<sp/>see<sp/>the<sp/>[MSVC<sp/>documentation](https://learn.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-static-library-cpp?view=msvc-170).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>a<sp/>detailed<sp/>guide<sp/>on<sp/>linking<sp/>libraries<sp/>in<sp/>`gcc`,<sp/>see<sp/>the<sp/>[gcc<sp/>website](https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html).</highlight></codeline>
+    </programlisting>
+    <location file="src/installation.md"/>
+  </compounddef>
+</doxygen>

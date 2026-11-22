@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__channel__creation" kind="group">
+    <compoundname>channel_creation</compoundname>
+    <title>Constructor and Destructor</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+        <definition>NDXLChannel * ndxlCreateChannel</definition>
+        <argsstring>(NDXLNetwork *_Network, void *_Params)</argsstring>
+        <name>ndxlCreateChannel</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>_Params</declname>
+        </param>
+        <briefdescription>
+<para>Creates a noise channel in a network and returns a pointer to it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Network that will own this channel. This also dictates which vertices and edges can be affected by this channel.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to extra memory used by the channel. May be NULL.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is NULL, returns NULL, otherwise returns a new <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer.</para>
+</simplesect>
+<simplesect kind="note"><para>Each channel maintains its own Wiener path for use in rejection sampling with memory (RSwM) algorithms. Destroying one while it is in use may disrupt path preservation and intdoduce statistical bias. See <ref refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kindref="member">ndxlDestroyChannel()</ref> for further details.</para>
+</simplesect>
+<simplesect kind="warning"><para>NDXL stores the supplied <computeroutput>void* _Params</computeroutput> pointer without copying the associated data or managing its lifetime. The pointed-to memory must remain valid for as long as the channel uses it. The user remains responsible for managing any allocations.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kindref="member">ndxlDestroyChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__getters_1gae2a14deb284d756f55511e25fb57d48c" kindref="member">ndxlGetChannelEdgeCount</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__getters_1ga0fd0973e5840d882d2cc752e2b011aff" kindref="member">ndxlGetChannelVertexCount</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h" line="55" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h" declline="55" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlDestroyChannel</definition>
+        <argsstring>(NDXLChannel **_Channel)</argsstring>
+        <name>ndxlDestroyChannel</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> **</type>
+          <declname>_Channel</declname>
+        </param>
+        <briefdescription>
+<para>Destroys a noise channel created using <ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel()</ref>, and zeroes the pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="inout">_Channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Channel or *_Channel are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise zeroes *_Channel, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="note"><para>The channel pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the channel has been destroyed.</para>
+</simplesect>
+<simplesect kind="warning"><para>Destroying a noise channel also destroys its associated Wiener path. Any vertices and edges referencing the channel automatically remove their references to it and continue to exist without using that channel. The memory associated with the relevant objects&apos; user-defined <computeroutput>void* _Params</computeroutput> pointers is not handled by the destructors, and must be managed explicitly by the user.</para>
+</simplesect>
+<simplesect kind="warning"><para>However, destroying a noise channel while it is in use can disrupt Wiener path preservation in rejection sampling with memory (RSwM) algorithms, potentially introducing statistical bias into subsequent simulations.</para>
+</simplesect>
+<simplesect kind="warning"><para>It is therefore strongly recommended to verify that both <ref refid="group__channel__getters_1gae2a14deb284d756f55511e25fb57d48c" kindref="member">ndxlGetChannelEdgeCount()</ref> and <ref refid="group__channel__getters_1ga0fd0973e5840d882d2cc752e2b011aff" kindref="member">ndxlGetChannelVertexCount()</ref> return zero before destroying a noise channel.</para>
+</simplesect>
+<simplesect kind="warning"><para>Only the pointer variable passed to this function is zeroed. Any other pointers referencing the destroyed channel become invalid and must not be used.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Channel is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : *_Channel is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h" line="90" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h" declline="90" declcolumn="13"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Functions for creating and destroying noise channels. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

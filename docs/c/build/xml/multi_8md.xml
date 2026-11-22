@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="multi_8md" kind="file" language="Markdown">
+    <compoundname>multi.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Adding<sp/>Multiple<sp/>Agents<sp/>{#multi}</highlight></codeline>
+<codeline><highlight class="normal">\note<sp/>This<sp/>page<sp/>assumes<sp/>familiarity<sp/>with<sp/>the<sp/>basic<sp/>layout<sp/>and<sp/>API<sp/>usage<sp/>described<sp/>in<sp/>the<sp/>main<sp/>@ref<sp/>examples<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Adding<sp/>multiple<sp/>agents<sp/>to<sp/>a<sp/>network<sp/>allows<sp/>us<sp/>to<sp/>simulate<sp/>a<sp/>wider<sp/>variety<sp/>of<sp/>dynamical<sp/>conditions.</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>now,<sp/>we<sp/>will<sp/>only<sp/>modify<sp/>the<sp/>initial<sp/>conditions<sp/>and<sp/>parameters<sp/>of<sp/>agents,<sp/>but<sp/>later<sp/>we<sp/>will<sp/>see<sp/>how<sp/>to<sp/>assign<sp/>different<sp/>dynamics,<sp/>noise,<sp/>and<sp/>discrete<sp/>callback<sp/>functions<sp/>to<sp/>them<sp/>and<sp/>simulate<sp/>everything<sp/>together.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>most<sp/>important<sp/>point<sp/>to<sp/>remember<sp/>when<sp/>dealing<sp/>with<sp/>multiple<sp/>agents<sp/>is<sp/>that<sp/>each<sp/>one&apos;s<sp/>`void*<sp/>params`<sp/>must<sp/>persist<sp/>in<sp/>memory<sp/>as<sp/>long<sp/>as<sp/>the<sp/>agent<sp/>is<sp/>alive.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>same<sp/>is<sp/>not<sp/>true<sp/>for<sp/>its<sp/>initial<sp/>state<sp/>vector,<sp/>as<sp/>this<sp/>is<sp/>copied<sp/>and<sp/>stored<sp/>internally<sp/>by<sp/>NDXL.</highlight></codeline>
+<codeline><highlight class="normal">As<sp/>a<sp/>demonstration,<sp/>let<sp/>us<sp/>modify<sp/>the<sp/>network<sp/>we<sp/>created<sp/>in<sp/>the<sp/>@ref<sp/>examples<sp/>section<sp/>to<sp/>contain<sp/>three<sp/>vertices,<sp/>each<sp/>with<sp/>different<sp/>values<sp/>for<sp/>\f$A\f$<sp/>and<sp/>\f$\vec{x}_0\f$.</highlight></codeline>
+<codeline><highlight class="normal">Also<sp/>for<sp/>demonstration<sp/>purposes,<sp/>we<sp/>will<sp/>assume<sp/>there<sp/>exists<sp/>a<sp/>function<sp/>`randdbl()`<sp/>which<sp/>takes<sp/>in<sp/>two<sp/>parameters,<sp/>`low`<sp/>and<sp/>`high`,<sp/>and<sp/>returns<sp/>a<sp/>random<sp/>number<sp/>in<sp/>the<sp/>interval<sp/>\f$\left[low,~high\right]\f$.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;../include/ndxl.h&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Modify<sp/>the<sp/>CSV<sp/>file<sp/>to<sp/>capture<sp/>outputs<sp/>for<sp/>three<sp/>vertices</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>f_output<sp/>=<sp/>fopen(&quot;states3.csv&quot;,<sp/>&quot;w&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(!f_output)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(f_output,<sp/>&quot;t,x1,x2,x3\n&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Dedicate<sp/>space<sp/>for<sp/>three<sp/>vertices<sp/>and<sp/>their<sp/>`void*<sp/>params`<sp/>pointers</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLVertex*<sp/>vertices[3];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>A[3]<sp/>=<sp/>{<sp/>2.0,<sp/>0.5,<sp/>1.75<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>vertices<sp/>in<sp/>a<sp/>loop</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>3;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>State<sp/>is<sp/>copied<sp/>so<sp/>x0<sp/>does<sp/>not<sp/>need<sp/>to<sp/>stay<sp/>in<sp/>memory,<sp/>unlike<sp/>`A`</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>x0<sp/>=<sp/>randdbl(0.5,<sp/>1.5);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vertices[i]<sp/>=<sp/>ndxlCreateVertex(nwk,<sp/>&amp;x0,<sp/>1,<sp/>dynamics,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>&amp;A[i]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Because<sp/>we<sp/>now<sp/>have<sp/>three<sp/>vertices,<sp/>we<sp/>must<sp/>also<sp/>update<sp/>our<sp/>network<sp/>callback<sp/>to<sp/>capture<sp/>the<sp/>outputs<sp/>for<sp/>all<sp/>three.</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>iterate<sp/>over<sp/>the<sp/>network<sp/>vertices<sp/>using<sp/>the<sp/>relevant<sp/>iterators<sp/>described<sp/>in<sp/>the<sp/>@ref<sp/>network_traversal<sp/>section<sp/>of<sp/>the<sp/>API.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;stdio.h&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;../include/ndxl.h&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>cb(NDXLNetwork*<sp/>net,<sp/>double<sp/>time,<sp/>void*<sp/>params)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>csvfile<sp/>=<sp/>(FILE*)params;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(csvfile,<sp/>&quot;%f&quot;,<sp/>time);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Iterate<sp/>over<sp/>vertices<sp/>using<sp/>network<sp/>vertex<sp/>iterators</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(NDXLVertex*<sp/>vertex<sp/>=<sp/>ndxlGetNetworkFirstVertex(net);<sp/>vertex;<sp/>vertex<sp/>=<sp/>ndxlGetNetworkNextVertex(vertex))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Get<sp/>state<sp/>of<sp/>current<sp/>vertex<sp/>and<sp/>write<sp/>it<sp/>out<sp/>to<sp/>the<sp/>file,<sp/>separated<sp/>by<sp/>a<sp/>comma</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>double<sp/>x<sp/>=<sp/>ndxlVertexState(vertex)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(csvfile,<sp/>&quot;,%f&quot;,<sp/>x);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Remember<sp/>to<sp/>append<sp/>the<sp/>newline<sp/>character<sp/>to<sp/>the<sp/>line<sp/>we<sp/>just<sp/>wrote</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(csvfile,<sp/>&quot;\n&quot;);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>network<sp/>can<sp/>now<sp/>be<sp/>simulated<sp/>as<sp/>before.</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>also<sp/>modify<sp/>our<sp/>plotting<sp/>script<sp/>to<sp/>read<sp/>the<sp/>initial<sp/>conditions,<sp/>which<sp/>will<sp/>befirst<sp/>row<sp/>of<sp/>the<sp/>CSV<sp/>after<sp/>the<sp/>headers,<sp/>and<sp/>formulate<sp/>the<sp/>analytical<sp/>solutions<sp/>based<sp/>on<sp/>that.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```python</highlight></codeline>
+<codeline><highlight class="normal">import<sp/>matplotlib.pyplot<sp/>as<sp/>plt</highlight></codeline>
+<codeline><highlight class="normal">import<sp/>numpy<sp/>as<sp/>np</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Do<sp/>not<sp/>parse<sp/>header<sp/>labels</highlight></codeline>
+<codeline><highlight class="normal">t_num,<sp/>x_num1,<sp/>x_num2,<sp/>x_num3<sp/>=<sp/>np.loadtxt(&quot;states3.csv&quot;,<sp/>delimiter=&apos;,&apos;,<sp/>skiprows=1,<sp/>unpack=True)</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>=<sp/>np.array([2.0,<sp/>0.5,<sp/>1.75])</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Extract<sp/>x0<sp/>and<sp/>compute<sp/>integration<sp/>constants</highlight></codeline>
+<codeline><highlight class="normal">x0<sp/>=<sp/>np.array([x_num1[0],<sp/>x_num2[0],<sp/>x_num3[0]])</highlight></codeline>
+<codeline><highlight class="normal">c<sp/>=<sp/>np.log(x0)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Analyical<sp/>solutions</highlight></codeline>
+<codeline><highlight class="normal">t_ana<sp/>=<sp/>np.linspace(0.,<sp/>2.5,<sp/>50)</highlight></codeline>
+<codeline><highlight class="normal">x_ana1<sp/>=<sp/>np.exp(0.5<sp/>*<sp/>A[0]<sp/>*<sp/>t_ana**2<sp/>+<sp/>c[0])</highlight></codeline>
+<codeline><highlight class="normal">x_ana2<sp/>=<sp/>np.exp(0.5<sp/>*<sp/>A[1]<sp/>*<sp/>t_ana**2<sp/>+<sp/>c[1])</highlight></codeline>
+<codeline><highlight class="normal">x_ana3<sp/>=<sp/>np.exp(0.5<sp/>*<sp/>A[2]<sp/>*<sp/>t_ana**2<sp/>+<sp/>c[2])</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Visualisation</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_num,<sp/>x_num1)</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_num,<sp/>x_num2)</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_num,<sp/>x_num3)</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_ana,<sp/>x_ana1,<sp/>ls=&apos;--&apos;)</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_ana,<sp/>x_ana2,<sp/>ls=&apos;--&apos;)</highlight></codeline>
+<codeline><highlight class="normal">plt.plot(t_ana,<sp/>x_ana3,<sp/>ls=&apos;--&apos;)</highlight></codeline>
+<codeline><highlight class="normal">plt.xlabel(&quot;Time,<sp/>$t$&quot;)</highlight></codeline>
+<codeline><highlight class="normal">plt.ylabel(&quot;$x=f(x,~t)$&quot;)</highlight></codeline>
+<codeline><highlight class="normal">plt.savefig(&quot;states3.png&quot;,<sp/>bbox_inches=&apos;tight&apos;)</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![](@ref<sp/>states3.png)</highlight></codeline>
+    </programlisting>
+    <location file="src/examples/multi.md"/>
+  </compounddef>
+</doxygen>

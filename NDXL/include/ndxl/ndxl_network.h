@@ -5,8 +5,10 @@
  *
  * Declares the NDXLNetwork object and provides functions for network construction, destruction, traversal, parameter management, and numerical simulation.
  *
- * @copyright Copyright (c) 2026 Ethan Codron
- * @license GNU GPL-3.0-only
+ * @copyright Copyright (c) 2026, Ethan Codron.
+ * 
+ * Licensed under the GNU General Public License v3.0 only.
+ * See the LICENSE file in the repository root.
 */
 
 #ifndef _NDXL_NETWORK_
@@ -15,7 +17,8 @@
 #include "ndxl_edge.h"
 
 /**
- * @defgroup network_callbacks Network Callbacks
+ * @defgroup network_callbacks Callbacks
+ * @ingroup ndxl_network
  * @brief Callback signatures for networks during simulation.
  *
  * @{
@@ -24,21 +27,24 @@
 /**
  * @brief Network callback function.
  *
- * Defines a user-supplied discrete callback that is invoked during network simulation.
+ * @details Defines a user-supplied discrete callback that is invoked during network simulation.
  *
- * @param _Network
+ * @param[in] _Network
  * Pointer to the network being simulated.
  *
- * @param _Time
+ * @param[in] _Time
  * Current local simulation time of the network.
  *
- * @param _Params
+ * @param[in] _Params
  * User-defined parameters associated with the network.
  *
  * @return
  * Integer indicating callback success (zero) or failure (any nonzero value).
+ * 
+ * @note
+ * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
 */
-typedef int(*NDXLNetworkCallback)(NDXLNetwork*, double, void*);
+typedef int(*NDXLNetworkCallback)(NDXLNetwork* _Network, double _Time, void* _Params);
 
 /** @}*/
 
@@ -47,7 +53,8 @@ extern "C" {
 #endif
 
 /**
- * @defgroup network_creation Network Constructor and Destructor
+ * @defgroup network_creation Constructor and Destructor
+ * @ingroup ndxl_network
  * @brief Functions for creating and destroying networks.
  *
  * @{
@@ -56,7 +63,7 @@ extern "C" {
 /**
  * @brief Creates an empty NDXLNetwork object and returns a pointer to it.
  *
- * @param _Params
+ * @param[in] _Params
  * Pointer to extra memory used by the network. May be NULL.
  *
  * @return
@@ -85,11 +92,11 @@ _NDXLIMP_ NDXLNetwork* _CDECL ndxlCreateNetwork(
 /**
  * @brief Destroys a network created using ndxlCreateNetwork(), and zeroes the pointer.
  *
- * @param _Network
+ * @param[in,out] _Network
  * Pointer to NDXLNetwork pointer.
  *
  * @return
- * If _Network or *_Network are NULL, returns NDXL_ERR, otherwise zeroes *_Network, and returns NDXL_OK.
+ * If _Network or *_Network are NULL, returns @ref NDXL_ERR, otherwise zeroes *_Network, and returns NDXL_OK.
  *
  * @note
  * The network pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the network has been destroyed.
@@ -97,11 +104,12 @@ _NDXLIMP_ NDXLNetwork* _CDECL ndxlCreateNetwork(
  * @warning
  * Destroying a network also destroys all vertices, edges, and noise channels owned by that network. All pointers to the network and its owned objects become invalid. The memory associated with the relevant objects' user-defined `void* _Params` pointers is not handled by the destructors, and must be managed explicitly by the user.
  *
+ * @warning
  * Only the pointer variable passed to this function is zeroed. Any other pointers referencing the destroyed network become invalid and must not be used.
  * 
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: *_Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : *_Network is NULL.
  * 
  * @see ndxlCreateNetwork
 */
@@ -114,7 +122,8 @@ _NDXLIMP_ const int _CDECL ndxlDestroyNetwork(
 
 
 /**
- * @defgroup network_getters Network Getters
+ * @defgroup network_getters Getters
+ * @ingroup ndxl_network
  * @brief Getter functions for querying network properties.
  *
  * @{
@@ -123,14 +132,14 @@ _NDXLIMP_ const int _CDECL ndxlDestroyNetwork(
 /**
  * @brief Gets the number of noise channels a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the channel count of.
  *
  * @return
- * If _Network is NULL, returns NDXL_ERR, otherwise returns the number of noise channels in _Network.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise returns the number of noise channels in _Network.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
 */
 _NDXLIMP_ const size_t _CDECL ndxlGetNetworkChannelCount(
 	_In_ _Notnull_ NDXLNetwork* _Network
@@ -139,14 +148,14 @@ _NDXLIMP_ const size_t _CDECL ndxlGetNetworkChannelCount(
 /**
  * @brief Gets a list of all the noise channels in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the noise channels of.
  *
- * @param _Channels
+ * @param[out] _Channels
  * Pointer to a user-allocated array of NDXLChannel pointers. The array must contain at least ndxlGetNetworkChannelCount(_Network) elements. The function populates the array in-place.
  *
  * @return
- * If either _Network or _Channels are NULL, returns NDXL_ERR, otherwise populates _Channels with the noise channel pointers associated with _Network, and returns NDXL_OK.
+ * If either _Network or _Channels are NULL, returns @ref NDXL_ERR, otherwise populates _Channels with the noise channel pointers associated with _Network, and returns NDXL_OK.
  *
  * @note
  * The caller retains ownership of the array, but not of the NDXLChannel objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
@@ -155,8 +164,8 @@ _NDXLIMP_ const size_t _CDECL ndxlGetNetworkChannelCount(
  * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_ARG_ERR: _Channels is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Channels is NULL.
  *
  * @see ndxlGetNetworkChannelCount
 */
@@ -168,14 +177,14 @@ _NDXLIMP_ const int _CDECL ndxlGetNetworkChannels(
 /**
  * @brief Gets a list of all the edges in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the edges of.
  *
- * @param _Edges
+ * @param[out] _Edges
  * Pointer to a user-allocated array of NDXLEdge pointers. The array must contain at least ndxlGetNetworkSize(_Network) elements. The function populates the array in-place.
  *
  * @return
- * If either _Network or _Edges are NULL, returns NDXL_ERR, otherwise populates _Edges with the edge pointers associated with _Network, and returns NDXL_OK.
+ * If either _Network or _Edges are NULL, returns @ref NDXL_ERR, otherwise populates _Edges with the edge pointers associated with _Network, and returns NDXL_OK.
  *
  * @note
  * The caller retains ownership of the array, but not of the NDXLEdge objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
@@ -184,8 +193,8 @@ _NDXLIMP_ const int _CDECL ndxlGetNetworkChannels(
  * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_ARG_ERR: _Edges is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Edges is NULL.
  *
  * @see ndxlGetNetworkSize
 */
@@ -197,17 +206,17 @@ _NDXLIMP_ const int _CDECL ndxlGetNetworkEdges(
 /**
  * @brief Gets the number of vertices in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the order of.
  *
  * @return
- * If _Network is NULL, returns NDXL_ERR, otherwise returns the number of vertices in _Network.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise returns the number of vertices in _Network.
  *
  * @note
  * Not to be confused with ndxlGetNetworkSize, which returns the number of edges in a network.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetNetworkSize
 */
@@ -218,7 +227,7 @@ _NDXLIMP_ const size_t _CDECL ndxlGetNetworkOrder(
 /**
  * @brief Gets the user-defined `void* _Params` of a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrive the parameters of.
  *
  * @return
@@ -228,7 +237,7 @@ _NDXLIMP_ const size_t _CDECL ndxlGetNetworkOrder(
  * A return value of NULL does not necessarily indicate an error, as `void* _Params` could be NULL. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlSetNetworkParams
@@ -240,17 +249,17 @@ _NDXLIMP_ void* _CDECL ndxlGetNetworkParams(
 /**
  * @brief Gets the number of edges in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrive the size of.
  *
  * @return
- * If _Network is NULL, returns NDXL_ERR, otherwise returns the number of edges in _Network.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise returns the number of edges in _Network.
  *
  * @note
  * Not to be confused with ndxlGetNetworkOrder, which returns the number of vertices in a network.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetNetworkOrder
 */
@@ -261,17 +270,17 @@ _NDXLIMP_ const size_t _CDECL ndxlGetNetworkSize(
 /**
  * @brief Gets the local simulation time of a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrive the time of.
  *
  * @return
- * If _Network is NULL, returns NDXL_ERR, otherwise returns the local simulation time of _Network.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise returns the local simulation time of _Network.
  *
  * @note
  * The local simulation time only updates on a successful simulation step.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
 */
 _NDXLIMP_ const double _CDECL ndxlGetNetworkTime(
 	_In_ _Notnull_ NDXLNetwork* _Network
@@ -280,14 +289,14 @@ _NDXLIMP_ const double _CDECL ndxlGetNetworkTime(
 /**
  * @brief Gets a list of all the vertices in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the vertices of.
  *
- * @param _Vertices
+ * @param[out] _Vertices
  * Pointer to a user-allocated array of NDXLVertex pointers. The array must contain at least ndxlGetNetworkOrder(_Network) elements. The function populates the array in-place.
  *
  * @return
- * If either _Network or _Vertices are NULL, returns NDXL_ERR, otherwise populates _Vertices with the vertex pointers associated with _Network, and returns NDXL_OK.
+ * If either _Network or _Vertices are NULL, returns @ref NDXL_ERR, otherwise populates _Vertices with the vertex pointers associated with _Network, and returns NDXL_OK.
  *
  * @note
  * The caller retains ownership of the array, but not of the NDXLVertex objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
@@ -296,8 +305,8 @@ _NDXLIMP_ const double _CDECL ndxlGetNetworkTime(
  * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_ARG_ERR: _Vertices is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Vertices is NULL.
  *
  * @see ndxlGetNetworkOrder
 */
@@ -311,7 +320,8 @@ _NDXLIMP_ const int _CDECL ndxlGetNetworkVertices(
 
 
 /**
- * @defgroup network_setters Network Setters
+ * @defgroup network_setters Setters
+ * @ingroup ndxl_network
  * @brief Setter functions for updating network properties.
  *
  * @{
@@ -320,22 +330,23 @@ _NDXLIMP_ const int _CDECL ndxlGetNetworkVertices(
 /**
  * @brief Sets the user-defined `void* _Params` of a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to update the parameters of.
  *
- * @param _Params
+ * @param[in] _Params
  * Pointer to extra memory used by the network. May be NULL.
  *
  * @return
- * If _Network is NULL, returns NDXL_ERR, otherwise updates the parameters of _Network, and returns NDXL_OK.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise updates the parameters of _Network, and returns NDXL_OK.
  *
  * @warning
  * NDXL stores the supplied `void* _Params` pointer without copying the associated data or managing its lifetime. The pointed-to memory must remain valid for as long as the network uses it.
  *
+ * @warning
  * This function replaces the networks's existing parameter pointer without freeing or otherwise managing the memory it previously referenced. The user remains responsible for managing both the previous and new allocations.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetNetworkParams
 */
@@ -350,6 +361,7 @@ _NDXLIMP_ const int _CDECL ndxlSetNetworkParams(
 
 /**
  * @defgroup network_traversal Network Traversal
+ * @ingroup ndxl_network
  * @brief Functions for traversing network agents and noise channels.
  *
  * @{
@@ -358,7 +370,7 @@ _NDXLIMP_ const int _CDECL ndxlSetNetworkParams(
 /**
  * @brief Gets the first noise channel in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the first noise channel of.
  *
  * @return
@@ -367,10 +379,11 @@ _NDXLIMP_ const int _CDECL ndxlSetNetworkParams(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkNextChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkNextChannel
@@ -384,7 +397,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkFirstChannel(
 /**
  * @brief Gets the first edge in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the first edge of.
  *
  * @return
@@ -393,10 +406,11 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkFirstChannel(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkNextEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
  * 
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkNextEdge
@@ -410,7 +424,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkFirstEdge(
 /**
  * @brief Gets the first vertex in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the first vertex of.
  *
  * @return
@@ -419,10 +433,11 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkFirstEdge(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkNextVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkNextVertex
@@ -436,7 +451,7 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkFirstVertex(
 /**
  * @brief Gets the last noise channel in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the last noise channel of.
  *
  * @return
@@ -445,10 +460,11 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkFirstVertex(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkPreviousChannel to iterate over network noise channels.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstChannel
@@ -462,7 +478,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkLastChannel(
 /**
  * @brief Gets the last edge in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the last edge of.
  *
  * @return
@@ -471,10 +487,11 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkLastChannel(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkPreviousEdge to iterate over network edges.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstEdge
@@ -488,7 +505,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkLastEdge(
 /**
  * @brief Gets the last vertex in a network.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to retrieve the last vertex of.
  *
  * @return
@@ -497,10 +514,11 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkLastEdge(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkPreviousVertex to iterate over network vertices.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstVertex
@@ -514,7 +532,7 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkLastVertex(
 /**
  * @brief Gets the next channel in the network noise channel sequence.
  *
- * @param _Channel
+ * @param[in] _Channel
  * Current NDXLChannel pointer in network noise channel sequence.
  *
  * @return
@@ -523,10 +541,11 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkLastVertex(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the channel could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Channel is NULL.
+ * - @ref NDXL_ARG_ERR : _Channel is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstChannel
@@ -540,7 +559,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkNextChannel(
 /**
  * @brief Gets the next edge in the network edge sequence.
  *
- * @param _Edge
+ * @param[in] _Edge
  * Current NDXLEdge pointer in network edge sequence.
  *
  * @return
@@ -549,10 +568,11 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkNextChannel(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the edge could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Edge is NULL.
+ * - @ref NDXL_ARG_ERR : _Edge is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstEdge
@@ -566,7 +586,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkNextEdge(
 /**
  * @brief Gets the next vertex in the network vertex sequence.
  *
- * @param _Vertex
+ * @param[in] _Vertex
  * Current NDXLVertex pointer in network vertex sequence.
  *
  * @return
@@ -575,10 +595,11 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkNextEdge(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the vertex could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Vertex is NULL.
+ * - @ref NDXL_ARG_ERR : _Vertex is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstVertex
@@ -592,7 +613,7 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkNextVertex(
 /**
  * @brief Gets the previous channel in the network noise channel sequence.
  *
- * @param _Channel
+ * @param[in] _Channel
  * Current NDXLChannel pointer in network noise channel sequence.
  *
  * @return
@@ -601,10 +622,11 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkNextVertex(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the channel could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Channel is NULL.
+ * - @ref NDXL_ARG_ERR : _Channel is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstChannel
@@ -618,7 +640,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkPreviousChannel(
 /**
  * @brief Gets the previous edge in the network edge sequence.
  *
- * @param _Edge
+ * @param[in] _Edge
  * Current NDXLEdge pointer in network edge sequence.
  *
  * @return
@@ -627,10 +649,11 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkPreviousChannel(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the edge could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Edge is NULL.
+ * - @ref NDXL_ARG_ERR : _Edge is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstEdge
@@ -644,7 +667,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkPreviousEdge(
 /**
  * @brief Gets the previous vertex in the network vertex sequence.
  *
- * @param _Vertex
+ * @param[in] _Vertex
  * Current NDXLVertex pointer in network vertex sequence.
  *
  * @return
@@ -653,10 +676,11 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkPreviousEdge(
  * @note
  * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
  * 
+ * @note
  * A return value of NULL does not necessarily indicate an error, as the vertex could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Vertex is NULL.
+ * - @ref NDXL_ARG_ERR : _Vertex is NULL.
  *
  * @see ndxlGetLastErrorCode
  * @see ndxlGetNetworkFirstVertex
@@ -672,30 +696,34 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
 
 
 /**
- * @defgroup network_simulation Network Simulation
+ * @defgroup network_simulation Simulation
+ * @ingroup ndxl_network
  * @brief Functions for simulating networks.
  * 
  * @par Simulation Behaviour
  * Simulation starts at the local simulation time of a network i.e., the first simulation starts at t = 0, and subsequent simulations on the same network start at whatever time the previous simulation finished.
- * 
  * Each network essentially functions as its own state machine, and because networks can dynamically change during simulation, only the current simulation state is preserved. Any errors encountered during simulation thus leave the network in the state it was in before the error occured.
- * 
  * The evaluation order for a single Runge-Kutta stage is all vertices from ndxlGetNetworkFirstVertex to ndxlGetNetworkLastVertex, followed by all edges from ndxlGetNetworkFirstEdge to ndxlGetNetworkLastEdge.
  *
  * @par Callback Invocation
  * Network callbacks are invoked once at local simulation time t = 0, before integration begins, and subsequently after every successful integration step. The initial callback is only invoked once during the lifetime of a network; repeated calls to simulation functions do not invoke it again.
- *
  * Agent callbacks are invoked after every successful integration step, but are not invoked at the initial simulation time. Like stepping, vertex callbacks are evaluated first, then edge callbacks, in the same order as described above.
  *
- * @par Callback Failure
- * A callback returning any nonzero value indicates failure. NDXL immediately terminates the simulation upon receiving this signal.
- *
+ * @par External Failure
+ * Any callback, dynamics, or noise function returning any nonzero value indicates failure. NDXL immediately terminates the simulation upon receiving this signal.
  * The network state is not rolled back following a callback failure. Instead, it remains at the state reached when the callback was invoked, with all previously completed integration steps and the network configuration preserved.
  * 
  * @see ndxlGetNetworkFirstVertex
  * @see ndxlGetNetworkLastVertex
  * @see ndxlGetNetworkFirstEdge
  * @see ndxlGetNetworkLastEdge
+ * @see NDXLNetworkCallback
+ * @see NDXLVertexDynamics
+ * @see NDXLVertexNoise
+ * @see NDXLVertexCallback
+ * @see NDXLEdgeDynamics
+ * @see NDXLEdgeNoise
+ * @see NDXLEdgeCallback
  * 
  * @{
 */
@@ -703,31 +731,31 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
 /**
  * @brief Simulates a network using the static explicit Ralston method of order 4.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Step
- * Step size. Must be > 0.
+ * @param[in] _Step
+ * Step size. Must be greater than zero.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Step <= 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Step <= 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -741,33 +769,33 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRalston(
 ) _NOEXCEPT;
 
 /**
- * @brief Simulates a network using the static explicit Nystrom method of order 5.
+ * @brief Simulates a network using the static explicit Nystr&ouml;m method of order 5.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Step
- * Step size. Must be > 0.
+ * @param[in] _Step
+ * Step size. Must be greater than zero.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Step <= 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Step <= 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -783,29 +811,29 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateNystrom(
 /**
  * @brief Simulates a network using the adaptive explicit Dormand-Prince method of order 5(4).
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Atol
- * Absolute tolerance (number of correct decimal places). Must be > 0.
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places). Must be greater than zero.
  *
- * @param _Rtol
- * Relative tolerance (number of correct digits). Must be > 0.
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits). Must be greater than zero.
  *
- * @param _Tstops
+ * @param[in] _Tstops
  * Array containing times the solver must evaluate. May be 0, in which case _Tcount must also be 0.
  *
- * @param _Tcount
- * Length of _Tstops array. Must be > 0 if _Tstops is provided, and 0 otherwise.
+ * @param[in] _Tcount
+ * Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
@@ -814,14 +842,14 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateNystrom(
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Atol <= 0.
- * - NDXL_VALUE_ERR: _Rtol <= 0.
- * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Atol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Rtol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -840,29 +868,29 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateDopri(
 /**
  * @brief Simulates a network using the adaptive explicit Cash-Karp method of order 5(4).
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Atol
- * Absolute tolerance (number of correct decimal places). Must be > 0.
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places). Must be greater than zero.
  *
- * @param _Rtol
- * Relative tolerance (number of correct digits). Must be > 0.
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits). Must be greater than zero.
  *
- * @param _Tstops
+ * @param[in] _Tstops
  * Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.
  *
- * @param _Tcount
- * Length of _Tstops array. Must be > 0 if _Tstops is provided, and 0 otherwise.
+ * @param[in] _Tcount
+ * Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
@@ -871,14 +899,14 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateDopri(
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Atol <= 0.
- * - NDXL_VALUE_ERR: _Rtol <= 0.
- * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Atol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Rtol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -897,31 +925,31 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRkck(
 /**
  * @brief Simulates a network using the static explicit Euler-Maruyama method of strong order 0.5.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Step
- * Step size. Must be > 0.
+ * @param[in] _Step
+ * Step size. Must be greater than zero.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains no stochastic agents as it is a stochastic method.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Step <= 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains no stochastic agents, one of the deterministic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Step <= 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains no stochastic agents, one of the deterministic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateRalston
@@ -940,29 +968,29 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateEuler(
 /**
  * @brief Simulates a network using the adaptive explicit Euler-Heun method of strong order 1(0.5). Uses rejection sampling with memory (RSwM) to preserve Wiener path distributions.
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Atol
- * Absolute tolerance (number of correct decimal places). Must be > 0.
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places). Must be greater than zero.
  *
- * @param _Rtol
- * Relative tolerance (number of correct digits). Must be > 0.
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits). Must be greater than zero.
  *
- * @param _Tstops
+ * @param[in] _Tstops
  * Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.
  *
- * @param _Tcount
- * Length of _Tstops array. Must be > 0 if _Tstops is provided, and 0 otherwise.
+ * @param[in] _Tcount
+ * Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains no stochastic agents as it is a stochastic method.
@@ -971,14 +999,14 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateEuler(
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Atol <= 0.
- * - NDXL_VALUE_ERR: _Rtol <= 0.
- * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains no stochastic agents, one of the deterministic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Atol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Rtol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains no stochastic agents, one of the deterministic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateRalston
@@ -1007,29 +1035,29 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateHeun(
 /**
  * @brief Simulates a network using the adaptive implicit Radau IIA method of order 5(3).
  *
- * @param _Network
+ * @param[in] _Network
  * Target network to simulate.
  *
- * @param _Time
- * Duration of the simulation. Must be > 0.
+ * @param[in] _Time
+ * Duration of the simulation. Must be greater than zero.
  *
- * @param _Atol
- * Absolute tolerance (number of correct decimal places). Must be > 0.
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places). Must be greater than zero.
  *
- * @param _Rtol
- * Relative tolerance (number of correct digits). Must be > 0.
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits). Must be greater than zero.
  *
- * @param _Tstops
+ * @param[in] _Tstops
  * Array containing times the solver must evaluate. May be NULL, in which case _Tcount must also be 0.
  *
- * @param _Tcount
- * Length of _Tstops array. Must be > 0 if _Tstops is provided, and 0 otherwise.
+ * @param[in] _Tcount
+ * Length of _Tstops array. Must be greater than zero if _Tstops is provided, and 0 otherwise.
  *
- * @param _Callback
+ * @param[in] _Callback
  * External discrete callback called once at local simulation time of 0, then again after each integration step. May be NULL.
  *
  * @return
- * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns NDXL_ERR.
+ * Returns NDXL_OK if _Network is successfully integrated over _Time, otherwise returns @ref NDXL_ERR.
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
@@ -1040,14 +1068,14 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateHeun(
  * This method relies on network-wide Jacobian evaluations, meaning memory usage scales with the number of agents squared, as opposed to the linear scaling seen in explicit methods. 
  *
  * @par Errors raised
- * - NDXL_ARG_ERR: _Network is NULL.
- * - NDXL_VALUE_ERR: _Time <= 0.
- * - NDXL_VALUE_ERR: _Atol <= 0.
- * - NDXL_VALUE_ERR: _Rtol <= 0.
- * - NDXL_VALUE_ERR: _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
- * - NDXL_SIM_ERR: _Network contains no agents.
- * - NDXL_SIM_ERR: _Network contains stochastic agents, one of the stochastic methods should be used.
- * - NDXL_SIM_ERR: A dynamics, noise, or callback function returned a nonzero value during simulation.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Time <= 0.
+ * - @ref NDXL_VALUE_ERR : _Atol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Rtol <= 0.
+ * - @ref NDXL_VALUE_ERR : _Tstops is NULL and _Tcount is nonzero, or _Tstops is not NULL and _Tcount is 0.
+ * - @ref NDXL_SIM_ERR : _Network contains no agents.
+ * - @ref NDXL_SIM_ERR : _Network contains stochastic agents, one of the stochastic methods should be used.
+ * - @ref NDXL_SIM_ERR : A dynamics, noise, or callback function returned a nonzero value during simulation.
  *
  * @see NDXLNetworkCallback
  * @see ndxlNetworkSimulateEuler
@@ -1187,7 +1215,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRadau(
 //	{
 //		//network::_Nwkargs[this->_My_ptr][0] = _Cb;
 //		//return ndxlNetworkSimulateNorsett(this->_My_ptr, _Tspan, _Step, _nwk_bridge);
-//		return NDXL_ERR;
+//		return @ref NDXL_ERR;
 //	}
 //
 //	inline const int simulate_radau(const double _Tspan, const double _Atol = 1e-10, const double _Rtol = 1e-8, const std::vector<double>& _Tstops = {}, const network_callback& _Cb = nullptr) noexcept
@@ -1196,7 +1224,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRadau(
 //		//const std::size_t _Nstops = _Tstops.size();
 //		//const double* _Stops = (_Nstops ? _Tstops.data() : 0);
 //		//return ndxlNetworkSimulateRadau(this->_My_ptr, _Tspan, _Atol, _Rtol, _Stops, _Nstops, _nwk_bridge);
-//		return NDXL_ERR;
+//		return @ref NDXL_ERR;
 //	}
 //};
 //

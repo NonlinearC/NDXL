@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="sde" kind="page">
+    <compoundname>sde</compoundname>
+    <title>Adding Stochasticity</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="sde_1md_src_2examples_2sde"/></para>
+<para><simplesect kind="note"><para>This page assumes familiarity with the basic layout and API usage described in the main <ref refid="examples" kindref="compound">Examples</ref> page.</para>
+</simplesect>
+The preceeding examples have all looked at vertices whose agents evolve deterministically i.e., repeated runs of the same simulation result in the same outputs and have the same analytical solution. This is not the case for stochastic differential equations (SDEs), which are explicitly designed to simulate agents that have an element of randomness in their dynamics. Before we can begin solving SDEs, we need to understand several key concepts used in their definitions.</para>
+<sect1 id="sde_1autotoc_md29_1s1"><sect2 id="sde_1autotoc_md29">
+<title>Brownian Path</title><para>The random fluctuations in an SDE are assumed to follow Brownian motion, and the individual microscopic fluctuations over time are collectively referred to as a Wiener path. The system can have multiple Wiener paths simultaneously influencing its stochastic motion, and these are called noise channels. NDXL explicitly defines a single noise channel via the <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> object i.e., each <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> is an independent Wiener process. This makes local <ref refid="group__vertex__dnc_1ga0e85c54f67da8f77c7ff75720724fab0" kindref="member">noise functions</ref> in NDXL only responsible for returning the <formula id="96">$D^\prime\times M^\prime$</formula> diffusion submatrix of the agent they are associated with, where <formula id="97">$D^\prime$</formula> and <formula id="98">$M^\prime$</formula> are respectively the state vector cardinality and number of noise channels of that agent.</para>
+</sect2></sect1>
+<sect1 id="sde_1autotoc_md30_1s1"><sect2 id="sde_1autotoc_md30">
+<title>Drift and Diffusion</title><para>An SDE for a <formula id="26">$D$</formula>-dimensional state vector <formula id="99">$\vec{X}$</formula> is defined most generally as</para>
+<para><formula id="100">\[    d\vec{X} = f(\vec{X},~t)dt + g(\vec{X},~t)dW
+\]</formula></para>
+<para>Here, <formula id="101">$f$</formula> is called the deterministic drift function, <formula id="102">$g$</formula> is the stochastic diffusion matrix, and <formula id="103">$W$</formula> ( <formula id="104">$dW\sim\mathcal{N}(0,~h)$</formula>) is a Wiener process (increment). Multiple <formula id="105">$M$</formula> independent noise sources can influence the system simultaneously, so the diffusion matrix has dimensions <formula id="106">$D\times M$</formula>, whose entries <formula id="107">$g_{ij}$</formula> are the amplitude of noise channel <formula id="42">$j$</formula> on component <formula id="20">$i$</formula> of the state vector. This interpretation has several important consequences for agent-based modelling:</para>
+<para><itemizedlist>
+<listitem><para>A single noise channel can influence multiple elements of the same state vector</para>
+</listitem><listitem><para>A single element in a state vector can be influenced by multiple noise channels</para>
+</listitem><listitem><para>Agents can share noise channels independently of their dynamics or state vectors</para>
+</listitem></itemizedlist>
+</para>
+</sect2></sect1>
+<sect1 id="sde_1autotoc_md31_1s1"><sect2 id="sde_1autotoc_md31">
+<title>Path Preservation and RSwM</title><para>For static stepping algorithms like <ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">Euler-Maruyama</ref>, steps are taken to be successful regardless of the local error or behaviour of the Brownian path. This makes them far more inaccurate than their adaptive counterparts, and should only ever be used as a &quot;preview&quot; of the stochastic output (assuming a very small step size e.g., <formula id="108">$h\sim10^{-5}$</formula>) rather than a complete simulation output.</para>
+<para>Adaptive algorithms like <ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">Heun-Euler</ref> estimate local error based on user-defined tolerances, and this is where the stochasticity of the system becomes problematic. If a step is rejected in a deterministic ODE, we know it was because the difference between the two solutions was too large over that step, and the step is simply reduced and retried. In SDEs, however, the deterministic drift functions could agree nearly perfectly, but the stochastic diffusion components cause the paths to diverge too much, raising the local error. This means a step can be rejected effectively by random chance.</para>
+<para>However, the rejection event itself cannot simply be discarded as a &quot;chance effect&quot;; if we simply reject the step and retry with a fresh Wiener increment, we lose information about why the step was initially rejected, which introduces statistical bias into the Wiener path as a whole. This is where an algorithm called <emphasis>Rejection Sampling with Memory</emphasis> (RSwM) comes in. Without going into too much detail, RSwM constructs a <emphasis>Brownian bridge</emphasis> between the rejected step and previously accepted step, which allows for a deterministic interpolation of an intermediate step that should be attempted first, followed by a step that takes us back to the originally rejected time point. This preserves the statistical integrity and distribution properties of the underlying Wiener process, making adaptive stochastic methods far more suitable for actual simulations involving SDEs.</para>
+</sect2></sect1>
+<sect1 id="sde_1autotoc_md32_1s1"><sect2 id="sde_1autotoc_md32">
+<title>It<ocirc/> and Stratonovich Interpretations</title><para>A further complication with SDE solvers is the calculus behind the solving method, which we eluded to in the <ref refid="concepts_1meth-stochastic" kindref="member">Stochastic methods</ref> section of the <ref refid="concepts" kindref="compound">Concepts</ref> page. Briefly, the two main schemes are the It&amp;ocirc and Stratonovich interpretations, and the differences between them come down to the mathematical properties preserved:</para>
+<para><itemizedlist>
+<listitem><para>It<ocirc/> evaluates the integral on the left-hand side of the interval, preserving the martingale property but not the chain rule</para>
+</listitem><listitem><para>Stratonovich evaluates the integral at the midpoint of the interval, preserving the chain rule but not the martingale property</para>
+</listitem></itemizedlist>
+</para>
+<para>Fortunately, switching between the schemes is rather simple, requiring only a correction term in the drift function. This &quot;drift correction term&quot; is defined for component <formula id="20">$i$</formula> of the state vector <formula id="99">$\vec{X}$</formula> as</para>
+<para><formula id="109">\[    \frac{1}{2}\displaystyle\sum_{j=1}^M{\displaystyle\sum_{j=1}^D{g_{kj}(\vec{X},~t)\frac{\partial g_{ij}(\vec{X},~t)}{\partial x_k}}}
+\]</formula></para>
+<para>If solving a Stratonovich equation using an It<ocirc/> solver, add the correction to the drift...</para>
+<para><formula id="110">\[    dX_i = \left[f_i(\vec{X},~t) + \frac{1}{2}\displaystyle\sum_{j=1}^M{\displaystyle\sum_{j=1}^D{g_{kj}(\vec{X},~t)\frac{\partial g_{ij}(\vec{X},~t)}{\partial x_k}}}\right]dt + \displaystyle\sum_{j=1}^M{g_{ij}(\vec{X},~t)dW_j}
+\]</formula></para>
+<para>...and subtract it if using a Stratonovich solver to solve an It<ocirc/> equation.</para>
+</sect2></sect1>
+<sect1 id="sde_1autotoc_md33">
+<title>Particle Ensemble</title><para>Let us now simulate an ensemble of Ornstein-Uhlenbeck particles, which models the position <formula id="62">$x$</formula> of particle <formula id="20">$i$</formula> as</para>
+<para><formula id="111">\[    dx_i = -\Gamma x_i{\rm d}t + \sigma dW_i.
+\]</formula></para>
+<para>From the equation, we can see that all particles are affected by only one Wiener process, but the process driving each particle is unique. We start by defining our drift and diffusion functions, which correspond to the dynamics and noise functions in NDXL, respectively. Where the dynamics function&apos;s output was an array with length <formula id="26">$D$</formula>, the noise function&apos;s output is a flattened matrix (array) with dimensions (length) <formula id="106">$D\times M$</formula></para>
+<para><programlisting filename=".c"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>drift(<ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>*<sp/>particle,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>dx,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>x,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Gamma<sp/>=<sp/>((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*)p)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dx[0]<sp/>=<sp/>-Gamma<sp/>*<sp/>x[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>diffusion(<ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>*<sp/>particle,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>dg,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>x,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigma<sp/>=<sp/>((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*)p)[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dg[0]<sp/>=<sp/>sigma;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Because each particle&apos;s Wiener driver is unique, we do not have to create any noise channels. Instead, we can simply specify the noise function and number of noise channels, leaving the <computeroutput>_Channels</computeroutput> argument itself <computeroutput>NULL</computeroutput>, which NDXL interprets as &quot;create `_Nchannels` new noise channels&quot; (see <ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex()</ref>).</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Define<sp/>Gamma,<sp/>sigma,<sp/>and<sp/>initial<sp/>position</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Gs[2]<sp/>=<sp/>{<sp/>1.5,<sp/>1.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x0<sp/>=<sp/>-1.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Create<sp/>1000<sp/>particles<sp/>all<sp/>starting<sp/>at<sp/>x0</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1000;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;x0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drift,<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Dynamics</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>diffusion,<sp/><sp/></highlight><highlight class="comment">//<sp/>Noise</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>did<sp/>not<sp/>create<sp/>any<sp/>channels,<sp/>so<sp/>we<sp/>leave<sp/>this<sp/>as<sp/>NULL<sp/>to<sp/>specify<sp/>&quot;all<sp/>channels<sp/>must<sp/>be<sp/>new<sp/>and<sp/>independent&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Each<sp/>particle<sp/>is<sp/>driven<sp/>by<sp/>only<sp/>one<sp/>Wiener<sp/>process<sp/>(channel)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;Gs</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Because our network has stochastic agents, NDXL will raise a <ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref> if we try to simulate the network using one of the deterministic methods shown previously (similarly, one cannot use the stochastic methods on a purely deterministic network). As explained above, we want to use an adaptive method so that the RSwM algorithm&apos;s path preservation is in effect. Similar to the <ref refid="highorder" kindref="compound">N-Body example</ref>, we will also define a series of time stops at which to take snapshots of the simulated output.</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tstops[6]<sp/>=<sp/>{<sp/>2.0,<sp/>4.0,<sp/>6.0,<sp/>8.0,<sp/>10.0,<sp/>12.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref>(nwk,<sp/>14.0,<sp/>1e-3,<sp/>1e-3,<sp/>tstops,<sp/>6,<sp/>cb);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="sde_1autotoc_md34">
+<title>Specifying noise channels</title><para>We will modify our Ornstein-Uhlenbeck ensemble above to have all particles driven by the same Wiener process; what we expect is the initial distribution to simply change position, not shape, as all particles are perturbed by the same random amount each time step. To achieve this, we will create a <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> before the vertices and assign it as the only channel to each vertex&apos;s <computeroutput>_Channels</computeroutput> array.</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Define<sp/>NDXLChannel<sp/>object</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>channel<sp/>=<sp/><ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Host<sp/>network;<sp/>channel<sp/>can<sp/>only<sp/>influence<sp/>vertices<sp/>and<sp/>edges<sp/>in<sp/>this<sp/>network</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>extra<sp/>`void*<sp/>params`<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Create<sp/>1000<sp/>particles<sp/>using<sp/>the<sp/>same<sp/>channel</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1000;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;x0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drift,<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Dynamics</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>diffusion,<sp/><sp/></highlight><highlight class="comment">//<sp/>Noise</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;channel,<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Must<sp/>be<sp/>an<sp/>array<sp/>of<sp/>NDXLChannel<sp/>pointers,<sp/>hence<sp/>the<sp/>use<sp/>of<sp/>the<sp/>addressof<sp/>operator</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Each<sp/>particle<sp/>is<sp/>still<sp/>only<sp/>driven<sp/>by<sp/>one<sp/>Wiener<sp/>process<sp/>(now<sp/>defined<sp/>by<sp/>`channel`)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;Gs</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Interestingly, the analytical solution to this model approaches a Gaussian distribution with zero mean, and variance <formula id="112">$\Sigma^2=\frac{\sigma^2}{2\Gamma}$</formula>. We can therefore compare our distributions (blue) to the analytical soltuion (orange) over time, as shown in the images below.</para>
+<para><simplesect kind="note"><para>The analytical solution is only valid if all particles are driven by independent Wiener processes; for a shared process, the variance is zero, and the distribution collapses into a Dirac-delta distribution that moves randomly about the mean.</para>
+</simplesect>
+<center> <table rows="1" cols="2"><row>
+<entry thead="no" align="center"><para><image type="html" name="ou.png">Independent Wiener processes</image>
+ </para>
+</entry><entry thead="no" align="center"><para><image type="html" name="ou_1chan.png">Shared Wiener process</image>
+ </para>
+</entry></row>
+</table>
+</center> </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/examples/sde.md"/>
+  </compounddef>
+</doxygen>

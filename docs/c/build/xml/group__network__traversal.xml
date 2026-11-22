@@ -1,0 +1,578 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__network__traversal" kind="group">
+    <compoundname>network_traversal</compoundname>
+    <title>Network Traversal</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__network__traversal_1gab1f1a15012c507ad567e292791191197" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+        <definition>NDXLChannel * ndxlGetNetworkFirstChannel</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkFirstChannel</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the first noise channel in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the first noise channel of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no noise channels, returns NULL, otherwise returns the first <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkNextChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gafb865245b51b309005bfa04f4fe19119" kindref="member">ndxlGetNetworkNextChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaa7c0d961d7f5fa106bfbdb631e3af84c" kindref="member">ndxlGetNetworkPreviousChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga9b84edb3b23a13da36f7a84498ff73c9" kindref="member">ndxlGetNetworkLastChannel</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="393" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="393" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga79f79750160fc6971dd000da2181c7e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+        <definition>NDXLEdge * ndxlGetNetworkFirstEdge</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkFirstEdge</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the first edge in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the first edge of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no edges, returns NULL, otherwise returns the first <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkNextEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaff920e37e1c7556ffab57d43f4477cae" kindref="member">ndxlGetNetworkNextEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gad34b7e738623830f62005a346fac8d9c" kindref="member">ndxlGetNetworkPreviousEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga503cf6b4175046f3896ff33e3379253d" kindref="member">ndxlGetNetworkLastEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="420" column="12" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="420" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga654f02fad350c904b773221e86d687a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetNetworkFirstVertex</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkFirstVertex</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the first vertex in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the first vertex of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no vertices, returns NULL, otherwise returns the first <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkNextVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab9fecd9843a351db1ab4a355ef840faf" kindref="member">ndxlGetNetworkNextVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga4878678e312cc5d066fbac375e957d49" kindref="member">ndxlGetNetworkPreviousVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga641b925b0b36c357e6a0ea46fe8e1603" kindref="member">ndxlGetNetworkLastVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="447" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="447" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga9b84edb3b23a13da36f7a84498ff73c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+        <definition>NDXLChannel * ndxlGetNetworkLastChannel</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkLastChannel</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the last noise channel in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the last noise channel of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no noise channels, returns NULL, otherwise returns the last <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkPreviousChannel to iterate over network noise channels.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab1f1a15012c507ad567e292791191197" kindref="member">ndxlGetNetworkFirstChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gafb865245b51b309005bfa04f4fe19119" kindref="member">ndxlGetNetworkNextChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaa7c0d961d7f5fa106bfbdb631e3af84c" kindref="member">ndxlGetNetworkPreviousChannel</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="474" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="474" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga503cf6b4175046f3896ff33e3379253d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+        <definition>NDXLEdge * ndxlGetNetworkLastEdge</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkLastEdge</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the last edge in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the last edge of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no edges, returns NULL, otherwise returns the last <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkPreviousEdge to iterate over network edges.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga79f79750160fc6971dd000da2181c7e6" kindref="member">ndxlGetNetworkFirstEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaff920e37e1c7556ffab57d43f4477cae" kindref="member">ndxlGetNetworkNextEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gad34b7e738623830f62005a346fac8d9c" kindref="member">ndxlGetNetworkPreviousEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="501" column="12" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="501" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga641b925b0b36c357e6a0ea46fe8e1603" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetNetworkLastVertex</definition>
+        <argsstring>(NDXLNetwork *_Network)</argsstring>
+        <name>ndxlGetNetworkLastVertex</name>
+        <param>
+          <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+          <declname>_Network</declname>
+        </param>
+        <briefdescription>
+<para>Gets the last vertex in a network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target network to retrieve the last vertex of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Network is either NULL or has no vertices, returns NULL, otherwise returns the last <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer created on _Network.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkPreviousVertex to iterate over network vertices.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Network is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga654f02fad350c904b773221e86d687a8" kindref="member">ndxlGetNetworkFirstVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab9fecd9843a351db1ab4a355ef840faf" kindref="member">ndxlGetNetworkNextVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga4878678e312cc5d066fbac375e957d49" kindref="member">ndxlGetNetworkPreviousVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="528" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="528" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1gafb865245b51b309005bfa04f4fe19119" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+        <definition>NDXLChannel * ndxlGetNetworkNextChannel</definition>
+        <argsstring>(NDXLChannel *_Channel)</argsstring>
+        <name>ndxlGetNetworkNextChannel</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+          <declname>_Channel</declname>
+        </param>
+        <briefdescription>
+<para>Gets the next channel in the network noise channel sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer in network noise channel sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Channel is either NULL or is the last noise channel in the network&apos;s channel sequence, returns NULL, otherwise returns the next <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the channel could have no successors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Channel is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab1f1a15012c507ad567e292791191197" kindref="member">ndxlGetNetworkFirstChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaa7c0d961d7f5fa106bfbdb631e3af84c" kindref="member">ndxlGetNetworkPreviousChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga9b84edb3b23a13da36f7a84498ff73c9" kindref="member">ndxlGetNetworkLastChannel</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="555" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="555" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1gaff920e37e1c7556ffab57d43f4477cae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+        <definition>NDXLEdge * ndxlGetNetworkNextEdge</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetNetworkNextEdge</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the next edge in the network edge sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer in network edge sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is either NULL or is the last edge in the network&apos;s edge sequence, returns NULL, otherwise returns the next <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the edge could have no successors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga79f79750160fc6971dd000da2181c7e6" kindref="member">ndxlGetNetworkFirstEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gad34b7e738623830f62005a346fac8d9c" kindref="member">ndxlGetNetworkPreviousEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga503cf6b4175046f3896ff33e3379253d" kindref="member">ndxlGetNetworkLastEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="582" column="12" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="582" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1gab9fecd9843a351db1ab4a355ef840faf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetNetworkNextVertex</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetNetworkNextVertex</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the next vertex in the network vertex sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer in network vertex sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is either NULL or is the last vertex in the network&apos;s vertex sequence, returns NULL, otherwise returns the next <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the vertex could have no successors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga654f02fad350c904b773221e86d687a8" kindref="member">ndxlGetNetworkFirstVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga4878678e312cc5d066fbac375e957d49" kindref="member">ndxlGetNetworkPreviousVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga641b925b0b36c357e6a0ea46fe8e1603" kindref="member">ndxlGetNetworkLastVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="609" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="609" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1gaa7c0d961d7f5fa106bfbdb631e3af84c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+        <definition>NDXLChannel * ndxlGetNetworkPreviousChannel</definition>
+        <argsstring>(NDXLChannel *_Channel)</argsstring>
+        <name>ndxlGetNetworkPreviousChannel</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> *</type>
+          <declname>_Channel</declname>
+        </param>
+        <briefdescription>
+<para>Gets the previous channel in the network noise channel sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Channel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer in network noise channel sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Channel is either NULL or is the first noise channel in the network&apos;s channel sequence, returns NULL, otherwise returns the previous <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the channel could have no predecessors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Channel is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab1f1a15012c507ad567e292791191197" kindref="member">ndxlGetNetworkFirstChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gafb865245b51b309005bfa04f4fe19119" kindref="member">ndxlGetNetworkNextChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga9b84edb3b23a13da36f7a84498ff73c9" kindref="member">ndxlGetNetworkLastChannel</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="636" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="636" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1gad34b7e738623830f62005a346fac8d9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+        <definition>NDXLEdge * ndxlGetNetworkPreviousEdge</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetNetworkPreviousEdge</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the previous edge in the network edge sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer in network edge sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is either NULL or is the first edge in the network&apos;s edge sequence, returns NULL, otherwise returns the previous <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the edge could have no predecessors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga79f79750160fc6971dd000da2181c7e6" kindref="member">ndxlGetNetworkFirstEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gaff920e37e1c7556ffab57d43f4477cae" kindref="member">ndxlGetNetworkNextEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga503cf6b4175046f3896ff33e3379253d" kindref="member">ndxlGetNetworkLastEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="663" column="12" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="663" declcolumn="12"/>
+      </memberdef>
+      <memberdef kind="function" id="group__network__traversal_1ga4878678e312cc5d066fbac375e957d49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetNetworkPreviousVertex</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetNetworkPreviousVertex</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the previous vertex in the network vertex sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer in network vertex sequence.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is either NULL or is the first vertex in the network&apos;s vertex sequence, returns NULL, otherwise returns the previous <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointer in the host network&apos;s sequence.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the vertex could have no predecessors. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga654f02fad350c904b773221e86d687a8" kindref="member">ndxlGetNetworkFirstVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1gab9fecd9843a351db1ab4a355ef840faf" kindref="member">ndxlGetNetworkNextVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__traversal_1ga641b925b0b36c357e6a0ea46fe8e1603" kindref="member">ndxlGetNetworkLastVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" line="690" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h" declline="690" declcolumn="14"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Functions for traversing network agents and noise channels. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

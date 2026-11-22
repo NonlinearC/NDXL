@@ -5,8 +5,10 @@
  *
  * Declares API-wide macros, functions, typedefs, and header files.
  *
- * @copyright Copyright (c) 2026 Ethan Codron
- * @license GNU GPL-3.0-only
+ * @copyright Copyright (c) 2026, Ethan Codron.
+ * 
+ * Licensed under the GNU General Public License v3.0 only.
+ * See the LICENSE file in the repository root.
 */
 
 #ifndef _NDXLCORE_
@@ -24,8 +26,8 @@
 #include "unicpp/unicpp.h"
 
 /**
- * @defgroup ndxl_objects NDXL Objects
- * @brief Opaque type declarations of the objects defined by NDXL.
+ * @defgroup ndxl_objects Objects and Functions
+ * @brief Opaque type declarations of the objects defined by NDXL, and detailed explanations on the functions that interface with them.
  *
  * @warning
  * NDXL objects must NOT be freed using free(). Instead, the relevant destructor must be called so that internal links and memory allocations are safely and properly handled. All non-destroyed objects are automatically garbage collected when the program terminates.
@@ -40,6 +42,8 @@
 */
 
 /**
+ * @defgroup ndxl_network NDXLNetwork
+ * @ingroup ndxl_objects
  * @brief Network object representing a complete simulation system.
  *
  * The central object in NDXL. Each network is its own state machine, managing its constituent vertices, edges, and noise channels, and serving as the target of network simulation functions. Multiple networks can exist simultaneously, but only one can be simulated at a time.
@@ -51,8 +55,11 @@
  * @see ndxlDestroyNetwork
 */
 typedef struct NDXLNetwork NDXLNetwork;
+/** @}*/
 
 /**
+ * @defgroup ndxl_channel NDXLChannel
+ * @ingroup ndxl_objects 
  * @brief Noise channel object representing a Wiener process.
  *
  * Each channel defines an independent Wiener process. Noise channels can be shared between multiple agents, and are associated with agents through their noise functions.
@@ -66,8 +73,11 @@ typedef struct NDXLNetwork NDXLNetwork;
  * @see ndxlCreateEdge
 */
 typedef struct NDXLChannel NDXLChannel;
+/** @}*/
 
 /**
+ * @defgroup ndxl_vertex NDXLVertex
+ * @ingroup ndxl_objects
  * @brief Vertex object representing an individual resident component of a network.
  *
  * Vertices contain their own state vectors, local dynamics, and noise, and form the nodes of the network topology. Coupling between vertices is made explicit by edges.
@@ -79,8 +89,11 @@ typedef struct NDXLChannel NDXLChannel;
  * @see ndxlCreateEdge
 */
 typedef struct NDXLVertex NDXLVertex;
+/** @}*/
 
 /**
+ * @defgroup ndxl_edge NDXLEdge
+ * @ingroup ndxl_objects 
  * @brief Edge object representing a connection between two vertices.
  *
  * Edges define the relationships and coupling between vertices in a network. Similar to vertices, edges contain their own state functions, local dynamics, and noise. They additionally facilitate delayed and directional information transfer between vertices, and are responsible for historical state storage of the vertices they join.
@@ -91,6 +104,7 @@ typedef struct NDXLVertex NDXLVertex;
  * @see ndxlCreateEdge
 */
 typedef struct NDXLEdge NDXLEdge;
+/** @}*/
 
 /** @}*/
 
@@ -113,7 +127,7 @@ typedef struct NDXLEdge NDXLEdge;
 
 
 /**
- * @defgroup ndxl_err NDXL Error Codes and Functions
+ * @defgroup ndxl_err Errors
  * 
  * @brief Internal error codes used by NDXL, what they represent, when they are raised, and how to query and respond to them.
  *
@@ -264,10 +278,10 @@ _NDXLIMP_ void _CDECL ndxlPrintError() _NOEXCEPT;
  *
  * Allows users to explicitly set an NDXL error code and associated error message.
  *
- * @param _Code
+ * @param[in] _Code
  * Error code to set.
  *
- * @param _Msg
+ * @param[in] _Msg
  * Null-terminated error message.
  *
  * @return

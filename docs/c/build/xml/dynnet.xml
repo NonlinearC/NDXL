@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="dynnet" kind="page">
+    <compoundname>dynnet</compoundname>
+    <title>Simulating Networks With Dynamic Topologies</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="dynnet_1md_src_2examples_2dynnet"/></para>
+<para><simplesect kind="note"><para>This page assumes familiarity with the basic layout and API usage described in the main <ref refid="examples" kindref="compound">Examples</ref> page. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="src/examples/dynnet.md"/>
+  </compounddef>
+</doxygen>

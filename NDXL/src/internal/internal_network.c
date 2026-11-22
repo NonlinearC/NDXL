@@ -237,7 +237,7 @@ void __ndxlSetNetworkParams(NDXLNetwork* _Network, void* _Params)
 	_Network->params = _Params;
 }
 
-void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, const double _Rtol, const double _OrderInv)
+const int __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, const double _Rtol, const double _OrderInv)
 {
 	// Algorithm variables
 	NDXLVertex* vert;
@@ -258,8 +258,7 @@ void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, cons
 			if (vert->func(vert, vert->rkf[0], vert->state, vert->time, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -282,8 +281,7 @@ void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, cons
 			if (edge->func(edge, edge->rkf[0], edge->state, edge->time, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -327,8 +325,7 @@ void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, cons
 			if (vert->func(vert, vert->rkf[1], vert->stage_state[1], vert->time + _H0, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -350,8 +347,7 @@ void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, cons
 			if (edge->func(edge, edge->rkf[1], edge->stage_state[1], edge->time + _H0, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -369,10 +365,11 @@ void __ndxlSetNetworkInitialStep(NDXLNetwork* _Network, const double _Atol, cons
 	_D2 = sqrt(_D2 / _Network->jacn) / _H0;
 	_D0 = fmax(_D1, _D2);
 	_H1 = (_D0 <= 1e-15) ? fmax(1e-6, 1e-3 * _H0) : pow(1e-2 / _D0, _OrderInv);
-	_Network->h = fmin(100.0 * _H0, _H1);
+    _Network->h = fmin(100.0 * _H0, _H1);
+    return NDXL_OK;
 }
 
-void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _Atol, const double _Rtol, const double _OrderInv)
+const int __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _Atol, const double _Rtol, const double _OrderInv)
 {
 	// Algorithm variables
 	NDXLVertex* vert;
@@ -393,8 +390,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (vert->func(vert, vert->rkf[0], vert->state, vert->time, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -404,8 +400,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (vert->func(vert, vert->rkg[0], vert->state, vert->time, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex noise call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -433,8 +428,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (edge->func(edge, edge->rkf[0], edge->state, edge->time, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -444,8 +438,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (edge->func(edge, edge->rkg[0], edge->state, edge->time, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge noise call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -478,8 +471,9 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 		for (i = 0; i < vert->order; i++)
 		{
 			vert->stage_state[1][i] = vert->state[i] + _H0 * vert->rkf[0][i];
+            vert->rkf[2][i] = 0.0;
 			for (j = 0; j < vert->m; j++)
-				vert->rkf[2][i] = vert->stage_state[1][i] + _S0 * vert->rkg[0][i * vert->m + j];
+				vert->rkf[2][i] += vert->stage_state[1][i] + _S0 * vert->rkg[0][i * vert->m + j];
 		}
 		vert->stage = 1;
 	}
@@ -490,8 +484,9 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 		for (i = 0; i < edge->order; i++)
 		{
 			edge->stage_state[1][i] = edge->state[i] + _H0 * edge->rkf[0][i];
+            edge->rkf[2][i] = 0.0;
 			for (j = 0; j < edge->order; j++)
-				edge->rkf[2][i] = edge->stage_state[1][i] + _S0 * edge->rkg[0][i * edge->m + j];
+				edge->rkf[2][i] += edge->stage_state[1][i] + _S0 * edge->rkg[0][i * edge->m + j];
 		}
 		edge->stage = 1;
 	}
@@ -504,8 +499,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (vert->func(vert, vert->rkf[1], vert->stage_state[1], vert->time + _H0, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -515,8 +509,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (vert->noise(vert, vert->rkg[1], vert->rkf[2], vert->time + _H0, vert->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during vertex noise call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -543,8 +536,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (edge->func(edge, edge->rkf[1], edge->stage_state[1], edge->time + _H0, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge dynamics call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -554,8 +546,7 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 			if (edge->noise(edge, edge->rkg[1], edge->rkf[2], edge->time + _H0, edge->params))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulate: external error encountered during edge noise call in initial step size calculation.");
-				_Network->h = 0.0;
-				return;
+                return NDXL_ERR;
 			}
 		}
 		else
@@ -580,6 +571,8 @@ void __ndxlSetNetworkInitialStepStochastic(NDXLNetwork* _Network, const double _
 	_D0 = fmax(fmax(_D1drift, _D2drift), fmax(__square(_D1diff), __square(_D2diff)));
 	_H1 = (_D0 <= 1e-15) ? fmax(1e-6, 1e-3 * _H0) : pow(1e-2 / _D0, _OrderInv);
 	_Network->h = fmin(100.0 * _H0, _H1);
+    _Network->s = sqrt(_Network->h);
+    return NDXL_OK;
 }
 
 // ^^^^^ Network setters | network functions vvvvv
@@ -784,8 +777,7 @@ const int __ndxlNetworkSimulateDopri(NDXLNetwork* _Network, const double _Time, 
 	// Setup network parameters
 	_Network->butcher = __butcherDopriC;
 	_Network->method_explicit = 1;
-	__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.2);
-	if (!_Network->h)
+	if (__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.2))
 		return NDXL_ERR;
 
 	// Setup simulatiuon variables
@@ -828,11 +820,11 @@ const int __ndxlNetworkSimulateDopri(NDXLNetwork* _Network, const double _Time, 
 			}
 
 			// Global tolerance is based on global max error from all agents
-			_Errsum = sqrt(_Errsum / _Network->jacn);
-			_Hnew = fmax(fmin(0.9 * pow(_Errsum, 0.2), 10.0), 0.2) * _Network->h;
+			_Errsum = fmax(sqrt(_Errsum / _Network->jacn), EPS);
+			_Hnew = fmax(fmin(0.9 * pow(_Errsum, -0.2), 10.0), 0.2) * _Network->h;
 
 			// Check step success
-			if (_Errsum <= 1.0)
+			if (_Errsum >= 1.0)
 				_Network->h = _Hnew;
 			else
 			{
@@ -871,7 +863,7 @@ const int __ndxlNetworkSimulateDopri(NDXLNetwork* _Network, const double _Time, 
 		_Tnext = t + _Hnew;
 		if ((_Tidx < _Tcount) && (t >= _Tstops[_Tidx]))
 			_Tidx++;
-		if ((_Tidx < _Tcount) && (_Tnext > _Tstops[_Tidx]))
+		if ((_Tidx < _Tcount) && (_Tnext >= _Tstops[_Tidx]))
 			_Hnew = _Tstops[_Tidx] - t;
 		if (t + _Hnew > _Endtime)
 			_Hnew = _Endtime - t;
@@ -909,8 +901,7 @@ const int __ndxlNetworkSimulateRkck(NDXLNetwork* _Network, const double _Time, c
 	// Setup network parameters
 	_Network->butcher = __butcherCashKarpC;
 	_Network->method_explicit = 1;
-	__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.2);
-	if (!_Network->h)
+	if (__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.2))
 		return NDXL_ERR;
 
 	// Setup simulatiuon variables
@@ -954,10 +945,10 @@ const int __ndxlNetworkSimulateRkck(NDXLNetwork* _Network, const double _Time, c
 
 			// Global tolerance is based on global max error from all agents
 			_Errsum = sqrt(_Errsum / _Network->jacn);
-			_Hnew = fmax(fmin(0.9 * pow(_Errsum, 0.2), 10.0), 0.2) * _Network->h;
+			_Hnew = fmax(fmin(0.9 * pow(_Errsum, -0.2), 10.0), 0.2) * _Network->h;
 
 			// Check step success
-			if (_Errsum <= 1.0)
+			if (_Errsum >= 1.0)
 				_Network->h = _Hnew;
 			else
 			{
@@ -996,7 +987,7 @@ const int __ndxlNetworkSimulateRkck(NDXLNetwork* _Network, const double _Time, c
 		_Tnext = t + _Hnew;
 		if ((_Tidx < _Tcount) && (t >= _Tstops[_Tidx]))
 			_Tidx++;
-		if ((_Tidx < _Tcount) && (_Tnext > _Tstops[_Tidx]))
+		if ((_Tidx < _Tcount) && (_Tnext >= _Tstops[_Tidx]))
 			_Hnew = _Tstops[_Tidx] - t;
 		if (t + _Hnew > _Endtime)
 			_Hnew = _Endtime - t;
@@ -1134,8 +1125,7 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 	// Setup network parameters
 	_Network->butcher = 0;
 	_Network->method_explicit = 1;
-	__ndxlSetNetworkInitialStepStochastic(_Network, _Atol, _Rtol, 0.2);
-	if (!_Network->h)
+	if (__ndxlSetNetworkInitialStepStochastic(_Network, _Atol, _Rtol, 1.0))
 		return NDXL_ERR;
 
 	// Setup simulatiuon variables
@@ -1151,14 +1141,13 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 	{
 		// Reset step rejection and obtain Wiener increments
 		char _Rejected = 1;
-		_Network->s = sqrt(_Network->h);
 		for (channel = _Network->channel_head; channel; channel = channel->next)
 			_Network->h = __ndxlChannelRedraw(channel);
 
 		// Continue until step is successful
 		while (_Rejected)
 		{
-			// Reset error sum
+			// Reset error sum and Wiener scalar
 			_Errsum = 0.0;
 
 			// Heun-Euler is a two stage method
@@ -1183,10 +1172,10 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 
 			// Global tolerance is based on global max error from all agents
 			_Errsum = sqrt(_Errsum / _Network->jacn);
-			_Hnew = fmax(fmin(0.9 * pow(_Errsum, 1.0), 10.0), 0.2) * _Network->h;
+			_Hnew = fmax(fmin(0.9 * _Errsum, 10.0), 0.2) * _Network->h;
 
 			// Check step success
-			if (_Errsum <= 1.0)
+			if (_Errsum < 1.0)
 			{
 				for (channel = _Network->channel_head; channel; channel = channel->next)
 					__ndxlCreateChannelIncrement(channel, _Network->h, _Hnew);
@@ -1229,11 +1218,12 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 		_Tnext = t + _Hnew;
 		if ((_Tidx < _Tcount) && (t >= _Tstops[_Tidx]))
 			_Tidx++;
-		if ((_Tidx < _Tcount) && (_Tnext > _Tstops[_Tidx]))
+		if ((_Tidx < _Tcount) && (_Tnext >= _Tstops[_Tidx]))
 			_Hnew = _Tstops[_Tidx] - t;
 		if (t + _Hnew > _Endtime)
 			_Hnew = _Endtime - t;
 		_Network->h = _Hnew;
+        _Network->s = sqrt(_Network->h);
 
 		// Process callback, if any
 		if (_Callback)
@@ -1273,8 +1263,7 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 	// Setup network parameters
 	_Network->butcher = __butcherRadauC;
 	_Network->method_explicit = 0;
-	__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.25);
-	if (!_Network->h)
+	if (__ndxlSetNetworkInitialStep(_Network, _Atol, _Rtol, 0.25))
 		return NDXL_ERR;
 
 	// Setup simulatiuon variables
@@ -1564,7 +1553,7 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 				{
 					for (size_t i = 0; i < vert->order; i++)
 					{
-						_Err = (_Atol + _Rtol * fmax(fabs(vert->state[i]), fabs(vert->rkf[2][i]))) / (__radauEig[0] * _Network->errloc[_Aidx + i]);
+						_Err = (__radauEig[0] * _Network->errloc[_Aidx + i]) / (_Atol + _Rtol * fmax(fabs(vert->state[i]), fabs(vert->rkf[2][i])));
 						_Errsum += (_Err * _Err);
 					}
 				}
@@ -1572,17 +1561,17 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 				{
 					for (size_t i = 0; i < edge->order; i++)
 					{
-						_Err = (_Atol + _Rtol * fmax(fabs(edge->state[i]), fabs(edge->rkf[2][i]))) / (__radauEig[0] * _Network->errloc[_Aidx + i]);
+						_Err = (__radauEig[0] * _Network->errloc[_Aidx + i]) / (_Atol + _Rtol * fmax(fabs(edge->state[i]), fabs(edge->rkf[2][i])));
 						_Errsum += (_Err * _Err);
 					}
 				}
 
 				// Predict step size and check error convergence
 				_Err = sqrt(_Errsum / _Network->jacn);
-				_Hnew = fmin(fmax(0.9 * pow(_Err, 0.25), 0.2), 10.0) * _Network->h;
+				_Hnew = fmin(fmax(0.9 * pow(_Err, -0.25), 0.2), 10.0) * _Network->h;
 
 				// Check step success
-				if (_Err < 1.0)
+				if (_Err >= 1.0)
 					_Network->h = _Hnew;
 				else
 				{
@@ -1628,7 +1617,7 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 		_Tnext = t + _Hnew;
 		if ((_Tidx < _Tcount) && (t >= _Tstops[_Tidx]))
 			_Tidx++;
-		if ((_Tidx < _Tcount) && (_Tnext > _Tstops[_Tidx]))
+		if ((_Tidx < _Tcount) && (_Tnext >= _Tstops[_Tidx]))
 			_Hnew = _Tstops[_Tidx] - t;
 		if (t + _Hnew > _Endtime)
 			_Hnew = _Endtime - t;

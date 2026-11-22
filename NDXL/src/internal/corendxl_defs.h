@@ -192,7 +192,7 @@ static double __radauErr[3] = { -10.048809399827414, 1.382142733160748, -0.33333
 		case 6:\
 			for (size_t i = 0; i < _##objname->order; i++) {\
 				_##objname->rkf[7][i] = _##objname->state[i] + _Delta * (_##objname->rkf[7][i] + __butcherDopriB[5] * _##objname->rkf[6][i]);\
-				const double _Err = (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i]))) / (_##objname->stage_state[0][i] - _##objname->rkf[7][i]);\
+				const double _Err = (_##objname->stage_state[0][i] - _##objname->rkf[7][i]) / (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i])));\
 				*_Errsum += (_Err * _Err);\
 			}\
 			break;\
@@ -240,7 +240,7 @@ static double __radauErr[3] = { -10.048809399827414, 1.382142733160748, -0.33333
 			for (size_t i = 0; i < _##objname->order; i++) {\
 				_##objname->rkf[7][i] = _##objname->state[i] + _Delta * (_##objname->rkf[7][i] + __butcherCashKarpB4[4] * _##objname->rkf[5][i]);\
 				_##objname->stage_state[0][i] = _##objname->state[i] + _Delta * (__butcherCashKarpB5[0] * _##objname->rkf[0][i] + __butcherCashKarpB5[1] * _##objname->rkf[2][i] + __butcherCashKarpB5[2] * _##objname->rkf[3][i] + __butcherCashKarpB5[3] * _##objname->rkf[5][i]);\
-				const double _Err = (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i]))) / (_##objname->stage_state[0][i] - _##objname->rkf[7][i]);\
+				const double _Err = (_##objname->stage_state[0][i] - _##objname->rkf[7][i]) / (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i])));\
 				*_Errsum += (_Err * _Err);\
 			}\
 			break;\
@@ -259,7 +259,7 @@ static double __radauErr[3] = { -10.048809399827414, 1.382142733160748, -0.33333
 	if (_##objname->noise)\
 		_Result |= _##objname->noise(_##objname, _##objname->rkg[_##objname->stage], _##objname->stage ? _##objname->stage_state[_##objname->stage % 2] : _##objname->state, _##objname->time + _##objname->stage * _Delta, _##objname->params);\
 	else\
-		memset(_##objname->rkg[_##objname->stage], 0, _##objname->order * sizeof(double));\
+		memset(_##objname->rkg[_##objname->stage], 0, _##objname->order * _##objname->m * sizeof(double));\
 	if (_##objname->stage) {\
 		for (size_t i = 0; i < _##objname->order; i++) {\
 			_##objname->stage_state[0][i] = _##objname->state[i] + 0.5 * _Delta * (_##objname->rkf[0][i] + _##objname->rkf[1][i]);\
@@ -283,20 +283,20 @@ static double __radauErr[3] = { -10.048809399827414, 1.382142733160748, -0.33333
 #define INTEGRATOR_HEUN(objname) static inline int __ndxlIntegrateHeun##objname(NDXL##objname* _##objname, const double _Delta, const double _Atol, const double _Rtol, double* _Errsum) {\
 	int _Result = 0;\
 	if (_##objname->func)\
-		_Result |= _##objname->func(_##objname, _##objname->rkf[_##objname->stage], _##objname->stage ? _##objname->stage_state[_##objname->stage % 2] : _##objname->state, _##objname->time + _##objname->stage * _Delta, _##objname->params);\
+		_Result |= _##objname->func(_##objname, _##objname->rkf[_##objname->stage], _##objname->stage ? _##objname->stage_state[1] : _##objname->state, _##objname->time + _##objname->stage * _Delta, _##objname->params);\
 	else\
 		memset(_##objname->rkf[_##objname->stage], 0, _##objname->order * sizeof(double));\
 	if (_##objname->noise)\
-		_Result |= _##objname->noise(_##objname, _##objname->rkg[_##objname->stage], _##objname->stage ? _##objname->stage_state[_##objname->stage % 2] : _##objname->state, _##objname->time + _##objname->stage * _Delta, _##objname->params);\
+		_Result |= _##objname->noise(_##objname, _##objname->rkg[_##objname->stage], _##objname->stage ? _##objname->stage_state[1] : _##objname->state, _##objname->time + _##objname->stage * _Delta, _##objname->params);\
 	else\
-		memset(_##objname->rkg[_##objname->stage], 0, _##objname->order * sizeof(double));\
+		memset(_##objname->rkg[_##objname->stage], 0, _##objname->order * _##objname->m * sizeof(double));\
 	if (_##objname->stage) {\
 		for (size_t i = 0; i < _##objname->order; i++) {\
 			_##objname->stage_state[0][i] = _##objname->state[i] + 0.5 * _Delta * (_##objname->rkf[0][i] + _##objname->rkf[1][i]);\
 			size_t j = 0;\
 			for (NDXL##objname##Channel* citer = _##objname->chead; citer; j++, citer = citer->next)\
 				_##objname->stage_state[0][i] += 0.5 * citer->channel->dw * (_##objname->rkg[0][i * _##objname->m + j] + _##objname->rkg[1][i * _##objname->m + j]);\
-			const double _Err = (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i]))) / (_##objname->stage_state[0][i] - _##objname->rkf[2][i]);\
+			const double _Err = (_Atol + _Rtol * fmax(fabs(_##objname->stage_state[0][i]), fabs(_##objname->state[i]))) / (_##objname->stage_state[0][i] - _##objname->stage_state[1][i]);\
 			*_Errsum += (_Err * _Err);\
 		}\
 		_##objname->stage = 0;\
@@ -306,163 +306,8 @@ static double __radauErr[3] = { -10.048809399827414, 1.382142733160748, -0.33333
 			size_t j = 0;\
 			for (NDXL##objname##Channel* citer = _##objname->chead; citer; j++, citer = citer->next)\
 				_##objname->stage_state[1][i] += citer->channel->dw * _##objname->rkg[0][i * _##objname->m + j];\
-			_##objname->rkf[2][i] = _##objname->stage_state[1][i];\
 		}\
 		_##objname->stage = 1;\
-	}\
-	return _Result;\
-}
-
-#define INTEGRATOR_NORSETT(objname) static inline int __ndxlIntegrateNorsett##objname(NDXL##objname* _##objname, const double _Delta) {\
-	int _Result = 0;\
-	if (_##objname->func) {\
-		const size_t _Datsz = _##objname->order * sizeof(double);\
-		const size_t _Jacsz = _##objname->order * sizeof(double*);\
-		memcpy(_##objname->rkf[3], _##objname->state, _Datsz);\
-		memcpy(_##objname->rkf[4], _##objname->state, _Datsz);\
-		memcpy(_##objname->rkf[5], _##objname->state, _Datsz);\
-		memcpy(_##objname->rkg[3], _##objname->state, _Datsz);\
-		_##objname->rkg[3][0] += 1e-10;\
-		memcpy(_##objname->rkg[4], _##objname->state, _Datsz);\
-		_##objname->rkg[4][0] -= 1e-10;\
-		const double _Tevals[3] = {\
-			_##objname->time + __butcherNorsettC[0] * _Delta,\
-			_##objname->time + __butcherNorsettC[1] * _Delta,\
-			_##objname->time + __butcherNorsettC[2] * _Delta\
-		};\
-		if (_##objname->noise) {\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[0] * _##objname->rkf[3][j]) + _##objname->rkg[7][i] * (__butcherNorsettA[0] * _##objname->rkg[0][j]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[0], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[0], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[0], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[3][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[3][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[3][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[1] * _##objname->rkf[3][j] + __butcherNorsettA[2] * _##objname->rkf[4][j]) + _##objname->rkg[7][i] * (__butcherNorsettA[1] * _##objname->rkg[0][j] + __butcherNorsettA[2] * _##objname->rkg[1][j]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[1], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[1], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[1], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[4][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[4][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[4][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[3] * _##objname->rkf[3][j] + __butcherNorsettA[4] * _##objname->rkf[4][j] + __butcherNorsettA[5] * _##objname->rkf[5][j]) + _##objname->rkg[7][i] * (__butcherNorsettA[3] * _##objname->rkg[0][j] + __butcherNorsettA[4] * _##objname->rkg[1][j] + __butcherNorsettA[5] * _##objname->rkg[2][i]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[2], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[2], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[2], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[5][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[5][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[5][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t i = 0; i < _##objname->order; i++)\
-				_##objname->temp_state[i] = _##objname->state[i] + _Delta * (__butcherNorsettB[0] * _##objname->rkf[3][i] + __butcherNorsettB[1] * _##objname->rkf[4][i] + __butcherNorsettB[2] * _##objname->rkf[5][i]) + _##objname->rkg[7][i] * (__butcherNorsettB[0] * _##objname->rkg[0][i] + __butcherNorsettB[1] * _##objname->rkg[1][i] + __butcherNorsettB[2] * _##objname->rkg[2][i]);\
-		} else {\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[0] * _##objname->rkf[3][j]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[0], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[0], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[0], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[3][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[3][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[3][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[1] * _##objname->rkf[3][j] + __butcherNorsettA[2] * _##objname->rkf[4][j]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[1], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[1], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[1], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[4][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[4][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[4][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t _NR = 0; _NR < 20; _NR++) {\
-				double _Maxerr = 0.0;\
-				double _Abserr;\
-				for (size_t i = 0; i < _##objname->order; i++) {\
-					for (size_t j = 0; j < _##objname->order; i++)\
-						_##objname->rkf[6][j] = _##objname->state[j] + _Delta * (__butcherNorsettA[3] * _##objname->rkf[3][j] + __butcherNorsettA[4] * _##objname->rkf[4][j] + __butcherNorsettA[5] * _##objname->rkf[5][j]);\
-					_Result |= _##objname->func(_##objname, _##objname->rkf[7], _##objname->rkf[6], _Tevals[2], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[5], _##objname->rkg[3], _Tevals[2], _##objname->params);\
-					_Result |= _##objname->func(_##objname, _##objname->rkg[6], _##objname->rkg[4], _Tevals[2], _##objname->params);\
-					const double _Newt = (_##objname->state[i] + _##objname->rkf[7][i] - _##objname->rkf[5][i]) / ((_##objname->rkg[3][i] - _##objname->rkg[4][i]) * 5e9);\
-					if ((_Abserr = fabs(_##objname->rkf[5][i]) - fabs(_Newt)) > _Maxerr)\
-						_Maxerr = _Abserr;\
-					_##objname->rkf[5][i] -= _Newt;\
-					_##objname->rkg[3][i] -= 1e-10;\
-					_##objname->rkg[3][(i + 1) % _##objname->order] += 1e-10;\
-					_##objname->rkg[4][i] += 1e-10;\
-					_##objname->rkg[4][(i + 1) % _##objname->order] -= 1e-10;\
-				}\
-				if (_Maxerr < 1e-10)\
-					break;\
-			}\
-			for (size_t i = 0; i < _##objname->order; i++)\
-				_##objname->temp_state[i] = _##objname->state[i] + _Delta * (__butcherNorsettB[0] * _##objname->rkf[3][i] + __butcherNorsettB[1] * _##objname->rkf[4][i] + __butcherNorsettB[2] * _##objname->rkf[5][i]);\
-		}\
 	}\
 	return _Result;\
 }
@@ -485,7 +330,7 @@ static inline void __onExit()
 
 static inline double __randomDouble()
 {
-	static struct timespec _Ts;
+	struct timespec _Ts;
 	timespec_get(&_Ts, TIME_UTC);
 	srand(_Ts.tv_sec ^ _Ts.tv_nsec);
 	return ((double)rand()) / ((double)RAND_MAX);

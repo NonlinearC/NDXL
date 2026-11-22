@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__edge__dnc" kind="group">
+    <compoundname>edge_dnc</compoundname>
+    <title>Dynamics, Noise, and Callbacks</title>
+    <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="group__edge__dnc_1gaaa6e3ed5b81b15dcfafe1c21d41815a4" prot="public" static="no">
+        <type>int(*)</type>
+        <definition>typedef int(*) NDXLEdgeDynamics(NDXLEdge *_Edge, double *_dY, const double *_Y, double _Time, void *_Params)</definition>
+        <argsstring>(NDXLEdge *_Edge, double *_dY, const double *_Y, double _Time, void *_Params)</argsstring>
+        <name>NDXLEdgeDynamics</name>
+        <briefdescription>
+<para>Edge dynamics function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines a user-supplied function that governs how the state of a edge evolves over time.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calling edge.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_dY</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat output vector containing the time derivative of the calling edge. ndxlGetEdgeOrder(calling_edge) total elements must be written to it, even if those elements are zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat input vector containing the current Runge-Kutta stage of the calling edge. Is guaranteed to have ndxlGetEdgeOrder(calling_edge) elements.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local simulation time of the calling edge, offset by a fraction of the step size corresponding to the next Runge-Kutta stage. Note that this is generally NOT equivalent to ndxlGetEdgeTime(calling_edge), which only updates on a successful step.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User-defined parameters associated with the calling edge.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Integer indicating function success (zero) or failure (any nonzero value).</para>
+</simplesect>
+<simplesect kind="note"><para>If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a <ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetEdgeOrder(calling_edge) elements can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga2d6bd43a6d934b6fbc8c3f0f1f66745d" kindref="member">ndxlGetEdgeOrder</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="58" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__edge__dnc_1ga751f34e2abaa42c496447193f3480e80" prot="public" static="no">
+        <type>int(*)</type>
+        <definition>typedef int(*) NDXLEdgeNoise(NDXLEdge *_Edge, double *_dG, const double *_Y, double _Time, void *_Params)</definition>
+        <argsstring>(NDXLEdge *_Edge, double *_dG, const double *_Y, double _Time, void *_Params)</argsstring>
+        <name>NDXLEdgeNoise</name>
+        <briefdescription>
+<para>Edge noise function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines a user-supplied function that provides the amplitude of noise, for each element in its state vector, for each independent Wiener process the edge is driven by.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calling edge.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_dG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat output matrix containing the noise amplitudes, where element ij (at index i * ndxlGetEdgeChannelCount(calling_edge) + j) represents the amplitude of the j-th Wiener process on the i-th state-vector element. ndxlGetEdgeOrder(calling_edge) x ndxlGetEdgeChannelCount(calling_edge) total elements must be written to it, even if those elements are zero.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat input vector containing the current Runge-Kutta stage of the calling edge. Is guaranteed to have ndxlGetEdgeOrder(calling_edge) elements.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Local simulation time of the calling edge, offset by a fraction of the step size corresponding to the next Runge-Kutta stage. Note that this is generally NOT equivalent to ndxlGetEdgeTime(calling_edge), which only updates on a successful step.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User-defined parameters associated with the calling edge.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Integer indicating function success (zero) or failure (any nonzero value).</para>
+</simplesect>
+<simplesect kind="note"><para>If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a <ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetEdgeOrder(calling_edge) x ndxlGetEdgeChannelCount(calling_edge) elements can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga2d6bd43a6d934b6fbc8c3f0f1f66745d" kindref="member">ndxlGetEdgeOrder</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga9a94b25401f370a604ba1131ab87995f" kindref="member">ndxlGetEdgeChannelCount</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="92" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="group__edge__dnc_1ga497617ccf30d07fdb6e08f13fb35ef05" prot="public" static="no">
+        <type>int(*)</type>
+        <definition>typedef int(*) NDXLEdgeCallback(NDXLEdge *_Edge, double *_Y, double _Time, void *_Params)</definition>
+        <argsstring>(NDXLEdge *_Edge, double *_Y, double _Time, void *_Params)</argsstring>
+        <name>NDXLEdgeCallback</name>
+        <briefdescription>
+<para>Edge callback function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defines a user-supplied discrete callback that is invoked during simulation of the edge&apos;s host network.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calling edge.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="inout">_Y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat vector containing the most recently accepted state vector of the calling edge. Is guaranteed to have ndxlGetEdgeOrder(calling_edge) elements, and may be modified in-place.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Time</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current simulation time of the calling edge, equivalent to ndxlGetEdgeTime(calling_edge).</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Params</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>User-defined parameters associated with the calling edge.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Integer indicating function success (zero) or failure (any nonzero value).</para>
+</simplesect>
+<simplesect kind="note"><para>If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a <ref refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kindref="member">NDXL_SIM_ERR</ref>.</para>
+</simplesect>
+<simplesect kind="warning"><para>Writing beyond ndxlGetEdgeOrder(calling_edge) elements to the state vector can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga2d6bd43a6d934b6fbc8c3f0f1f66745d" kindref="member">ndxlGetEdgeOrder</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="122" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Dynamics, noise, and callback functions for edge objects. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

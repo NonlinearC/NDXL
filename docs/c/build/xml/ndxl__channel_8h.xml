@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="ndxl__channel_8h" kind="file" language="C++">
+    <compoundname>ndxl_channel.h</compoundname>
+    <includes refid="ndxlcore_8h" local="yes">../ndxlcore.h</includes>
+    <includedby refid="ndxl_8h" local="yes">C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl.h</includedby>
+    <includedby refid="ndxl__vertex_8h" local="yes">C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h</label>
+        <link refid="ndxl__channel_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>../ndxlcore.h</label>
+        <link refid="ndxlcore_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>unicpp/unicpp.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl.h</label>
+        <link refid="ndxl_8h"/>
+      </node>
+      <node id="1">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h</label>
+        <link refid="ndxl__channel_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h</label>
+        <link refid="ndxl__edge_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h</label>
+        <link refid="ndxl__network_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h</label>
+        <link refid="ndxl__vertex_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="func">
+      <member refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kind="function"><name>ndxlCreateChannel</name></member>
+      <member refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kind="function"><name>ndxlDestroyChannel</name></member>
+      <member refid="group__channel__getters_1gae2a14deb284d756f55511e25fb57d48c" kind="function"><name>ndxlGetChannelEdgeCount</name></member>
+      <member refid="group__channel__getters_1ga7de70ef6bcadc6dd9f70d4f44511e130" kind="function"><name>ndxlGetChannelEdges</name></member>
+      <member refid="group__channel__getters_1gabe5954ec58bd4adfb984b597b42f0836" kind="function"><name>ndxlGetChannelNetwork</name></member>
+      <member refid="group__channel__getters_1gad111628d528bc1c1955f392cef292423" kind="function"><name>ndxlGetChannelParams</name></member>
+      <member refid="group__channel__getters_1ga0fd0973e5840d882d2cc752e2b011aff" kind="function"><name>ndxlGetChannelVertexCount</name></member>
+      <member refid="group__channel__getters_1gaed518240f333ed5e70253cf7f08f8e8f" kind="function"><name>ndxlGetChannelVertices</name></member>
+      <member refid="group__channel__setters_1ga5d2369a88f8570d5b6e913cc2e161fdc" kind="function"><name>ndxlSetChannelParams</name></member>
+    </sectiondef>
+    <briefdescription>
+<para>Public API for NDXL noise channel creation and querying. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares the <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> object, representing an independent Wiener process. Provides functions for channel construction, destruction, and querying.</para>
+<para><simplesect kind="copyright"><para>Copyright (c) 2026, Ethan Codron.</para>
+</simplesect>
+Licensed under the GNU General Public License v3.0 only. See the LICENSE file in the repository root. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_NDXL_CHANNEL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_NDXL_CHANNEL_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ndxlcore_8h" kindref="compound">../ndxlcore.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_CDECL<sp/><ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel</ref>(</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref>*<sp/>_Network,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Maybenull_<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>_Params</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kindref="member">ndxlDestroyChannel</ref>(</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>**<sp/>_Channel</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="group__channel__getters_1gae2a14deb284d756f55511e25fb57d48c" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__getters_1gae2a14deb284d756f55511e25fb57d48c" kindref="member">ndxlGetChannelEdgeCount</ref>(</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="group__channel__getters_1ga7de70ef6bcadc6dd9f70d4f44511e130" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__getters_1ga7de70ef6bcadc6dd9f70d4f44511e130" kindref="member">ndxlGetChannelEdges</ref>(</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>_Out_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref>**<sp/>_Edges</highlight></codeline>
+<codeline lineno="149"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="group__channel__getters_1gabe5954ec58bd4adfb984b597b42f0836" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref>*<sp/>_CDECL<sp/><ref refid="group__channel__getters_1gabe5954ec58bd4adfb984b597b42f0836" kindref="member">ndxlGetChannelNetwork</ref>(</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel</highlight></codeline>
+<codeline lineno="165"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185" refid="group__channel__getters_1gad111628d528bc1c1955f392cef292423" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>_CDECL<sp/><ref refid="group__channel__getters_1gad111628d528bc1c1955f392cef292423" kindref="member">ndxlGetChannelParams</ref>(</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="group__channel__getters_1ga0fd0973e5840d882d2cc752e2b011aff" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__getters_1ga0fd0973e5840d882d2cc752e2b011aff" kindref="member">ndxlGetChannelVertexCount</ref>(</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="group__channel__getters_1gaed518240f333ed5e70253cf7f08f8e8f" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__getters_1gaed518240f333ed5e70253cf7f08f8e8f" kindref="member">ndxlGetChannelVertices</ref>(</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/>_Out_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>**<sp/>_Vertices</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="group__channel__setters_1ga5d2369a88f8570d5b6e913cc2e161fdc" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__channel__setters_1ga5d2369a88f8570d5b6e913cc2e161fdc" kindref="member">ndxlSetChannelParams</ref>(</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Notnull_<sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>*<sp/>_Channel,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/>_In_<sp/>_Maybenull_<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>_Params</highlight></codeline>
+<codeline lineno="271"><highlight class="normal">)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>_NDXL_CHANNEL_</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h"/>
+  </compounddef>
+</doxygen>

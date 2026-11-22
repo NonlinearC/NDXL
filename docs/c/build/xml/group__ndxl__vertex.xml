@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__ndxl__vertex" kind="group">
+    <compoundname>ndxl_vertex</compoundname>
+    <title>NDXLVertex</title>
+    <innergroup refid="group__vertex__dnc">Dynamics, Noise, and Callbacks</innergroup>
+    <innergroup refid="group__vertex__creation">Constructor and Destructor</innergroup>
+    <innergroup refid="group__vertex__getters">Getters</innergroup>
+    <innergroup refid="group__vertex__setters">Setters</innergroup>
+    <innergroup refid="group__vertex__traversal">Edge Traversal</innergroup>
+    <innergroup refid="group__vertex__functions">Functions</innergroup>
+    <briefdescription>
+<para>Vertex object representing an individual resident component of a network. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Vertices contain their own state vectors, local dynamics, and noise, and form the nodes of the network topology. Coupling between vertices is made explicit by edges.</para>
+<para><simplesect kind="warning"><para>Destroying a vertex also destroys all edges coupled to that vertex, invalidating any pointers to those edges. Any channels used by the vertex remain unaffected.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

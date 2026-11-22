@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__ndxl__err" kind="group">
+    <compoundname>ndxl_err</compoundname>
+    <title>Errors</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlGetLastErrorCode</definition>
+        <argsstring>()</argsstring>
+        <name>ndxlGetLastErrorCode</name>
+        <briefdescription>
+<para>Gets the most recently raised error code. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The most recently raised error code, or NDXL_OK if no error has been raised.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetLastErrorMsg for a full error description.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" kindref="member">ndxlGetLastErrorMsg</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="247" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" declline="247" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char *const</type>
+        <definition>const char *const ndxlGetLastErrorMsg</definition>
+        <argsstring>()</argsstring>
+        <name>ndxlGetLastErrorMsg</name>
+        <briefdescription>
+<para>Gets the most recently raised error message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Returns the most recently raised error message. If no error has been raised, returns the default initialisation message.</para>
+</simplesect>
+<simplesect kind="note"><para>This function is most commonly used in conjunction with ndxlGetLastErrorCode for a full error description. All error messages end in a fullstop.</para>
+</simplesect>
+<simplesect kind="warning"><para>The char pointer returned is shared, meaning it will be invalidated if another error is raised. The user must explicitly copy the message contents if they want to preserve the message, however, this is not the intended use for the function.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="263" column="20" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" declline="263" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ndxlPrintError</definition>
+        <argsstring>()</argsstring>
+        <name>ndxlPrintError</name>
+        <briefdescription>
+<para>Prints the most recent error code and message in an easily readable format. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Returns nothing.</para>
+</simplesect>
+<simplesect kind="note"><para>NDXL first attempts to write the error to stderr, and falls back to stdout if that fails. If writing to stdout also fails, the function does nothing. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="274" column="8" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" declline="274" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__ndxl__err_1gae0f32492efbd78f52d3ed640d0805349" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ndxlRaiseError</definition>
+        <argsstring>(const int _Code, const char *const _Msg)</argsstring>
+        <name>ndxlRaiseError</name>
+        <param>
+          <type>const int</type>
+          <declname>_Code</declname>
+        </param>
+        <param>
+          <type>const char *const</type>
+          <declname>_Msg</declname>
+        </param>
+        <briefdescription>
+<para>Manually sets the library&apos;s most recent error. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows users to explicitly set an NDXL error code and associated error message.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Code</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error code to set.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated error message.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Returns nothing.</para>
+</simplesect>
+<simplesect kind="note"><para>_Msg is copied to the internal error message buffer.</para>
+</simplesect>
+<simplesect kind="warning"><para>This function is primarily intended for debugging and testing. It does not reproduce the termination behaviour associated with errors raised internally by NDXL. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="296" column="8" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" declline="296" declcolumn="8"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="group__ndxl__err_1ga19dddd4e82c8c4618a4b1c759389620f" prot="public" static="no">
+        <name>NDXL_OK</name>
+        <initializer>0</initializer>
+        <briefdescription>
+<para>Successful operation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The &quot;success&quot; indicator for any function that returns an integer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="162" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" prot="public" static="no">
+        <name>NDXL_ERR</name>
+        <initializer>-1</initializer>
+        <briefdescription>
+<para>An internal error was raised. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The &quot;failure&quot; indicator for any function returning a numeric value.</para>
+<para><simplesect kind="note"><para>When used as the return value of a function returning size_t, NDXL_ERR is converted to the maximum representable size_t value.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlGetErrorMsg </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" kindref="member">ndxlPrintError</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="176" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="176" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" prot="public" static="no">
+        <name>NDXL_VALUE_ERR</name>
+        <initializer>1</initializer>
+        <briefdescription>
+<para>Invalid value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Raised whenever an argument had an invalid value, for example:<itemizedlist>
+<listitem><para>Negative state vector size in agent creation</para>
+</listitem><listitem><para>Zero step size in simulation function</para>
+</listitem><listitem><para>Mismatched time stops array and count values</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="note"><para>This value is retrieved through <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> and is not returned directly by functions.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation" kindref="compound">Network Simulation</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="193" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" prot="public" static="no">
+        <name>NDXL_ARG_ERR</name>
+        <initializer>2</initializer>
+        <briefdescription>
+<para>Invalid argument. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Raised whenever an argument itself was invalid, for example:<itemizedlist>
+<listitem><para>Querying the state of a NULL agent</para>
+</listitem><listitem><para>Simulating a NULL network</para>
+</listitem><listitem><para>Passing NULL as the output for list getters</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="note"><para>This value is retrieved through <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> and is not returned directly by functions.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__functions_1ga1f59cebd8575f89020b590ba036006c8" kindref="member">ndxlVertexState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation" kindref="compound">Network Simulation</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__getters_1ga966800269e1b55fed34b8fedf84d371e" kindref="member">ndxlGetNetworkVertices</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__getters_1gacefa12e408d9b66d602733a31d0a87e5" kindref="member">ndxlGetNetworkEdges</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="212" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" prot="public" static="no">
+        <name>NDXL_SIM_ERR</name>
+        <initializer>3</initializer>
+        <briefdescription>
+<para>Simulation failure. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Raised whenever a simulation encounters an external error, triggered by a nonzero return value from a dynamics function, noise function, or callback.</para>
+<para><simplesect kind="note"><para>This value is retrieved through <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> and is not returned directly by functions.</para>
+</simplesect>
+<simplesect kind="see"><para>ndxlNetworkCallback </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlVertexFunction </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlVertexNoise </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlVertexCallback </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlEdgeFunction </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlEdgeNoise </para>
+</simplesect>
+<simplesect kind="see"><para>ndxlEdgeCallback </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="230" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="230" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Internal error codes used by NDXL, what they represent, when they are raised, and how to query and respond to them. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>NDXL distinguishes between function return values and error codes.</para>
+<para>Function return values indicate whether an operation succeeded:<itemizedlist>
+<listitem><para>For functions returning numeric values:<itemizedlist>
+<listitem><para>NDXL_OK indicates success.</para>
+</listitem><listitem><para>NDXL_ERR indicates failure.</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>For functions returning pointers:<itemizedlist>
+<listitem><para>Non-NULL indicates success.</para>
+</listitem><listitem><para>NULL (0) indicates failure.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+<para>The specific cause of an error is recorded separately and can be retrieved using <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref>, while its associated human-readable description can be retrieved using <ref refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" kindref="member">ndxlGetLastErrorMsg()</ref>.</para>
+<para>The error codes NDXL_VALUE_ERR, NDXL_ARG_ERR, and NDXL_SIM_ERR are exclusively used to identify the cause of an error and are never returned directly by functions.</para>
+<para>A formatted string combining both pieces of information can be directly printed using <ref refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" kindref="member">ndxlPrintError()</ref>.</para>
+<para><simplesect kind="warning"><para>Error information is stored globally and shared between all threads and objects. Consequently, an error raised by one thread or object may overwrite error information previously recorded by another thread or object. Periodic use of error querying while developing a simulation is strongly recommended. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

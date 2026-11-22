@@ -85,8 +85,8 @@ lib.ndxlSetEdgeNoise.argtypes = [NDXLEdge_p, NDXLEdgeNoise]
 
 # ^^^^^ Setters | functions vvvvv
 
-lib.ndxlEdgeContainsVertex.restype = ctypes.c_bool
-lib.ndxlEdgeContainsVertex.argtypes = [NDXLEdge_p, NDXLVertex_p]
+lib.ndxlEdgeConnectsVertex.restype = ctypes.c_char
+lib.ndxlEdgeConnectsVertex.argtypes = [NDXLEdge_p, NDXLVertex_p]
 
 lib.ndxlEdgeState.restype = ctypes.POINTER(ctypes.c_double)
 lib.ndxlEdgeState.argtypes = [NDXLEdge_p]
@@ -291,6 +291,9 @@ class edge:
 	@property
 	def vertices(self):
 		return [self.vertex1, self.vertex2]
+
+	def connects_vertex(self, vert):
+		return lib.ndxlEdgeConnectsVertex(self._ptr, vert.c_ptr)
 
 @NDXLEdgeDynamics
 def _efunc_bridge(ed, dstate, state, time, args):

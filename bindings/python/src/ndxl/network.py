@@ -20,6 +20,28 @@ lib.ndxlDestroyNetwork.argtypes = [ctypes.POINTER(NDXLNetwork_p)]
 lib.ndxlGetNetworkEdges.restype = ctypes.c_int
 lib.ndxlGetNetworkEdges.argtypes = [NDXLNetwork_p, ctypes.POINTER(NDXLEdge_p)]
 
+lib.ndxlGetNetworkOrder.restype = ctypes.c_size_t
+lib.ndxlGetNetworkOrder.argtypes = [NDXLNetwork_p]
+
+lib.ndxlGetNetworkParams.restype = ctypes.c_void_p
+lib.ndxlGetNetworkParams.argtypes = [NDXLNetwork_p]
+
+lib.ndxlGetNetworkSize.restype = ctypes.c_size_t
+lib.ndxlGetNetworkSize.argtypes = [NDXLNetwork_p]
+
+lib.ndxlGetNetworkTime.restype = ctypes.c_double
+lib.ndxlGetNetworkTime.argtypes = [NDXLNetwork_p]
+
+lib.ndxlGetNetworkVertices.restype = ctypes.c_int
+lib.ndxlGetNetworkVertices.argtypes = [NDXLNetwork_p, ctypes.POINTER(NDXLVertex_p)]
+
+# ^^^^^ Getters | setters vvvvv
+
+lib.ndxlSetNetworkParams.restype = ctypes.c_int
+lib.ndxlSetNetworkParams.argtypes = [NDXLNetwork_p, ctypes.c_void_p]
+
+# ^^^^^ Setters | traversal vvvvv
+
 lib.ndxlGetNetworkFirstChannel.restype = NDXLChannel_p
 lib.ndxlGetNetworkFirstChannel.argtypes = [NDXLNetwork_p]
 
@@ -38,22 +60,25 @@ lib.ndxlGetNetworkLastEdge.argtypes = [NDXLNetwork_p]
 lib.ndxlGetNetworkLastVertex.restype = NDXLVertex_p
 lib.ndxlGetNetworkLastVertex.argtypes = [NDXLNetwork_p]
 
-lib.ndxlGetNetworkOrder.restype = ctypes.c_size_t
-lib.ndxlGetNetworkOrder.argtypes = [NDXLNetwork_p]
+lib.ndxlGetNetworkNextChannel.restype = NDXLChannel_p
+lib.ndxlGetNetworkNextChannel.argtypes = [NDXLChannel_p]
 
-lib.ndxlGetNetworkParams.restype = ctypes.c_void_p
-lib.ndxlGetNetworkParams.argtypes = [NDXLNetwork_p]
+lib.ndxlGetNetworkNextEdge.restype = NDXLEdge_p
+lib.ndxlGetNetworkNextEdge.argtypes = [NDXLEdge_p]
 
-lib.ndxlGetNetworkSize.restype = ctypes.c_size_t
-lib.ndxlGetNetworkSize.argtypes = [NDXLNetwork_p]
+lib.ndxlGetNetworkNextVertex.restype = NDXLVertex_p
+lib.ndxlGetNetworkNextVertex.argtypes = [NDXLVertex_p]
 
-lib.ndxlGetNetworkTime.restype = ctypes.c_double
-lib.ndxlGetNetworkTime.argtypes = [NDXLNetwork_p]
+lib.ndxlGetNetworkPreviousChannel.restype = NDXLChannel_p
+lib.ndxlGetNetworkPreviousChannel.argtypes = [NDXLChannel_p]
 
-lib.ndxlGetNetworkVertices.restype = ctypes.c_int
-lib.ndxlGetNetworkVertices.argtypes = [NDXLNetwork_p, ctypes.POINTER(NDXLVertex_p)]
+lib.ndxlGetNetworkPreviousEdge.restype = NDXLEdge_p
+lib.ndxlGetNetworkPreviousEdge.argtypes = [NDXLEdge_p]
 
-# ^^^^^ Getters | functions vvvvv
+lib.ndxlGetNetworkPreviousVertex.restype = NDXLVertex_p
+lib.ndxlGetNetworkPreviousVertex.argtypes = [NDXLVertex_p]
+
+# ^^^^^ Traversal | simulation vvvvv
 
 lib.ndxlNetworkSimulateRalston.restype = ctypes.c_int
 lib.ndxlNetworkSimulateRalston.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, NDXLNetworkCallback]
@@ -79,7 +104,7 @@ lib.ndxlNetworkSimulateNorsett.argtypes = [NDXLNetwork_p, ctypes.c_double, ctype
 lib.ndxlNetworkSimulateRadau.restype = ctypes.c_int
 lib.ndxlNetworkSimulateRadau.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.c_size_t, NDXLNetworkCallback]
 
-# ^^^^^ Functions | Python wrappers vvvvv
+# ^^^^^ Simulation | Python wrappers vvvvv
 
 class simulationmethod:
 	def __init__(self, func, static, kwdef):

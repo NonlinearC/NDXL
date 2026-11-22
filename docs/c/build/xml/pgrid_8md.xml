@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="pgrid_8md" kind="file" language="Markdown">
+    <compoundname>pgrid.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Simulating<sp/>Networks<sp/>With<sp/>Dynamic<sp/>Topologies<sp/>{#dynnet}</highlight></codeline>
+    </programlisting>
+    <location file="src/examples/pgrid.md"/>
+  </compounddef>
+</doxygen>

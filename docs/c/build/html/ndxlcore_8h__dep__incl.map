@@ -1,0 +1,16 @@
+<map id="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" name="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h">
+<area shape="rect" id="Node000001" title="Public API for NDXL error codes and functions, and object definitions." alt="" coords="10,5,192,64"/>
+<area shape="rect" id="Node000002" href="$ndxl__channel_8h.html" title="Public API for NDXL noise channel creation and querying." alt="" coords="10,112,192,171"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,77,104,112,98,111,101,82"/>
+<area shape="rect" id="Node000003" href="$ndxl_8h.html" title="Public API for NDXL." alt="" coords="5,539,221,581"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="75,187,65,219,58,265,57,311,60,358,68,403,88,482,107,538,102,538,83,483,62,404,55,358,51,311,52,264,60,218,76,182"/>
+<area shape="rect" id="Node000004" href="$ndxl__vertex_8h.html" title="Public API for NDXL vertex creation, state and parameter management, and nearest neighbour traversal." alt="" coords="74,219,256,277"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="126,181,150,218,145,219,127,187"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="129,293,116,326,104,385,102,444,106,498,112,539,106,537,101,498,97,445,99,384,110,324,132,288"/>
+<area shape="rect" id="Node000005" href="$ndxl__edge_8h.html" title="Public API for NDXL edge creation, state and parameter management, and vertex inspection." alt="" coords="125,325,306,384"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="186,289,205,325,199,325,185,294"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="187,395,166,433,140,490,122,540,117,537,135,488,161,431,183,399"/>
+<area shape="rect" id="Node000006" href="$ndxl__network_8h.html" title="Public API for NDXL network management and simulation." alt="" coords="176,432,357,491"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="237,396,255,432,250,431,235,401"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="211,498,147,540,145,536,205,500"/>
+</map>

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="nd" kind="page">
+    <compoundname>nd</compoundname>
+    <title>Network Dynamics</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="nd_1md_src_2concepts_2network-dynamics"/></para>
+<para>This page is dedicated to terminology pertaining to &quot;network dynamics&quot; in general, as well as how certain concepts are implemented/interpreted in NDXL.</para>
+<sect1 id="nd_1state-vector">
+<title>What is Meant by &quot;State Vector&quot;?</title><para>An agent&apos;s state vector is the vector of time-dependent properties that fully describe the agent. Because a scalar can be represented as a unit-length array, NDXL treats all state vectors as arrays, allowing for multidimensional dynamics to be evaluated by default: the time derivative for each element is just written in-place to the output array similar to the <ref refid="examples" kindref="compound">Getting Started</ref> example. In a power grid modelled by the swing equation, for example, each node has two states, namely, its phase angle <formula id="18">$\theta$</formula> and frequency <formula id="19">$\omega$</formula>, while each transmission line is typically only described by its coupling constant <formula id="7">$A$</formula>. We can explicitly write the state vector of node <formula id="20">$i$</formula> as:</para>
+<para><formula id="21">\[    \vec{x}_i = \left\langle\theta_i,~\omega_i\right\rangle
+\]</formula></para>
+<para>And similarly the state vector of edge <formula id="22">$ij$</formula> is:</para>
+<para><formula id="23">\[    \vec{y}_{ij} = \left\langle A_{ij}\right\rangle
+\]</formula></para>
+<sect2 id="nd_1autotoc_md21">
+<title>Do all elements of a state vector change over time?</title><para>They can, but they do not necessarily have to. An element constant with respect to time is called a <bold>static element</bold>, and if all elements of an agent&apos;s state vector are static, then the agent itself is said to be a <bold>static agent</bold>. Static elements in NDXL are characterised by a return value of <formula id="24">$0$</formula> for that element in its dynamics function; static agents can be simply assinged <computeroutput>NULL</computeroutput> for their dynamics.</para>
+</sect2>
+<sect2 id="nd_1dynamicsexample">
+<title>What if agent dynamics depend on constants in the equation?</title><para>Suppose the dynamics of a vertex are given by</para>
+<para><formula id="25">\[    \frac{d\vec{x}}{dt} = Ct + D\vec{x}
+\]</formula></para>
+<para>where <formula id="9">$C$</formula> and <formula id="26">$D$</formula> are constants. In the agent&apos;s constructor, these numbers are passed using the <computeroutput>void* params</computeroutput> argument, which is always the last argument in a constructor. During dynamics evaluation, they can be extracted by converting the <computeroutput>void* params</computeroutput> to whatever datatype the constants initially were defined as, as shown in the <ref refid="examples" kindref="compound">Getting Started</ref> example.</para>
+</sect2>
+</sect1>
+<sect1 id="nd_1hetero-dynamics">
+<title>Heterogeneous Dynamics</title><para>It is common to express the dynamics of network agents as a single function according to which each agent&apos;s state vector evolves, and have their state vectors and <computeroutput>void* params</computeroutput> refer to parameters. In the Kuramoto model, for example, each vertex has a unit state vector containing its phase <formula id="18">$\theta$</formula>, with its <computeroutput>void* params</computeroutput> containing its eigenfrequency, and evolves according to the agentic Kuramoto model. In the swing equation, each vertex has a two-component state vector containing its phase <formula id="18">$\theta$</formula> and frequency <formula id="19">$\omega$</formula>, and evolves according to the swing equation. There is, however, no strict requirement saying agents must:</para>
+<para><itemizedlist>
+<listitem><para>Have identically cardinal state vectors</para>
+</listitem><listitem><para>Depend on the same time-variant parameters as others</para>
+</listitem><listitem><para>Evolve according to the same dynamics, noise, or discrete callback functions</para>
+</listitem><listitem><para>Be influenced by the same noise channels and/or to the same degree</para>
+</listitem><listitem><para>Share user-defined <computeroutput>void* params</computeroutput> (constants)</para>
+</listitem><listitem><para>Have the same initial conditions</para>
+</listitem></itemizedlist>
+</para>
+<para>Whenever one or more of the first four conditions is false, the agents are said to be heterogeneous (initial conditions and constants are usually unique by default). This gives rise to the term &quot;heterogeneous dynamics&quot;, simply meaning that two or more agents in the network do not exhibit common dynamics. This can be, for example:</para>
+<para><itemizedlist>
+<listitem><para>One node evolving according to the Kuramoto model, its neighbour to the swing equation</para>
+</listitem><listitem><para>One node being static, its neighbour dynamic</para>
+</listitem><listitem><para>One node being <ref refid="nd_1stochasticity" kindref="member">stochastic</ref>, its neighbour purely deterministic</para>
+</listitem><listitem><para>One node having a ten-element state vector, its neighbour a scalar state</para>
+</listitem><listitem><para>One node being influenced by noise channels <formula id="27">$1$</formula>, <formula id="28">$3$</formula>, and <formula id="29">$6$</formula>, its neighbour by channels <formula id="30">$2$</formula> and <formula id="31">$5$</formula></para>
+</listitem></itemizedlist>
+</para>
+<para>NDXL makes simulating heterogeneous dynamics easy by assigning agent properties directly to the agents themselves, as outlined in the <ref refid="hetero" kindref="compound">Heterogeneous Dynamics</ref> example.</para>
+</sect1>
+<sect1 id="nd_1stochasticity">
+<title>Stochasticity</title><para>The default network dynamics equations are written as purely deterministic ODEs, however, some systems exhibit random fluctuations in the differential equation signal. These fluctuations are called noise, and add an element of stochasticity to the system, transforming the governing dynamics from an ODE to an SDE (stochastic differential equation). The stochastic contributions are assumed to follow Brownian motion, and the random path taken from start to finish is called a Wiener process. This process is further documented in the <ref refid="sde" kindref="compound">Stochasticity</ref> examples.</para>
+</sect1>
+<sect1 id="nd_1delays">
+<title>Delays</title><para>A delay is a concept in information theory that pertains to the time <formula id="32">$\tau$</formula> taken for information to travel from point A to point B. In the context of network dynamics, and specifically under the physical interpretation of a network, &quot;delays&quot; refer to the time taken for a signal to propagate from one vertex to its neighbour along a given edge. NDXL therefore treats delays as explicit edge properties, and each edge is responsible for mediating delayed interactions between the vertices it connects. The memory and implications are documented in <ref refid="group__edge__creation" kindref="compound">edge creation</ref>, while the mathematical details are further explained in the <ref refid="dde" kindref="compound">Delays</ref> examples.</para>
+</sect1>
+<sect1 id="nd_1higherorder">
+<title>Higher-Order Dynamics</title><para>The descriptions of differential equations governing agent dynamics have thus far (<ref refid="nd_1dynamicsexample" kindref="member">Dynamics</ref> and <ref refid="nd_1stochasticity" kindref="member">Stochasticity</ref>) been of first-order: <formula id="33">$\frac{d\vec{x}}{dt}$</formula>. Of course, many systems exhibit higher-order dynamics, written as <formula id="34">$\frac{d^n\vec{x}}{dt^n}$</formula>. To solve these systems using the first-order solvers, we must rewrite the <formula id="35">$n^{th}$</formula>-order equation as a set of <formula id="36">$n$</formula> coupled first-order equations by using a substitution of variables. The state vector of the agent then goes from having one element to <formula id="36">$n$</formula> elements, where the derivative of the <formula id="37">$i^{th}$</formula> component is used to compute the derivative of the <formula id="38">$(i+1)^{th}$</formula> component. This process is further detailed in the <ref refid="highorder" kindref="compound">Higher-Order Dynamics</ref> examples.</para>
+</sect1>
+<sect1 id="nd_1dyntop">
+<title>Dynamic Topologies</title><para>The size, order, and topology are usually fixed for a given network i.e., once the network is created, these variables cannot - and do not - change. For some applications and models, this approach is sufficient. However, there also exist networks for which these variables are not constant (see the examples listed in the introduction); in these cases, &quot;dead&quot; agents are usually simulated by zeroing their contributions to the overall dynamics, and &quot;new&quot; agents are simulated by reserving space before the simulation for their eventual existence. This wastes computational resources, and also provides a hard limit on the amount of new agents that can be brought into the network. Simulating these kinds of networks is specifically what NDXL was designed for: by allowing agents to be created and destroyed during simulation, only ever those that are still part of the network are actually simulated. See <ref refid="dynnet" kindref="compound">Simulating Networks With Dynamic Topologies</ref> for details how to simulate dynamic topology networks, what the rules are for when and how to add/remove/rearrange agents, and what the limitations, mathematical implications, and performance impacts are. </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/concepts/network-dynamics.md"/>
+  </compounddef>
+</doxygen>

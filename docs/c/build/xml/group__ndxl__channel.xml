@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__ndxl__channel" kind="group">
+    <compoundname>ndxl_channel</compoundname>
+    <title>NDXLChannel</title>
+    <innergroup refid="group__channel__creation">Constructor and Destructor</innergroup>
+    <innergroup refid="group__channel__getters">Getters</innergroup>
+    <innergroup refid="group__channel__setters">Setters</innergroup>
+    <briefdescription>
+<para>Noise channel object representing a Wiener process. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each channel defines an independent Wiener process. Noise channels can be shared between multiple agents, and are associated with agents through their noise functions.</para>
+<para><simplesect kind="warning"><para>Destroying a channel does not affect any other objects in the network, but may disrupt Wiener path preservation and introduce statistical bias. See <ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel()</ref> and <ref refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kindref="member">ndxlDestroyChannel()</ref> for further details.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__creation_1ga04594c5bf238b9ec6de0420a44701ed6" kindref="member">ndxlCreateChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__channel__creation_1ga460edf2e9eeda2afae0f4a8fcf804f83" kindref="member">ndxlDestroyChannel</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

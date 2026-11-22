@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="installation" kind="page">
+    <compoundname>installation</compoundname>
+    <title>Installation</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="installation_1md_src_2installation"/></para>
+<para>NDXL can be obtained from the library&apos;s <bold><ulink url="https://github.com/NonlinearC/NDXL/tree/main/NDXL">GitHub repository</ulink></bold>. The <computeroutput>C/C++</computeroutput> header files are located inside the <computeroutput>include</computeroutput> folder, and the precompiled libraries are located inside the <computeroutput>lib</computeroutput> folder. Copy these folders directly into the working directory of your project, which we will assume has the following structure:</para>
+<para><dot>
+digraph FileStructure {
+  rankdir=LR;
+  ordering=&quot;out&quot;;
+  node [shape=folder, style=filled, fillcolor=&quot;#eef4fa&quot;, fontname=&quot;Helvetica&quot;];
+  
+  root [label=&quot;my-project/&quot;];
+  include [label=&quot;include/&quot;];
+  lib [label=&quot;lib/&quot;];
+  src [label=&quot;src/&quot;];
+  ndxl [label=&quot;ndxl/&quot;];
+  unicpp [label=&quot;unicpp/&quot;];
+  x64 [label=&quot;x64/&quot;];
+  unix [label=&quot;Unix/&quot;];
+  macos [label=&quot;macOS/&quot;];
+  x64static [label=&quot;Static/&quot;];
+  x64dynamic [label=&quot;Dynamic/&quot;];
+  unixstatic [label=&quot;Static/&quot;];
+  unixdynamic [label=&quot;Dynamic/&quot;];
+  macosstatic [label=&quot;Static/&quot;];
+  macosdynamic [label=&quot;Dynamic/&quot;];
+  
+  node [shape=note, fillcolor=&quot;#ffffff&quot;];
+  ndxlh [label=&quot;ndxl.h&quot;]
+  ndxlcoreh [label=&quot;ndxlcore.h&quot;]
+  mainc [label=&quot;main.c&quot;];
+  channelh [label=&quot;ndxl_channel.h&quot;];
+  edgeh [label=&quot;ndxl_edge.h&quot;];
+  networkh [label=&quot;ndxl_network.h&quot;];
+  vertexh [label=&quot;ndxl_vertex.h&quot;];
+  unicppheaders [label=&quot;...&quot;];
+  x64lib [label=&quot;NDXL.lib&quot;];
+  x64lib2 [label=&quot;NDXL.lib&quot;];
+  x64dll [label=&quot;NDXL.dll&quot;];
+  unixlib [label=&quot;libNDXL.a&quot;];
+  unixdll [label=&quot;libNDXL.so&quot;];
+  maclib [label=&quot;libNDXL.a&quot;];
+  macdll [label=&quot;libNDXL.dylib&quot;];
+
+  root -&gt; include;
+  root -&gt; lib;
+  root -&gt; src;
+  
+  include -&gt; ndxl;
+  include -&gt; unicpp;
+  include -&gt; ndxlh;
+  include -&gt; ndxlcoreh;
+  
+  ndxl -&gt; channelh;
+  ndxl -&gt; edgeh;
+  ndxl -&gt; networkh;
+  ndxl -&gt; vertexh;
+  
+  unicpp -&gt; unicppheaders;
+  
+  lib -&gt; x64;
+  lib -&gt; unix;
+  lib -&gt; macos;
+  
+  x64 -&gt; x64static;
+  x64 -&gt; x64dynamic;
+  
+  unix -&gt; unixstatic;
+  unix -&gt; unixdynamic;
+  
+  macos -&gt; macosstatic;
+  macos -&gt; macosdynamic;
+  
+  x64static -&gt; x64lib;
+  x64dynamic -&gt; x64lib2;
+  x64dynamic -&gt; x64dll;
+  
+  unixstatic -&gt; unixlib;
+  unixdynamic -&gt; unixdll;
+  
+  macosstatic -&gt; maclib;
+  macosdynamic -&gt; macdll;
+  
+  src -&gt; mainc;
+}
+</dot>
+</para>
+<para>In <computeroutput>main.c</computeroutput>, we will define a minimal working program calling <ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit()</ref>, which <bold>must</bold> be called before using any NDXL functionality.</para>
+<para><programlisting filename=".c"><codeline><highlight class="preprocessor">#include<sp/>&quot;../include/ndxl.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>We will cover here the installation and linking guides for both the static and dynamic libraries in <computeroutput>MSVC</computeroutput> and <computeroutput>gcc</computeroutput>. Whether you use the static or dynamic version depends on you:<itemizedlist>
+<listitem><para>Use the static version for faster runtime execution but a larger executable</para>
+</listitem><listitem><para>Use the dynamic version for a smaller executable but slower runtime execution</para>
+</listitem></itemizedlist>
+</para>
+<sect1 id="installation_1autotoc_md9">
+<title>Compiling with MSVC</title><para>In the solution explorer, right-click your project file, and click &quot;Properties&quot; at the very bottom. At the top of the &quot;Properties&quot; dialogue, ensure the &quot;Configuration&quot; is set to &quot;All Configurations&quot;, and &quot;Platform&quot; is set to &quot;All Platforms&quot;. On the left, click the &quot;Linker&quot; dropdown, then click on &quot;Input&quot;. At the top of the page, the &quot;Additional Dependencies&quot; field will likely contain:</para>
+<para><programlisting><codeline><highlight class="normal">$(CoreLibraryDependencies);%(AdditionalDependencies)</highlight></codeline>
+</programlisting></para>
+<para>If your project uses other libraries, they will likely already be linked here too. Add NDXL.lib to the end preceeded by a semicolon:</para>
+<para><programlisting><codeline><highlight class="normal">$(CoreLibraryDependencies);%(AdditionalDependencies);NDXL.lib</highlight></codeline>
+</programlisting></para>
+<para>If the field is empty, simply set it to <computeroutput>NDXL.lib</computeroutput>, then click onto another field so that Visual Studio processes the input.</para>
+<sect2 id="installation_1autotoc_md10">
+<title>Linking against the static version (.lib)</title><para>Again under &quot;Linker&quot;, navigate to &quot;General&quot;, and search for the &quot;Additional Library Directories&quot; field. If it is empty, simply paste:</para>
+<para><programlisting><codeline><highlight class="normal">$(ProjectDir)lib\x64\Static\</highlight></codeline>
+</programlisting></para>
+<para>If the field contains next, click the drop-down arrow on the right, then click &lt;Edit...&gt;. In the window that pops up click the icon showing a folder with a star (&quot;New Line&quot;), then paste the above text in that line, and click &quot;OK&quot;. Finally, click the &quot;C/C++&quot; dropdown on the left, and navigate to the &quot;Preprocessor&quot; tab. Under &quot;Preprocessor Definitions&quot;, add:</para>
+<para><programlisting><codeline><highlight class="normal">NDXL_STATIC</highlight></codeline>
+</programlisting></para>
+<para>As before, if this field already contains text, append a semicolon before adding the above text. Click &quot;OK&quot; in the bottom right of the &quot;Properties&quot; window, and, assuming your file structure is correctly reflected in MSVC, the static version of NDXL should be successfully linked.</para>
+</sect2>
+<sect2 id="installation_1autotoc_md11">
+<title>Linking against the dynamic version (.dll)</title><para>Repeat the first step of the prebvious section, but under &quot;Additional Library Directories&quot;, instead paste:</para>
+<para><programlisting><codeline><highlight class="normal">$(ProjectDir)lib\x64\Dynamic\</highlight></codeline>
+</programlisting></para>
+<para><bold>Do not</bold> define the <computeroutput>NDXL_STATIC</computeroutput> preprocessor definition as it will attempt to import static symbols. Finally, ensure that <computeroutput>NDXL.dll</computeroutput> is in the same path as your executable at runtime, otherwise you will run into a &quot;dll not found error&quot;. Either copy the file manually to your target directory, or automate the process using a <ulink url="https://learn.microsoft.com/en-us/cpp/build/how-to-use-build-events-in-msbuild-projects?view=msvc-170">build event</ulink>.</para>
+</sect2>
+</sect1>
+<sect1 id="installation_1autotoc_md12">
+<title>Compiling with gcc</title><para>Ensure your terminal is currently in the root directory of your project:</para>
+<para><programlisting><codeline><highlight class="normal">user@pc:~$<sp/>cd<sp/>path/to/my-project</highlight></codeline>
+</programlisting></para>
+<para>Always remember to link against the standard math library <computeroutput>-lm</computeroutput>.</para>
+<sect2 id="installation_1autotoc_md13">
+<title>Linking against the static version (.a)</title><para>In your terminal, type:</para>
+<para><programlisting><codeline><highlight class="normal">gcc<sp/>-o<sp/>my-project.out<sp/>src/main.c<sp/>-Llib/Unix/Static<sp/>-lNDXL<sp/>-lm</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="installation_1autotoc_md14">
+<title>Linking against the dynamic version (.so)</title><para>In your terminal, type:</para>
+<para><programlisting><codeline><highlight class="normal">gcc<sp/>-o<sp/>my-project.out<sp/>src/main.c<sp/>-Llib/Unix/Dynamic<sp/>-lNDXL<sp/>-lm</highlight></codeline>
+</programlisting></para>
+<para>Ensure that <computeroutput>libNDXL.so</computeroutput> is discoverable by your runtime loader when you execute the program. The easiest way to do this is to copy the file into the same directory as <computeroutput>my-project.out</computeroutput> and run the executable from that directory.</para>
+</sect2>
+</sect1>
+<sect1 id="installation_1autotoc_md15">
+<title>References</title><para>For a detailed guide on linking libraries in <computeroutput>MSVC</computeroutput>, see the <ulink url="https://learn.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-static-library-cpp?view=msvc-170">MSVC documentation</ulink>.</para>
+<para>For a detailed guide on linking libraries in <computeroutput>gcc</computeroutput>, see the <ulink url="https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html">gcc website</ulink>. </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/installation.md"/>
+  </compounddef>
+</doxygen>

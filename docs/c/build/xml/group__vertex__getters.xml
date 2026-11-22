@@ -1,0 +1,817 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__vertex__getters" kind="group">
+    <compoundname>vertex_getters</compoundname>
+    <title>Getters</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__vertex__getters_1ga24e39dd5ee7d377ab7ce9e27b1bb4e58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__vertex__dnc_1ga8157fab181cba9d4fc99244e4179cbfb" kindref="member">NDXLVertexCallback</ref></type>
+        <definition>NDXLVertexCallback ndxlGetVertexCallback</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexCallback</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the callback function associated with a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the callback of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the callback function associated with _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the callback function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__setters_1gadbca55fb7a8e6353144f33394b047ab5" kindref="member">ndxlSetVertexCallback</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="261" column="22" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="261" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gaf017a9abc921777db053fd6e82961447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexChannelCount</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexChannelCount</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the number of noise channels affecting a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the channel count of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the number of noise channels affecting _Vertex.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL. </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="277" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="277" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga67f420e29b7b8ae3ba954bb1f1963488" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlGetVertexChannels</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLChannel **_Channels)</argsstring>
+        <name>ndxlGetVertexChannels</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> **</type>
+          <declname>_Channels</declname>
+        </param>
+        <briefdescription>
+<para>Gets a list of all the noise channels affecting a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the noise channels of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_Channels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a user-allocated array of <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointers. The array must contain at least ndxlGetVertexChannelCount(_Vertex) elements. The function populates the array in-place.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Channels are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise populates _Channels with the noise channel pointers associated with _Vertex, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="note"><para>The caller retains ownership of the array, but not of the <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Channels is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1gaf017a9abc921777db053fd6e82961447" kindref="member">ndxlGetVertexChannelCount</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="305" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="305" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexDegree</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexDegree</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the number of edges (directed and undirected) connected to a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the degree of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the total number of edges connected to _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>Not to be confused with ndxlGetVertexDegreeIn and ndxlGetVertexDegreeOut, which return the number of edges flowing into and out of _Vertex, respectively.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga28f83bfcf28ce414abd0fb036d4fa21c" kindref="member">ndxlGetVertexDegreeIn</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1gad1b8ca5a887360e82ed4a733f8c16383" kindref="member">ndxlGetVertexDegreeOut</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="329" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="329" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga28f83bfcf28ce414abd0fb036d4fa21c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexDegreeIn</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexDegreeIn</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the number of edges flowing into a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the in-degree of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the number of edges flowing into _Vertex. Undirected edges are counted as flowing in.</para>
+</simplesect>
+<simplesect kind="note"><para>Not to be confused with ndxlGetVertexDegree and ndxlGetVertexDegreeOut, which return the total number of edges and number of edges flowing out of _Vertex, respectively.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1gad1b8ca5a887360e82ed4a733f8c16383" kindref="member">ndxlGetVertexDegreeOut</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="352" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="352" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gad1b8ca5a887360e82ed4a733f8c16383" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexDegreeOut</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexDegreeOut</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the number of edges flowing out from a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the out-degree of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the number of edges flowing out of _Vertex. Undirected edges are counted as flowing out.</para>
+</simplesect>
+<simplesect kind="note"><para>Not to be confused with ndxlGetVertexDegree and ndxlGetVertexDegreeIn, which return the total number of edges and number of edges flowing into _Vertex, respectively.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga28f83bfcf28ce414abd0fb036d4fa21c" kindref="member">ndxlGetVertexDegreeIn</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="375" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="375" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga40eb78be12b9d0349bd31442afb124ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__vertex__dnc_1ga1140d9424f744e76f6ae10fde2d3329e" kindref="member">NDXLVertexDynamics</ref></type>
+        <definition>NDXLVertexDynamics ndxlGetVertexDynamics</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexDynamics</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the dynamics function associated with a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the dynamics of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the dynamics function associated with _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the dynamics function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__setters_1ga31a4de68771e8c0cd8e27be237aa8604" kindref="member">ndxlSetVertexDynamics</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="397" column="22" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="397" declcolumn="22"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga1b1536b7afc45446a9589c87e83933d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlGetVertexEdges</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLEdge **_Edges)</argsstring>
+        <name>ndxlGetVertexEdges</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> **</type>
+          <declname>_Edges</declname>
+        </param>
+        <briefdescription>
+<para>Gets a list of all the edges affecting a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the edges of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_Edges</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a user-allocated array of <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> pointers. The array must contain at least ndxlGetVertexDegree(_Vertex) elements. The function populates the array in-place with all edges that are connected to _Vertex, regardless of edge directionality.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Edges are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise populates _Edges with the edge pointers associated with _Vertex, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="note"><para>The caller retains ownership of the array, but not of the <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edges is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="425" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="425" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga94074c6405202952978b8b7f9c06753c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double *</type>
+        <definition>const double * ndxlGetVertexInitialState</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexInitialState</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the initial state vector of a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the initial state of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the initial state vector assigned to _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>If the initial state vector was NULL, _Vertex is assigned a zero-vector of length ndxlGetVertexOrder(_Vertex), meaning this function will still return a valid pointer containing the zero-vector.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1gad62aec463f1bf0438965cfa37cff355c" kindref="member">ndxlGetVertexOrder</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="448" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="448" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga17c6a47ca779d2e1cd63d3560a25a6d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetVertexNeighbour</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetVertexNeighbour</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the neighbouring vertex along a specified edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the neighbour of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The edge along which to query the neighbouring vertex.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Edge are NULL, or _Vertex is not connected to _Edge, returns NULL, otherwise returns the vertex that is connected to _Vertex by _Edge.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Edge is not connected to _Vertex</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="471" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="471" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga3ce7eff296fb475f3260d0110f95c8c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexNeighbourOrder</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetVertexNeighbourOrder</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the order of a neighbouring vertex along a specified edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the neighbour order of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The edge along which to query the order of the neighbouring vertex.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Edge are NULL, or _Vertex is not connected to _Edge, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the order of the vertex that is connected to _Vertex by _Edge.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Edge is not connected to _Vertex</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="495" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="495" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gad3a1dcd8fbeae6b6b3a708213b3cea01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlGetVertexNeighbours</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLVertex **_Neighbours)</argsstring>
+        <name>ndxlGetVertexNeighbours</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> **</type>
+          <declname>_Neighbours</declname>
+        </param>
+        <briefdescription>
+<para>Gets a list of all the nearest neighbour vertices of a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the neighbours of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_Neighbours</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a user-allocated array of <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> pointers. The array must contain at least ndxlGetVertexDegree(_Vertex) elements. The function populates the array in-place.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Neighbours are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise populates _Neighbours with the nearest neighbour vertex pointers of _Vertex, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="note"><para>The caller retains ownership of the array, but not of the <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Neighbours is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="524" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="524" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gad7f8cbc780425384693f7e4163f51ed7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double *</type>
+        <definition>const double * ndxlGetVertexNeighbourState</definition>
+        <argsstring>(NDXLVertex *_Vertex, NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetVertexNeighbourState</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the time-delayed state vector of a neighbouring vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the neighbour state of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The edge connecting _Vertex to its neighbour, the latter of which will be queried for its time-delayed state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Vertex or _Edge are NULL, or _Edge is not connected to _Vertex, returns NULL, otherwise returns the delayed state vector of the neighbouring vertex to _Vertex along _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If the delay of _Edge is zero, this is equivalent to calling ndxlGetVertexState(ndxlGetVertexNeighbour(_Vertex, _Edge)).</para>
+</simplesect>
+<simplesect kind="note"><para>If the delay of _Edge is nonzero, this function uses historical states stored by _Edge to lookup the state of the neighbouring vertex at time t - ndxlGetEdgeDelay(_Edge). If the requested time does not fall exactly on a stored state, the function performs a cubic Hermite interpolation between the two surrounding states and returns the interpolated state.</para>
+</simplesect>
+<simplesect kind="note"><para>In both cases, the returned pointer is shared, meaning it remains valid over the lifetime of the vertex, but the stored values will change on subsequent calls to this function.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Edge is not connected to _Vertex.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="557" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="557" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga92fbd8f6bb5ad59c012826f2205226c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+        <definition>NDXLNetwork * ndxlGetVertexNetwork</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexNetwork</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the owning network of a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the network of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the <ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> pointer on which _Vertex was created.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL. </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="574" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="574" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga0581e4cd8163071fb320ee5a7a51ded2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__vertex__dnc_1ga0e85c54f67da8f77c7ff75720724fab0" kindref="member">NDXLVertexNoise</ref></type>
+        <definition>NDXLVertexNoise ndxlGetVertexNoise</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexNoise</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the noise function associated with a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the noise of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the noise function associated with _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the noise function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__setters_1ga71bdcee35a30ceb4ef9902c52e5a18af" kindref="member">ndxlSetVertexNoise</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="596" column="19" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="596" declcolumn="19"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gad62aec463f1bf0438965cfa37cff355c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetVertexOrder</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexOrder</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the size of a vertex&apos;s state vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the order of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the size of the state vector of _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>If _State was NULL during construction, the vertex is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in <ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex()</ref>.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="617" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="617" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1ga51088c87d8c4b39f1c7a7f57b8ad4e37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * ndxlGetVertexParams</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexParams</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the user-defined <computeroutput>void* _Params</computeroutput> of a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the parameters of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns NULL, otherwise returns the user-defined <computeroutput>void* _Params</computeroutput> of _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as <computeroutput>void* _Params</computeroutput> could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__setters_1gaba1257b95725546dd745e2ce06148d8d" kindref="member">ndxlSetVertexParams</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="639" column="8" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="639" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__vertex__getters_1gae7cb0ad157f44508d54ec35815dc2910" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double</type>
+        <definition>const double ndxlGetVertexTime</definition>
+        <argsstring>(NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetVertexTime</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the local simulation time of a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target vertex to retrieve the time of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Vertex is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the local simulation time of _Vertex.</para>
+</simplesect>
+<simplesect kind="note"><para>The local simulation time only updates on a successful simulation step.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation" kindref="compound">Network Simulation</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" line="660" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h" declline="660" declcolumn="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Getter functions for querying vertex properties. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

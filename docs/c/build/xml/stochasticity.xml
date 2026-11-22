@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="stochasticity" kind="page">
+    <compoundname>stochasticity</compoundname>
+    <title>Stochasticity</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="stochasticity_1md_src_2concepts_2stochasticity"/></para>
+    </detaileddescription>
+    <location file="src/concepts/stochasticity.md"/>
+  </compounddef>
+</doxygen>

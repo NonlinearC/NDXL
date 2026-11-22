@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="callbacks" kind="page">
+    <compoundname>callbacks</compoundname>
+    <title>Injecting Perturbations</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="callbacks_1md_src_2examples_2callbacks"/></para>
+<para><simplesect kind="note"><para>This page assumes familiarity with the basic layout and API usage described in the main <ref refid="examples" kindref="compound">Examples</ref> page.</para>
+</simplesect>
+One of the most intuitive introductory examples to simulating network dynamics is the Kuramoto model, which we briefly illustrated on the <ulink url="https://github.com/NonlinearC/NDXL/tree/main/NDXL">C API homepage</ulink>. The example shown here includes a perturbation of one of the oscillators to hint at the discrete callback functionality of NDXL. The Kuramoto model describes the phase <formula id="18">$\theta$</formula> evolution of an oscillator with eigenfrequency <formula id="19">$\omega$</formula> as</para>
+<para><formula id="39">\[    \frac{d\theta_i}{dt} = \omega_i + \frac{1}{N_i}\displaystyle\sum_{j=1}^N{K_{ij}\sin{\left(\theta_j - \theta_i\right)}}.
+\]</formula></para>
+<para>Here, <formula id="40">$N_i$</formula> is the degree of oscillator <formula id="20">$i$</formula> (how many nearest neighbours it has), and <formula id="41">$K_{ij}$</formula> is the coupling strength between oscillators <formula id="20">$i$</formula> and <formula id="42">$j$</formula>. As usual, we start by defining the dynamics of the oscillators (vertices). Similar to <ref refid="group__network__traversal" kindref="compound">Network Traversal</ref> functions, the edges and neighbouring vertices of a vertex can be iterated over in NDXL using its <ref refid="group__vertex__traversal" kindref="compound">Edge Traversal</ref> functions. We will also use <ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree()</ref> to query the degree of each oscillator.</para>
+<para><programlisting filename=".c"><codeline><highlight class="preprocessor">#include<sp/>&lt;math.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>kuramoto(<ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>*<sp/>oscillator,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>dtheta_i,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>theta_i,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>time,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>params)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pointer<sp/>conversion<sp/>to<sp/>extract<sp/>eigenfrequency<sp/>from<sp/>`void*<sp/>params`</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>omega<sp/>=<sp/>*(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*)params;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>coupling<sp/>sum<sp/>by<sp/>iterating<sp/>over<sp/>only<sp/>the<sp/>vertices/edges<sp/>coupled<sp/>to<sp/>`oscillator`</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>coupling<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref>*<sp/>edge<sp/>=<sp/><ref refid="group__vertex__traversal_1ga37847adf2ab313359a11a28196cfa565" kindref="member">ndxlGetVertexFirstEdge</ref>(oscillator);<sp/>edge;<sp/>edge<sp/>=<sp/><ref refid="group__vertex__traversal_1gac1816923b2d91d36fd628ef8fdb36e02" kindref="member">ndxlGetVertexNextEdge</ref>(oscillator,<sp/>edge))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>K_ij<sp/>=<sp/><ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState</ref>(edge)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta_j<sp/>=<sp/><ref refid="group__vertex__getters_1gad7f8cbc780425384693f7e4163f51ed7" kindref="member">ndxlGetVertexNeighbourState</ref>(oscillator,<sp/>edge)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>coupling<sp/>+=<sp/>K_ij<sp/>*<sp/>sin(theta_j<sp/>-<sp/>theta_i[0]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Write<sp/>derivative<sp/>in-place<sp/>and<sp/>indicate<sp/>function<sp/>success</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dtheta_i[0]<sp/>=<sp/>omega<sp/>+<sp/>coupling<sp/>/<sp/><ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree</ref>(oscillator);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Next, let us define the perturbation callback shown in the paper, which set the phase of the target oscillator to <formula id="24">$0$</formula> at <formula id="43">$t=2.5$</formula>. Because discrete callbacks are called after each successful integration step, we cannot simply alter the state vector; we must ensure the called time is correct first.</para>
+<para><programlisting filename=".c"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>perturbation(<ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>*<sp/>oscillator,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>theta_i,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>time,<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>params)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(time<sp/>==<sp/>2.5)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta_i[0]<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>We create the oscillators next, applying the callback only to the first oscillator. Assigning the callback can either be done during vertex creation:</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>f_output<sp/>=<sp/>fopen(</highlight><highlight class="stringliteral">&quot;kuramoto.csv&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!f_output)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(f_output,<sp/></highlight><highlight class="stringliteral">&quot;t,theta1,theta2,theta3,theta4\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref>*<sp/>nwk<sp/>=<sp/><ref refid="group__network__creation_1gaceb794444113eebd20d8a6fabdc2e2f9" kindref="member">ndxlCreateNetwork</ref>(f_output);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigenfrequencies<sp/>will<sp/>be<sp/>our<sp/>`void*<sp/>params`,<sp/>so<sp/>they<sp/>must<sp/>persist<sp/>in<sp/>memory</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>omega[4];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>*<sp/>oscillators[4];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Assign<sp/>to<sp/>only<sp/>the<sp/>first<sp/>oscillator</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta0<sp/>=<sp/>randdbl(-PI,<sp/>PI);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>omega[0]<sp/>=<sp/>randdbl(0.9,<sp/>1.1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>oscillators[0]<sp/>=<sp/><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;theta0,r</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>kuramoto,<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Assign<sp/>Kuramoto<sp/>dynamics</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>perturbation,<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Assign<sp/>perturbation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;omega[0]<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigenfrequency</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>the<sp/>rest<sp/>of<sp/>the<sp/>oscillators</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>1;<sp/>i<sp/>&lt;<sp/>4;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta0<sp/>=<sp/>randdbl(-PI,<sp/>PI);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>omega[i]<sp/>=<sp/>randdbl(0.9,<sp/>1.1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oscillators[i]<sp/>=<sp/><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref>(nwk,<sp/>&amp;theta0,<sp/>1,<sp/>kuramoto,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>&amp;omega[i]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Or after the fact using <ref refid="group__vertex__setters_1gadbca55fb7a8e6353144f33394b047ab5" kindref="member">ndxlSetVertexCallback()</ref> :</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>4;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta0<sp/>=<sp/>randdbl(-PI,<sp/>PI);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>omega[i]<sp/>=<sp/>randdbl(0.9,<sp/>1.1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oscillators[i]<sp/>=<sp/><ref refid="group__vertex__creation_1gaec4b6881830464281fc35817e96bfaf3" kindref="member">ndxlCreateVertex</ref>(nwk,<sp/>&amp;theta0,<sp/>1,<sp/>kuramoto,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>&amp;omega[i]);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__vertex__setters_1gadbca55fb7a8e6353144f33394b047ab5" kindref="member">ndxlSetVertexCallback</ref>(oscillators[0],<sp/>perturbation);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<sect1 id="callbacks_1callbacks-topologies">
+<title>Defining the Topology</title><para>Before we can simulate our Kuramoto network, we need the edges that define the topology. Failing this, the oscillators will have no neighbours/edges to iterate over, and even worse, <ref refid="group__vertex__getters_1ga2311fb84b6241aa8c4f8b2e509bdf55e" kindref="member">ndxlGetVertexDegree()</ref> will return <formula id="24">$0$</formula>, resulting in division by <formula id="24">$0$</formula>! We will create a ring network with adjacency matrix</para>
+<para><formula id="44">\[\begin{array}{|cccc|}
+    0 &amp; 1 &amp; 1 &amp; 0 \\
+    1 &amp; 0 &amp; 0 &amp; 1 \\
+    1 &amp; 0 &amp; 0 &amp; 1 \\
+    0 &amp; 1 &amp; 1 &amp; 0 \\
+\end{array}
+\]</formula></para>
+<para>Although there are eight entries, we will only have four edges, each connecting a unique pair of vertices. The &quot;duplicate&quot; entries are a result of the edges being undirected i.e., if oscillator <formula id="20">$i$</formula> is connected to <formula id="42">$j$</formula>, then oscillator <formula id="42">$j$</formula> is also connected to oscillator <formula id="20">$i$</formula> via the same edge.</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Coupling<sp/>constant<sp/>K_ij<sp/>(made<sp/>identical<sp/>for<sp/>all<sp/>edges)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>K<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Define<sp/>topology</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oscillators[0],<sp/></highlight><highlight class="comment">//<sp/>&quot;Source&quot;<sp/>vertex<sp/>(interchangeable<sp/>with<sp/>&quot;Destination&quot;<sp/>in<sp/>undirected<sp/>edge)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>oscillators[1],<sp/></highlight><highlight class="comment">//<sp/>&quot;Destination&quot;<sp/>vertex<sp/>(interchangeable<sp/>with<sp/>&quot;Source&quot;<sp/>in<sp/>undirected<sp/>edge)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;K,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>State<sp/>vector</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Length<sp/>of<sp/>state<sp/>vector</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0.0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>delay<sp/>(see<sp/>@ref<sp/>dde)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Not<sp/>directed<sp/>(if<sp/>this<sp/>value<sp/>is<sp/>nonzero,<sp/>information<sp/>only<sp/>flows<sp/>from<sp/>&quot;Source&quot;<sp/>to<sp/>&quot;Destination&quot;<sp/>but<sp/>not<sp/>the<sp/>other<sp/>way<sp/>around)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>dynamics<sp/>(static<sp/>edge)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>noise</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>noise<sp/>channels<sp/>(must<sp/>be<sp/>NULL<sp/>if<sp/>noise<sp/>is<sp/>NULL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Number<sp/>of<sp/>noise<sp/>channels<sp/>(must<sp/>be<sp/>0<sp/>if<sp/>noise<sp/>is<sp/>NULL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>edge<sp/>callback</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>No<sp/>extra<sp/>`void*<sp/>params`</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref>(oscillators[0],<sp/>oscillators[2],<sp/>&amp;K,<sp/>1,<sp/>0.0,<sp/>0,<sp/>NULL,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>NULL);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref>(oscillators[1],<sp/>oscillators[3],<sp/>&amp;K,<sp/>1,<sp/>0.0,<sp/>0,<sp/>NULL,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>NULL);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref>(oscillators[2],<sp/>oscillators[3],<sp/>&amp;K,<sp/>1,<sp/>0.0,<sp/>0,<sp/>NULL,<sp/>NULL,<sp/>NULL,<sp/>0,<sp/>NULL,<sp/>NULL);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>We can now simulate our network as before; however, as mentioned in the @integration section, adaptive methods like <ref refid="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" kindref="member">ndxlNetworkSimulateDopri()</ref> do not guarantee that our target time in our <computeroutput>perturbation</computeroutput> callback will be evaluated. We therefore have two options for ensuring the condition <computeroutput>time == 2.5</computeroutput> eventually evaluates to true:</para>
+<para><itemizedlist>
+<listitem><para>Use a static method with a step size <formula id="5">$h$</formula> such that <formula id="45">$2.5\mod h=0$</formula></para>
+</listitem><listitem><para>Use the time stops parameter provided by adaptive methods</para>
+</listitem></itemizedlist>
+</para>
+<para>The first option works in theory, however, there is a computational issue, namely, floating point rounding. Without convoluting the details:</para>
+<para><itemizedlist>
+<listitem><para>Computers have limited precision with which to represent decimal numbers, meaning repeated floating point addition accumulates rounding errors</para>
+</listitem><listitem><para>This means that, for a hypothetical <formula id="46">$h=0.1$</formula>, <computeroutput>time</computeroutput> after the first integration step would be <formula id="47">$0+0.1=0.1$</formula>, however, after the third step it would be <formula id="48">$0.30000000000000004$</formula></para>
+</listitem><listitem><para>So our theory of using <formula id="45">$2.5\mod h=0$</formula> is not wrong, but in programming <formula id="49">$0.3\neq0.30000000000000004$</formula> - the same might hold true for testing <computeroutput>time == 2.5</computeroutput></para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="note"><para>In NDXL, networks and agents accumulate time differently. In a static method, agents use repeated addition, which magnifies their floating point error, while networks calculate their current time as their start time plus the number of steps multiplied by the step size. This makes network time &quot;technically&quot; more accurate, but still not fully reliable!</para>
+</simplesect>
+The second approach therefore appears to be our only option. The <computeroutput>_Tstops</computeroutput> parameter, like a state vector, is an array containing a list of times the solver must evaluate; the array must be sorted and lie within the interval [<ref refid="group__network__getters_1ga761760f609292305cf696a10e9324fd3" kindref="member">ndxlGetNetworkTime()</ref>, <ref refid="group__network__getters_1ga761760f609292305cf696a10e9324fd3" kindref="member">ndxlGetNetworkTime()</ref> + _Tspan], where <computeroutput>_Tspan</computeroutput> is the simulation duration (second argument to the simulate function). We must also provide the length of the time stops vector, which in this case is <formula id="27">$1$</formula>.</para>
+<para><programlisting filename=".c"><codeline><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Define<sp/>the<sp/>time<sp/>stops<sp/>array</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tstops<sp/>=<sp/>2.5;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>@ref<sp/>ndxlNetworkSimulateRkck()<sp/>would<sp/>also<sp/>be<sp/>a<sp/>suitable<sp/>choice<sp/>here</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" kindref="member">ndxlNetworkSimulateDopri</ref>(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>5.0,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Simulation<sp/>duration;<sp/>the<sp/>time<sp/>stops<sp/>array<sp/>must<sp/>be<sp/>between<sp/>the<sp/>current<sp/>network<sp/>time<sp/>(which<sp/>starts<sp/>at<sp/>0)<sp/>and<sp/>that<sp/>time<sp/>plus<sp/>the<sp/>duration</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1e-6,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1e-3,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;tstops,<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Time<sp/>stops<sp/>array</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Length<sp/>of<sp/>time<sp/>stops<sp/>array</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cb</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Our output verifies the perturbation at <computeroutput>time == 2.5</computeroutput>:</para>
+<para><image type="html" name="kuramoto.png"></image>
+ <image type="latex" name="kuramoto.png"></image>
+ <image type="rtf" name="kuramoto.png"></image>
+ <image type="docbook" name="kuramoto.png"></image>
+ <image type="xml" name="kuramoto.png"></image>
+ </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/examples/callbacks.md"/>
+  </compounddef>
+</doxygen>

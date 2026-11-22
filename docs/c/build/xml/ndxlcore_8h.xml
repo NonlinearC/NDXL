@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="ndxlcore_8h" kind="file" language="C++">
+    <compoundname>ndxlcore.h</compoundname>
+    <includes local="yes">unicpp/unicpp.h</includes>
+    <includedby refid="ndxl__channel_8h" local="yes">C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h</label>
+        <link refid="ndxlcore_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>unicpp/unicpp.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl.h</label>
+        <link refid="ndxl_8h"/>
+      </node>
+      <node id="2">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_channel.h</label>
+        <link refid="ndxl__channel_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h</label>
+        <link refid="ndxl__edge_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_network.h</label>
+        <link refid="ndxl__network_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_vertex.h</label>
+        <link refid="ndxl__vertex_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h</label>
+        <link refid="ndxlcore_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <sectiondef kind="define">
+      <memberdef kind="define" id="ndxlcore_8h_1a8c6d995a912085dbc89d3d542e2ddba8" prot="public" static="no">
+        <name>_NDXL_BEGIN</name>
+        <initializer>namespace ndxl {</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="113" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ndxlcore_8h_1ad7b7e61cbd494c708a56b1e0fb01e85e" prot="public" static="no">
+        <name>_NDXL_END</name>
+        <initializer>}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="114" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ndxlcore_8h_1a1e9d6a364764c0a9cfc781d098907286" prot="public" static="no">
+        <name>_NDXL</name>
+        <initializer>::ndxl::</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="115" column="9" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" prot="public" static="no">
+        <name>_NDXLIMP_</name>
+        <initializer>__attribute__((dllimport))</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="123" column="14" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <member refid="group__ndxl__err_1ga19dddd4e82c8c4618a4b1c759389620f" kind="define"><name>NDXL_OK</name></member>
+      <member refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kind="define"><name>NDXL_ERR</name></member>
+      <member refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kind="define"><name>NDXL_VALUE_ERR</name></member>
+      <member refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kind="define"><name>NDXL_ARG_ERR</name></member>
+      <member refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" kind="define"><name>NDXL_SIM_ERR</name></member>
+    </sectiondef>
+    <sectiondef kind="typedef">
+      <member refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kind="typedef"><name>NDXLNetwork</name></member>
+      <memberdef kind="typedef" id="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" prot="public" static="no">
+        <type>struct <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref></type>
+        <definition>typedef struct NDXLChannel NDXLChannel</definition>
+        <argsstring></argsstring>
+        <name>NDXLChannel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="75" column="26" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" prot="public" static="no">
+        <type>struct <ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref></type>
+        <definition>typedef struct NDXLVertex NDXLVertex</definition>
+        <argsstring></argsstring>
+        <name>NDXLVertex</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="91" column="25" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" prot="public" static="no">
+        <type>struct <ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref></type>
+        <definition>typedef struct NDXLEdge NDXLEdge</definition>
+        <argsstring></argsstring>
+        <name>NDXLEdge</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" line="106" column="23" bodyfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="func">
+      <member refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kind="function"><name>ndxlGetLastErrorCode</name></member>
+      <member refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" kind="function"><name>ndxlGetLastErrorMsg</name></member>
+      <member refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" kind="function"><name>ndxlPrintError</name></member>
+      <member refid="group__ndxl__err_1gae0f32492efbd78f52d3ed640d0805349" kind="function"><name>ndxlRaiseError</name></member>
+      <member refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kind="function"><name>ndxlInit</name></member>
+      <member refid="group__lib__mgmt_1ga7bc65ca258889410dbfd9cff62edcf08" kind="function"><name>ndxlGetNetworkCount</name></member>
+    </sectiondef>
+    <briefdescription>
+<para>Public API for NDXL error codes and functions, and object definitions. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Declares API-wide macros, functions, typedefs, and header files.</para>
+<para><simplesect kind="copyright"><para>Copyright (c) 2026, Ethan Codron.</para>
+</simplesect>
+Licensed under the GNU General Public License v3.0 only. See the LICENSE file in the repository root. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>_NDXLCORE_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_NDXLCORE_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;tuple&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unordered_map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;unicpp/unicpp.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref><sp/><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref><sp/><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref>;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref><sp/><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref>;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref><sp/><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="ndxlcore_8h_1a8c6d995a912085dbc89d3d542e2ddba8" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_NDXL_BEGIN<sp/>namespace<sp/>ndxl<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="ndxlcore_8h_1ad7b7e61cbd494c708a56b1e0fb01e85e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_NDXL_END<sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="ndxlcore_8h_1a1e9d6a364764c0a9cfc781d098907286" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>_NDXL<sp/><sp/><sp/><sp/><sp/><sp/><sp/>::ndxl::</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>NDXL_STATIC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#define<sp/>_NDXLIMP_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>_MSC_VER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>_NDXLIMP_<sp/>__declspec(dllimport)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#define<sp/>_NDXLIMP_<sp/>__attribute__((dllimport))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif<sp/></highlight><highlight class="comment">//<sp/>_MSC_VER</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>NDXL_STATIC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="group__ndxl__err_1ga19dddd4e82c8c4618a4b1c759389620f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NDXL_OK<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NDXL_ERR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NDXL_VALUE_ERR<sp/><sp/><sp/><sp/><sp/><sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NDXL_ARG_ERR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230" refid="group__ndxl__err_1ga47f4eed5c635910039ece338f536b88a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NDXL_SIM_ERR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;C&quot;</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247" refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref>()<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263" refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/>const<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>const<sp/>_CDECL<sp/><ref refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" kindref="member">ndxlGetLastErrorMsg</ref>()<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274" refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" kindref="member">ndxlPrintError</ref>()<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="296" refid="group__ndxl__err_1gae0f32492efbd78f52d3ed640d0805349" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__ndxl__err_1gae0f32492efbd78f52d3ed640d0805349" kindref="member">ndxlRaiseError</ref>(_In_<sp/>const<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_Code,<sp/>_In_z_<sp/>const<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>const<sp/>_Msg)<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326" refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/>const<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>()<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334" refid="group__lib__mgmt_1ga7bc65ca258889410dbfd9cff62edcf08" refkind="member"><highlight class="normal"><ref refid="ndxlcore_8h_1aab6ce64135d6f25ac37c5aeef24f7a3c" kindref="member">_NDXLIMP_</ref><sp/>const<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>_CDECL<sp/><ref refid="group__lib__mgmt_1ga7bc65ca258889410dbfd9cff62edcf08" kindref="member">ndxlGetNetworkCount</ref>()<sp/>_NOEXCEPT;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><ref refid="ndxlcore_8h_1a8c6d995a912085dbc89d3d542e2ddba8" kindref="member">_NDXL_BEGIN</ref></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">network;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">channel;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">vertex;</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">edge;</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>get_last_error_code()<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>get_last_error_msg()<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__ndxl__err_1ga7ed0ec0987f06de2cc78458f0f150002" kindref="member">ndxlGetLastErrorMsg</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>get_network_count()<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__lib__mgmt_1ga7bc65ca258889410dbfd9cff62edcf08" kindref="member">ndxlGetNetworkCount</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_error()<sp/>noexcept<sp/>{<sp/><ref refid="group__ndxl__err_1ga2091f6acf85227ca08a16369595c5bff" kindref="member">ndxlPrintError</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>raise_error(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>_Code,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>_Msg)<sp/></highlight><highlight class="keyword">noexcept</highlight><highlight class="normal"><sp/>{<sp/><ref refid="group__ndxl__err_1gae0f32492efbd78f52d3ed640d0805349" kindref="member">ndxlRaiseError</ref>(_Code,<sp/>_Msg);<sp/>}</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>init()<sp/>noexcept<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="group__lib__mgmt_1gaf795d2bbc114d928901bc9700830df4e" kindref="member">ndxlInit</ref>();<sp/>}</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><ref refid="ndxlcore_8h_1ad7b7e61cbd494c708a56b1e0fb01e85e" kindref="member">_NDXL_END</ref></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__cplusplus</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"></highlight></codeline>
+<codeline lineno="362"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>_NDXLCORE_</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxlcore.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,513 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="crosslang" kind="page">
+    <compoundname>crosslang</compoundname>
+    <title>Cross-Language Interoperability</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="crosslang_1md_src_2cross-language"/></para>
+<para>As we eluded to earlier, the architecture of NDXL is designed with two core concepts in mind, namely, maximum user control, and programming language-independence. The raw C functions therefore expose many parameters, most of which are unusued most of the time, and the whole API is structured around only primitive and opaque types, making direct usage thereof very verbose. For these reasons, the intended use of NDXL is a standalone library that can be imported into and used from other programming languages, with those language-specific bindings handling much of the boilerplate code. This page demonstrates this process, using the <ulink url="https://pypi.org/project/ndxl/">Python version</ulink> of NDXL as an example, the source code of which can be found on <ulink url="https://github.com/NonlinearC/NDXL/tree/main/bindings/python">GitHub</ulink>.</para>
+<para><simplesect kind="note"><para>To avoid clutter and repetition, we will not show every file and function in the library. Instead, we stick to core concepts, design philosophy, and the basics of the &quot;how to import&quot; procedure.</para>
+</simplesect>
+</para>
+<sect1 id="crosslang_1autotoc_md22">
+<title>Design Framework</title><para>To import NDXL into another programming language, we need a foreign library interface in that language that handles external library loading, symbol exposure, and data type conversion. This interface is usually in the form of language-specific functionality (e.g., <computeroutput>dllimport</computeroutput> in C/C++), or a package that mediates the operations (e.g., <ulink url="https://docs.python.org/3/library/ctypes.html">ctypes</ulink> in Python; <ulink url="https://docs.julialang.org/en/v1/stdlib/Libdl/">Libdl</ulink> in Julia). We then make use of the interface to</para>
+<para><itemizedlist>
+<listitem><para>Define the opaque types and function signatures exported in NDXL</para>
+</listitem><listitem><para>Construct wrapper classes that operate on the memory held by the opaque objects</para>
+</listitem><listitem><para>Construct wrapper functions that interface with the API functions using the wrapper classes</para>
+</listitem><listitem><para>Export the wrapper classes and functions as a more user-friendly interface so the user does not concern about things like memory management</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="note"><para>Perhaps most crucially, because NDXL manages its own memory, we do not want our wrapper classes &quot;managing&quot; the underlying memory so much as &quot;simply using&quot; it. We distinguish between the destructor of a wrapper class, which simply releases its handle on the underlying object memory, and the C destructor of the object itself e.g., <ref refid="group__network__creation_1ga41c3dace543bac6ff2d0597bd5cb03e1" kindref="member">ndxlDestroyNetwork()</ref>.</para>
+</simplesect>
+Almost always will the dynamic versions (<computeroutput>NDXL.dll</computeroutput>, <computeroutput>libNDXL.so</computeroutput>, <computeroutput>libNDXL.dylib</computeroutput>) of NDXL be used from the foreign library interface. Since NDXL supports Windows, Unix, and x86-64 macOS operating systems, we also need to detect the operating system and load the corresponding library file. The wrapper code is ideally platform independent maintatining NDXL&apos;s &quot;write once, run anywhere&quot; design semantic.</para>
+</sect1>
+<sect1 id="crosslang_1autotoc_md23">
+<title>Loading the Library</title><para>In Python, we make use of the <computeroutput>pathlib</computeroutput> and <computeroutput>platform</computeroutput> libraries to detect, respectively</para>
+<para><itemizedlist>
+<listitem><para>Where on the computer we are (path)</para>
+</listitem><listitem><para>What operating system is currently running</para>
+</listitem></itemizedlist>
+</para>
+<para>Using that, we extract the appropriate library file name relative to the current path, warning the user if an unsupported operating system is detected. In <computeroutput>core.py</computeroutput>, we load the dynamic library once using the <computeroutput>ctypes</computeroutput> library; we will use the <computeroutput>lib</computeroutput> variable throughout the rest of the API to interface with the library symbols.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">from</highlight><highlight class="normal"><sp/>pathlib<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>Path</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>ctypes</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>numpy<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>np</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>platform</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>Load<sp/>library<sp/>from<sp/>relative<sp/>path</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">_cwd<sp/>=<sp/>Path(__file__).resolve().parent</highlight></codeline>
+<codeline><highlight class="normal">_sysname<sp/>=<sp/>platform.system()</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_sysname<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;Windows&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>libname<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;NDXL.dll&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>_sysname<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;Linux&quot;</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>libname<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;libNDXL.so&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>(_sysname<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;Darwin&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(platform.machine()<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;x86_64&quot;</highlight><highlight class="normal">):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>libname<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;libNDXL.dylib&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>OSError(f</highlight><highlight class="stringliteral">&quot;Unsupported<sp/>platform:<sp/>{_sysname}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal">lib<sp/>=<sp/>ctypes.CDLL(str(_cwd<sp/>/<sp/></highlight><highlight class="stringliteral">&quot;lib&quot;</highlight><highlight class="normal"><sp/>/<sp/>libname))</highlight></codeline>
+</programlisting></para>
+<para>Since we&apos;re in <computeroutput>core.py</computeroutput>, this is the ideal place to put all &quot;core library functionality&quot; such as error codes and opaque object definitions. We use <computeroutput>ctypes.Structure</computeroutput> to define a C <computeroutput>struct</computeroutput>, but leave the corresponding Python class empty to indicate its definition is opaque. We then create the &quot;pointer to object&quot; types using <computeroutput>ctypes.POINTER</computeroutput> on the empty classes.</para>
+<para><programlisting filename=".py"><codeline><highlight class="comment">#<sp/>Error<sp/>definitions<sp/>from<sp/>library<sp/>header</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXL_OK<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">NDXL_ERR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>-1</highlight></codeline>
+<codeline><highlight class="normal">NDXL_VALUE_ERR<sp/><sp/>=<sp/>1</highlight></codeline>
+<codeline><highlight class="normal">NDXL_ARG_ERR<sp/><sp/><sp/><sp/>=<sp/>2</highlight></codeline>
+<codeline><highlight class="normal">NDXL_SIM_ERR<sp/><sp/><sp/><sp/>=<sp/>3</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>NDXL<sp/>object<sp/>definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">NDXLNetwork(ctypes.Structure):<sp/></highlight><highlight class="keyword">pass</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXLNetwork_p<sp/>=<sp/>ctypes.POINTER(NDXLNetwork)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">NDXLChannel(ctypes.Structure):<sp/></highlight><highlight class="keyword">pass</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXLChannel_p<sp/>=<sp/>ctypes.POINTER(NDXLChannel)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">NDXLVertex(ctypes.Structure):<sp/></highlight><highlight class="keyword">pass</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXLVertex_p<sp/>=<sp/>ctypes.POINTER(NDXLVertex)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">NDXLEdge(ctypes.Structure):<sp/></highlight><highlight class="keyword">pass</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXLEdge_p<sp/>=<sp/>ctypes.POINTER(NDXLEdge)</highlight></codeline>
+</programlisting></para>
+<para>When we loaded the library using <computeroutput>ctypes.CDLL</computeroutput>, all exported symbols were automatically detected and added to <computeroutput>lib</computeroutput> by name. However, <computeroutput>ctypes</computeroutput> knows only of the functions&apos; existence, not their signatures or return values. We must specify these by setting each function&apos;s <computeroutput>restype</computeroutput> (return type) and <computeroutput>argtypes</computeroutput> (parameters) properties.</para>
+<para><programlisting filename=".py"><codeline><highlight class="comment">#<sp/>NDXL<sp/>core<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetLastErrorCode.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetLastErrorCode.argtypes<sp/>=<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetLastErrorMsg.restype<sp/>=<sp/>ctypes.c_char_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetLastErrorMsg.argtypes<sp/>=<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkCount.restype<sp/>=<sp/>ctypes.c_size_t</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkCount.argtypes<sp/>=<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlPrintError.restype<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlPrintError.argtypes<sp/>=<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlRaiseError.restype<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlRaiseError.argtypes<sp/>=<sp/>[ctypes.c_int,<sp/>ctypes.c_char_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlInit.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlInit.argtypes<sp/>=<sp/>[]</highlight></codeline>
+</programlisting></para>
+<para>Of course, we do not want to use these functions with pure C types like <computeroutput>const char*</computeroutput>, but with Python types like <computeroutput>str</computeroutput>. This is where our wrapper functions come in, mediating the translation between the languages.</para>
+<para><programlisting filename=".py"><codeline><highlight class="comment">#<sp/>Wrapper<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">libinit():</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlInit()</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">get_last_error_code():</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlGetLastErrorCode()</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">get_last_error_msg():</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlGetLastErrorMsg().decode(</highlight><highlight class="stringliteral">&apos;utf-8&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">network_count():</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlGetNetworkCount()</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">print_error():</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>lib.ndxlPrintError()</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">raise_error(code,<sp/>msg):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>lib.ndxlRaiseError(code,<sp/>msg.encode(</highlight><highlight class="stringliteral">&apos;utf-8&apos;</highlight><highlight class="normal">))</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="crosslang_1autotoc_md24">
+<title>Defining Class-Specific Functions</title><para>The files <computeroutput>network.py</computeroutput>, <computeroutput>channel.py</computeroutput>, <computeroutput>vertex.py</computeroutput>, and <computeroutput>edge.py</computeroutput> each define their own wrapper classes for the corresponding NDXL objects. They begin by specifying the <computeroutput>restype</computeroutput> and <computeroutput>argtypes</computeroutput> properties of each function pertaining to the eventual wrapper object; basically, whatever is in <computeroutput><ref refid="ndxl__network_8h" kindref="compound">ndxl_network.h</ref></computeroutput> will have a corresponding <computeroutput>ctypes</computeroutput> signature and wrapper in <computeroutput>network.py</computeroutput>, and so forth. Again, to avoid clutter, we will only show a few functions here, but the design philosophy remains the same throughout all the Python wrapper files.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">from</highlight><highlight class="normal"><sp/>__future__<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>annotations</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>.core<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>*</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>Callbacks<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">NDXLNetworkCallback<sp/>=<sp/>ctypes.CFUNCTYPE(ctypes.c_int,<sp/>NDXLNetwork_p,<sp/>ctypes.c_double,<sp/>ctypes.c_void_p)</highlight></codeline>
+<codeline><highlight class="normal">NoneNCb<sp/>=<sp/><ref refid="group__network__callbacks_1ga791bb7d3068fd4f39c72846ce7645400" kindref="member">NDXLNetworkCallback</ref>(0)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Callbacks<sp/>|<sp/>constructor<sp/>and<sp/>destructor<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlCreateNetwork.restype<sp/>=<sp/>NDXLNetwork_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlCreateNetwork.argtypes<sp/>=<sp/>[ctypes.c_void_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlDestroyNetwork.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlDestroyNetwork.argtypes<sp/>=<sp/>[ctypes.POINTER(NDXLNetwork_p)]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Constructor<sp/>and<sp/>destructor<sp/>|<sp/>getters<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkOrder.restype<sp/>=<sp/>ctypes.c_size_t</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkOrder.argtypes<sp/>=<sp/>[NDXLNetwork_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkParams.restype<sp/>=<sp/>ctypes.c_void_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkParams.argtypes<sp/>=<sp/>[NDXLNetwork_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkTime.restype<sp/>=<sp/>ctypes.c_double</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkTime.argtypes<sp/>=<sp/>[NDXLNetwork_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkVertices.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkVertices.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.POINTER(NDXLVertex_p)]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Getters<sp/>|<sp/>setters<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlSetNetworkParams.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlSetNetworkParams.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.c_void_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Setters<sp/>|<sp/>traversal<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkFirstVertex.restype<sp/>=<sp/>NDXLVertex_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkFirstVertex.argtypes<sp/>=<sp/>[NDXLNetwork_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkLastVertex.restype<sp/>=<sp/>NDXLVertex_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkLastVertex.argtypes<sp/>=<sp/>[NDXLNetwork_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkNextVertex.restype<sp/>=<sp/>NDXLVertex_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkNextVertex.argtypes<sp/>=<sp/>[NDXLVertex_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkPreviousVertex.restype<sp/>=<sp/>NDXLVertex_p</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlGetNetworkPreviousVertex.argtypes<sp/>=<sp/>[NDXLVertex_p]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Traversal<sp/>|<sp/>simulation<sp/>vvvvv</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateRalston.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateRalston.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>NDXLNetworkCallback]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateDopri.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateDopri.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.POINTER(ctypes.c_double),<sp/>ctypes.c_size_t,<sp/>NDXLNetworkCallback]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateHeun.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateHeun.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.POINTER(ctypes.c_double),<sp/>ctypes.c_size_t,<sp/>NDXLNetworkCallback]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateRadau.restype<sp/>=<sp/>ctypes.c_int</highlight></codeline>
+<codeline><highlight class="normal">lib.ndxlNetworkSimulateRadau.argtypes<sp/>=<sp/>[NDXLNetwork_p,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.c_double,<sp/>ctypes.POINTER(ctypes.c_double),<sp/>ctypes.c_size_t,<sp/>NDXLNetworkCallback]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">#<sp/>^^^^^<sp/>Simulation</highlight></codeline>
+</programlisting></para>
+<para>This is where the personal flavour element of wrapper library design comes in: one needs to decide how and when to call constructors, destructors, iterators, etc, so that the interface remains memory safe but intuitive. For example, because agents and noise channels in NDXL all belong to a particular host network, we made the network class in Python responsible for:</para>
+<para><itemizedlist>
+<listitem><para>Creating agents and noise channels</para>
+</listitem><listitem><para>Storing created objects so that the user can ignore constructor return values</para>
+</listitem><listitem><para>Preserving the <computeroutput>ctypes</computeroutput> wrapper pointers</para>
+</listitem><listitem><para>Handling simulation parameters via a common <computeroutput>simulate()</computeroutput> function</para>
+</listitem></itemizedlist>
+</para>
+<para>Each object is also responsible for storing its own parameters pointer to by their <computeroutput>void* params</computeroutput> to ensure the pointer remains valid as long as the object is alive. Repeated references to the same object simply share the underlying <computeroutput>void* params</computeroutput> memory, which only gets garbage collected when the final object pointing to it releases its handle on it.</para>
+<para>The final bullet was an ease-of-use choice; the average user does not necessarily care what the underlying numerical method is, nor its numerical properties. They just want to get a simulation up and running as quickly and efficiently as possible, worrying about the details of the procedure later (e.g., switching to a stiff solver if the dynamics necessitate it). To facilitate this process, we had to ensure that</para>
+<para><itemizedlist>
+<listitem><para>The user supplied a valid simulation method for the <computeroutput>method</computeroutput> argument</para>
+</listitem><listitem><para>An appropriate default method is chosen if none is provided</para>
+</listitem><listitem><para>That method-specific parameters are passed (for example, one cannot supply a step size to an adaptive method, or an absolute tolerance to a static method)</para>
+</listitem></itemizedlist>
+</para>
+<para>We therefore defined several helper classes that combine the simulation method and arguments it requires, along with default values for those arguments where applicable.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">class<sp/></highlight><highlight class="normal">simulationmethod:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__init__(self,<sp/>func,<sp/>static,<sp/>kwdef):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._func<sp/>=<sp/>func</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._static<sp/>=<sp/>static</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._kwdef<sp/>=<sp/>kwdef</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">func(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._func</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">kwdef(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._kwdef</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">static(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._static</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">methodnames(type):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">ralston(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>simulationmethod(lib.ndxlNetworkSimulateRalston,<sp/></highlight><highlight class="keyword">True</highlight><highlight class="normal">,<sp/>(0.1,))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">dopri(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>simulationmethod(lib.ndxlNetworkSimulateDopri,<sp/></highlight><highlight class="keyword">False</highlight><highlight class="normal">,<sp/>(1e-6,<sp/>1e-3))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">heun(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>simulationmethod(lib.ndxlNetworkSimulateHeun,<sp/></highlight><highlight class="keyword">False</highlight><highlight class="normal">,<sp/>(1e-3,<sp/>1e-3))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">radau(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>simulationmethod(lib.ndxlNetworkSimulateRadau,<sp/></highlight><highlight class="keyword">False</highlight><highlight class="normal">,<sp/>(1e-8,<sp/>1e-6))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Get_method_by_name(self,<sp/>name):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>re.match(</highlight><highlight class="stringliteral">r&quot;(?i)ralston&quot;</highlight><highlight class="normal">,<sp/>name):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self.ralston</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>re.match(</highlight><highlight class="stringliteral">r&quot;(?i)(dopri)|(dormand(-|<sp/>)?prince)&quot;</highlight><highlight class="normal">,<sp/>name):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self.dopri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>re.match(</highlight><highlight class="stringliteral">r&quot;(?i)heun((-|<sp/>)?euler)?&quot;</highlight><highlight class="normal">,<sp/>name):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self.heun</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>re.match(</highlight><highlight class="stringliteral">r&quot;(?i)radau((ii)|2a)?&quot;</highlight><highlight class="normal">,<sp/>name):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self.radau</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">methods(metaclass=methodnames):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">pass</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>methods</computeroutput> interface allows the user to pass either a <computeroutput>simulationmethod</computeroutput> directly e.g., <computeroutput>ndxl.methods.dopri</computeroutput>, or by name e.g., <computeroutput>"ralston"</computeroutput>.</para>
+</sect1>
+<sect1 id="crosslang_1autotoc_md25">
+<title>Defining the Class</title><para>The <computeroutput>network</computeroutput> class can now be designed. The constructor takes in a raw <ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> pointer and its corresponding <computeroutput>void* params</computeroutput> for reasons we will see later with callbacks. It also registers the network with the class&apos; internal <computeroutput>nwkdict</computeroutput> dictionary, but only if the pointer does not exist yet. The destructor then simply releases handles on the underlying C memory, in line with the design choice of &quot;memory ownership&quot; vs &quot;memory usage&quot;. Networks are created using an external factory function, <computeroutput>create_network()</computeroutput>.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">class<sp/></highlight><highlight class="normal">network:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>nwkdict<sp/>=<sp/>dict()</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__init__(self,<sp/>ptr,<sp/>args):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._ptr<sp/>=<sp/>ptr</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._pptr<sp/>=<sp/>args</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._params<sp/>=<sp/>ctypes.cast(self._pptr,<sp/>ctypes.POINTER(ctypes.py_object)).contents.value</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._vdict<sp/>=<sp/>self._params[1]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._edict<sp/>=<sp/>self._params[2]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._cdict<sp/>=<sp/>self._params[3]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>self._Int_ptr<sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>network.nwkdict:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>network.nwkdict[self._Int_ptr]<sp/>=<sp/>self</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__del__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._ptr<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._pptr<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._params<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">create_network(args=None):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>_args<sp/>=<sp/>()<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>args<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>((args,)<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.isscalar(args)<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>copy.deepcopy(args))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>_pptr<sp/>=<sp/>ctypes.cast(ctypes.pointer(ctypes.py_object([</highlight><highlight class="keywordtype">None</highlight><highlight class="normal">,<sp/>dict(),<sp/>dict(),<sp/>dict(),<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">,<sp/>_args])),<sp/>ctypes.c_void_p)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>network(lib.ndxlCreateNetwork(_pptr),<sp/>_pptr)</highlight></codeline>
+</programlisting></para>
+<para>We then define some comparison dunder methods so we can do C-like comparisons between network pointers, and stringify dunder methods for printing the class to an output stream.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">def<sp/></highlight><highlight class="normal">__bool__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bool(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__eq__(self,<sp/>nwk):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>isinstance(nwk,<sp/>network):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._Int_ptr<sp/>==<sp/>nwk._Int_ptr</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">False</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__ne__(self,<sp/>nwk):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>isinstance(nwk,<sp/>network):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._Int_ptr<sp/>!=<sp/>nwk._Int_ptr</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">False</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__hash__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>hash(self._Int_ptr)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__str__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;&apos;&lt;ndxl.network<sp/>object<sp/>at<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>f</highlight><highlight class="stringliteral">&quot;{id(self._Int_ptr):#0{int(platform.architecture()[0][:-3])<sp/>//<sp/>4<sp/>+<sp/>2}X}&quot;</highlight><highlight class="normal"><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>{&apos;order&apos;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>str(lib.ndxlGetNetworkOrder(self._ptr))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&apos;size&apos;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>str(lib.ndxlGetNetworkSize(self._ptr))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>&apos;time&apos;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>str(lib.ndxlGetNetworkTime(self._ptr))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;}&gt;&apos;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">__repr__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>f</highlight><highlight class="stringliteral">&quot;NDXL<sp/>network\n============\n\nVertices<sp/>(order):<sp/>{lib.ndxlGetNetworkOrder(self._Int_ptr)}\nEdges<sp/>(size):<sp/>{lib.ndxlGetNetworkSize(self._ptr)}\nTime:<sp/>{lib.ndxlGetNetworkTime(self._ptr)}\n&quot;</highlight></codeline>
+</programlisting></para>
+<para>We also provide some class management methods for handling the pointers and internal errors stored/raised by NDXL.</para>
+<para><simplesect kind="warning"><para>These methods should <bold>NEVER</bold> be called by the user, as they are purely for internal resource management.</para>
+</simplesect>
+<programlisting filename=".py"><codeline><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Deregister_channel(self,<sp/>cid):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>del<sp/>self._cdict[cid]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Deregister_edge(self,<sp/>eid):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>del<sp/>self._edict[eid]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Deregister_vertex(self,<sp/>vid):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>del<sp/>self._vdict[vid]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Set_error(self,<sp/>err):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>self._params[-2]<sp/>=<sp/>err</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_Int_ptr(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ctypes.cast(self._ptr,<sp/>ctypes.c_void_p).value</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="crosslang_1autotoc_md26">
+<title>Class Properties and Object Constructors</title><para>Most of the getter and setter functions, and the destructor <computeroutput>destroy()</computeroutput>, interface with and return values directly from the C API, while the traversal functions simply wrap the traversed objects in the Python classes.</para>
+<para><programlisting filename=".py"><codeline><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">c_ptr(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._ptr</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">destroy(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>del<sp/>network.nwkdict[self._Int_ptr]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_res<sp/>=<sp/>lib.ndxlDestroyNetwork(ctypes.pointer(self._ptr))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>del<sp/>self._pptr</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>del<sp/>self._params</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_res</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">first_vertex(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>.vertex<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>vertex</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_vert<sp/>=<sp/>lib.ndxlGetNetworkFirstVertex(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_vert:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>vertex(_vert,<sp/>lib.ndxlGetVertexParams(_vert))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">last_vertex(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>.vertex<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>vertex</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_vert<sp/>=<sp/>lib.ndxlGetNetworkLastVertex(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_vert:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>vertex(_vert,<sp/>lib.ndxlGetVertexParams(_vert))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">order(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlGetNetworkOrder(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">params(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>self._params[-1]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">time(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lib.ndxlGetNetworkTime(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">vertices(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>.vertex<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>vertex</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_vert<sp/>=<sp/>lib.ndxlGetNetworkFirstVertex(self._ptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>_vert:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">yield</highlight><highlight class="normal"><sp/>vertex(_vert,<sp/>lib.ndxlGetVertexParams(_vert))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_vert<sp/>=<sp/>lib.ndxlGetNetworkNextVertex(_vert)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">@property</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">vertex_list(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>list(self.vertices)</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>vertices</computeroutput> and <computeroutput>vertex_list</computeroutput> functions serve similar but distinct purposes: the former is a Python generator that iterates over the vertices in a network, evaluating each &quot;next&quot; vertex only when needed. This is useful for operating on each vertex in sequence, but <bold>should not be used for destroying vertices</bold>, as this will invalidate the underlying pointer and cause <ref refid="group__network__traversal_1gab9fecd9843a351db1ab4a355ef840faf" kindref="member">`ndxlGetNetworkNextVertex(_vert)`</ref> to fail. The latter is a fully evaluated Python list containing the vertex objects, useful for grabbing a list once and then performing repeated operations on them. For destroying vertices in sequence, the list should be used instead of the generator, as the list does not rely on getting the &quot;next&quot; vertex pointer.</para>
+<para>Creating vertices is done through the network&apos;s <computeroutput>create_vertex()</computeroutput> method, which registers the vertex with its internal <computeroutput>_vdict</computeroutput> dictionary. The constructor also handles shaped and complex input arrays, and links the <computeroutput>dynamics</computeroutput>, <computeroutput>noise</computeroutput>, and <computeroutput>callback</computeroutput> functions of the vertex respectively to the Python dispatch functions <computeroutput>_vfunc_bridge</computeroutput>, <computeroutput>_vnoise_bridge</computeroutput>, and <computeroutput>_vcb_bridge</computeroutput> (see <computeroutput>vertex.py</computeroutput> in the <ulink url="https://github.com/NonlinearC/NDXL/tree/main/bindings/python">source code</ulink>).</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">def<sp/></highlight><highlight class="normal">create_vertex(self,<sp/>state=None,<sp/>dynamics=None,<sp/>noise=None,<sp/>channels=None,<sp/>cb=None,<sp/>args=None,<sp/>cplx=False):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">from</highlight><highlight class="normal"><sp/>.vertex<sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal"><sp/>vertex,<sp/>_vfunc_bridge,<sp/>_vnoise_bridge,<sp/>_vcb_bridge,<sp/>NoneVFn,<sp/>NoneVNz,<sp/>NoneVCb</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_state<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nstate<sp/>=<sp/>1</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_sstate<sp/>=<sp/>()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cplx<sp/>=<sp/>cplx</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_args<sp/>=<sp/>()<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>args<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>((args,)<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.isscalar(args)<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>copy.deepcopy(args))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>state<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_arr<sp/>=<sp/>np.array([state])<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.isscalar(state)<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>np.asarray(state)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_sstate<sp/>=<sp/>_arr.shape</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.issubdtype(_arr.dtype,<sp/>np.complexfloating)<sp/></highlight><highlight class="keywordflow">or</highlight><highlight class="normal"><sp/>cplx:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_st<sp/>=<sp/>_arr.flatten().astype(complex)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nstate<sp/>=<sp/>len(_st)<sp/>*<sp/>2</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_state<sp/>=<sp/>np.ctypeslib.as_ctypes(_st.view(float))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cplx<sp/>=<sp/></highlight><highlight class="keyword">True</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_st<sp/>=<sp/>_arr.flatten().astype(float)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nstate<sp/>=<sp/>len(_st)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_state<sp/>=<sp/>np.ctypeslib.as_ctypes(_st)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>channels<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>noise<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nchannels<sp/>=<sp/>0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cn<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nchannels<sp/>=<sp/>0<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_state<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>len(_state)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_carr<sp/>=<sp/>[</highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>_<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>range(_nchannels)]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cn<sp/>=<sp/>(NDXLChannel_p<sp/>*<sp/>_nchannels)(*_carr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_carr<sp/>=<sp/>np.array([channels])<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.isscalar(channels)<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>np.asarray(channels).flatten()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_carr<sp/>=<sp/>[(</highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_x<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_x.c_ptr)<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>_x<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>_carr]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nchannels<sp/>=<sp/>len(_carr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cn<sp/>=<sp/>(NDXLChannel_p<sp/>*<sp/>_nchannels)(*_carr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_pptr<sp/>=<sp/>ctypes.cast(ctypes.pointer(ctypes.py_object([dynamics,<sp/>noise,<sp/>cb,<sp/>_cplx,<sp/>_sstate,<sp/>_args])),<sp/>ctypes.c_void_p)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_vert<sp/>=<sp/>vertex(lib.ndxlCreateVertex(self._ptr,<sp/>_state,<sp/>_nstate,<sp/>NoneVFn<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>dynamics<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_vfunc_bridge,<sp/>NoneVNz<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>noise<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_vnoise_bridge,<sp/>_cn,<sp/>_nchannels,<sp/>NoneVCb<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>cb<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_vcb_bridge,<sp/>_pptr),<sp/>_pptr)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._vdict[_vert._Int_ptr]<sp/>=<sp/>_vert</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_vert</highlight></codeline>
+</programlisting></para>
+<para>Of course, error checking and input validation are yet to be added, as this is still the barebones implementation of an object constructor. Vertices can then be destroyed using their own <computeroutput>destroy()</computeroutput> destructors.</para>
+</sect1>
+<sect1 id="crosslang_1autotoc_md27">
+<title>Simulation</title><para>The final method we will show is the network&apos;s <computeroutput>simulate()</computeroutput> method, illustrating how method-specific keyword arguments are handled, and how the interface makes usage far simpler and less verbose than in C.</para>
+<para><programlisting filename=".py"><codeline><highlight class="keyword">def<sp/></highlight><highlight class="normal">simulate(self,<sp/>tspan,<sp/>method=None,<sp/>**simkwargs):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Ensure<sp/>tspan<sp/>is<sp/>a<sp/>numeric,<sp/>non-complex<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(tspan,<sp/>float))<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(tspan,<sp/>int)):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>numeric<sp/>value<sp/>for<sp/>tspan,<sp/>got<sp/>{tspan}<sp/>of<sp/>type<sp/>{type(tspan)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Use<sp/>DOPRI<sp/>method<sp/>by<sp/>default,<sp/>ensure<sp/>passed<sp/>method<sp/>is<sp/>one<sp/>of<sp/>the<sp/>NDXL<sp/>options</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>method<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_method<sp/>=<sp/>methods.dopri</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>isinstance(method,<sp/>simulationmethod):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_method<sp/>=<sp/>method</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">elif</highlight><highlight class="normal"><sp/>isinstance(method,<sp/>str):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_method<sp/>=<sp/>methods._Get_method_by_name(method.strip().lower())</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_method<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>ValueError(f</highlight><highlight class="stringliteral">&quot;Unknown<sp/>method<sp/>name<sp/>&apos;{method}&apos;.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>simulation<sp/>method<sp/>or<sp/>string<sp/>for<sp/>method,<sp/>got<sp/>{method}<sp/>of<sp/>type<sp/>{type(method)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Extract<sp/>simkwargs<sp/>based<sp/>on<sp/>whether<sp/>method<sp/>is<sp/>static<sp/>or<sp/>adaptive,<sp/>ensure<sp/>passed<sp/>parameters<sp/>are<sp/>of<sp/>correct<sp/>type</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_method.static:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_step<sp/>=<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;h&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;step&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;stepsize&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;step_size&quot;</highlight><highlight class="normal">,<sp/>_method.kwdef[0]))))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_step,<sp/>float))<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_step,<sp/>int)):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>numeric<sp/>value<sp/>for<sp/>step<sp/>size,<sp/>got<sp/>{_span}<sp/>of<sp/>type<sp/>{type(_span)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_atol<sp/>=<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;atol&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;abstol&quot;</highlight><highlight class="normal">,<sp/>_method.kwdef[0]))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_atol,<sp/>float))<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_atol,<sp/>int)):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>numeric<sp/>value<sp/>for<sp/>absolute<sp/>tolerance,<sp/>got<sp/>{_atol}<sp/>of<sp/>type<sp/>{type(_atol)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_rtol<sp/>=<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;rtol&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;reltol&quot;</highlight><highlight class="normal">,<sp/>_method.kwdef[1]))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_rtol,<sp/>float))<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_rtol,<sp/>int)):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>numeric<sp/>value<sp/>for<sp/>relative<sp/>tolerance,<sp/>got<sp/>{_rtol}<sp/>of<sp/>type<sp/>{type(_rtol)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_tstops<sp/>=<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;tstops&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;t_stops&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;timestops&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;time_stops&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">))))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_tstops<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nstops<sp/>=<sp/>0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_stops<sp/>=<sp/>[_tstops]<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>np.isscalar(_tstops)<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>list(_tstops)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>i,<sp/>_stop<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>enumerate(_stops):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_stop,<sp/>float))<sp/></highlight><highlight class="keywordflow">and</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>isinstance(_stop,<sp/>int)):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>numeric<sp/>values<sp/>for<sp/>time<sp/>stops,<sp/>got<sp/>{_stop}<sp/>of<sp/>type<sp/>{type(_stop)}<sp/>at<sp/>index<sp/>{i}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_stops[i]<sp/>=<sp/>float(_stop)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_nstops<sp/>=<sp/>len(_stops)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_tstops<sp/>=<sp/>(ctypes.c_double<sp/>*<sp/>_nstops)(*_stops)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Validate<sp/>callback</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cb<sp/>=<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;cb&quot;</highlight><highlight class="normal">,<sp/>simkwargs.pop(</highlight><highlight class="stringliteral">&quot;callback&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_cb<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>inspect.isfunction(_cb):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Expected<sp/>function<sp/>for<sp/>callback,<sp/>got<sp/>{_cb}<sp/>of<sp/>type<sp/>{type(_cb)}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_sig<sp/>=<sp/>inspect.signature(_cb)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/>_sig.bind(self,<sp/>0.,<sp/>*self._params[-1]):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>TypeError(f</highlight><highlight class="stringliteral">&quot;Callback<sp/>must<sp/>have<sp/>signature<sp/>cb(nwk,<sp/>t,<sp/>*args).&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Ensure<sp/>no<sp/>remaining<sp/>keywords<sp/>after<sp/>extraction</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>len(simkwargs)<sp/>&gt;<sp/>0:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>KeyError(f</highlight><highlight class="stringliteral">&quot;Got<sp/>unexpected<sp/>or<sp/>unsupported<sp/>keyword<sp/>argument<sp/>&apos;{next(iter(simkwargs))}&apos;.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">#<sp/>Run<sp/>simulation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._params[0]<sp/>=<sp/>_cb</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_method.static:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_result<sp/>=<sp/>_method.func(self._ptr,<sp/>tspan,<sp/>_step,<sp/>NoneNCb<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_cb<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_network_bridge)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_result<sp/>=<sp/>_method.func(self._ptr,<sp/>tspan,<sp/>_atol,<sp/>_rtol,<sp/>_tstops,<sp/>_nstops,<sp/>NoneNCb<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_cb<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>_network_bridge)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>self._params[-2]<sp/></highlight><highlight class="keywordflow">is</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">not</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_err<sp/>=<sp/>self._params[-2]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>self._params[-2]<sp/>=<sp/></highlight><highlight class="keywordtype">None</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>_err</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_result<sp/>!=<sp/>NDXL_OK:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>print_error()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">raise</highlight><highlight class="normal"><sp/>ValueError(f</highlight><highlight class="stringliteral">&quot;Simulation<sp/>exited<sp/>with<sp/>code<sp/>{get_last_error_code()}:<sp/>{get_last_error_msg()}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_result</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>_network_bridge</computeroutput> is a dispatcher function similar to what we saw previously with <computeroutput>_vfunc_bridge</computeroutput> and <computeroutput>_vcb_bridge</computeroutput>. Dispatcher functions analyse the calling object and its <computeroutput>void* params</computeroutput> for the Python-specific code to call (hence the verbose <computeroutput>_args</computeroutput> created in <computeroutput>create_network()</computeroutput>), creating a common function pointer that all the C objects use and avoiding overhead for multiple functions in Python.</para>
+<para><programlisting filename=".py"><codeline><highlight class="preprocessor">@NDXLNetworkCallback</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">def<sp/></highlight><highlight class="normal">_network_bridge(nwk,<sp/>time,<sp/>args):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>_n<sp/>=<sp/>network(nwk,<sp/>args)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_meta<sp/>=<sp/>ctypes.cast(args,<sp/>ctypes.POINTER(ctypes.py_object)).contents.value</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cb<sp/>=<sp/>_meta[0]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>_cb:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_userdata<sp/>=<sp/>_meta[-1]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_cb(_n,<sp/>time,<sp/>*_userdata)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">except</highlight><highlight class="normal"><sp/>BaseException<sp/></highlight><highlight class="keyword">as</highlight><highlight class="normal"><sp/>err:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_n._Set_error(err)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1</highlight></codeline>
+</programlisting></para>
+<para>We can see here the importance of <computeroutput>void* params</computeroutput> for storing all the object&apos;s metadata, as well as the return value for indicating an external failure in the Python function. Assuming you have created a network in Python, simulating it is now as easy as calling any of:</para>
+<para><programlisting filename=".py"><codeline><highlight class="normal">nwk.simulate(10.)</highlight></codeline>
+<codeline><highlight class="normal">nwk.simulate(10.,<sp/>cb=cb)</highlight></codeline>
+<codeline><highlight class="normal">nwk.simulate(10.,<sp/>atol=1e-5)</highlight></codeline>
+<codeline><highlight class="normal">nwk.simulate(10.,<sp/>atol=1e-7,<sp/>rtol=1e-2)</highlight></codeline>
+<codeline><highlight class="normal">nwk.simulate(10.,<sp/>method=</highlight><highlight class="stringliteral">&quot;ralston&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline><highlight class="normal">nwk.simulate(10.,<sp/>method=ndxl.methods.ralston,<sp/>step=0.05)</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <location file="src/cross-language.md"/>
+  </compounddef>
+</doxygen>

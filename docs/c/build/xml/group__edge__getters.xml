@@ -1,0 +1,643 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__edge__getters" kind="group">
+    <compoundname>edge_getters</compoundname>
+    <title>Getters</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__edge__getters_1ga56a4001f56a9f8c2978dfd7cbe4d4335" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__edge__dnc_1ga497617ccf30d07fdb6e08f13fb35ef05" kindref="member">NDXLEdgeCallback</ref></type>
+        <definition>NDXLEdgeCallback ndxlGetEdgeCallback</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeCallback</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the callback function associated with an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the callback of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the callback function associated with _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the callback function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__setters_1ga7a104912a974d0ff4de4a3968dae3633" kindref="member">ndxlSetEdgeCallback</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="285" column="20" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="285" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga9a94b25401f370a604ba1131ab87995f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetEdgeChannelCount</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeChannelCount</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the number of noise channels affecting an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the channel count of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the number of noise channels affecting _Edge.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL. </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="301" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="301" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga86b1645777ad4829da99a395a3b42157" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const int</type>
+        <definition>const int ndxlGetEdgeChannels</definition>
+        <argsstring>(NDXLEdge *_Edge, NDXLChannel **_Channels)</argsstring>
+        <name>ndxlGetEdgeChannels</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> **</type>
+          <declname>_Channels</declname>
+        </param>
+        <briefdescription>
+<para>Gets a list of all the noise channels affecting an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the noise channels of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="out">_Channels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to a user-allocated array of <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> pointers. The array must contain at least ndxlGetEdgeChannelCount(_Edge) elements. The function populates the array in-place.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Edge or _Channels are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise populates _Channels with the noise channel pointers associated with _Edge, and returns NDXL_OK.</para>
+</simplesect>
+<simplesect kind="note"><para>The caller retains ownership of the array, but not of the <ref refid="ndxlcore_8h_1a40b73c1a687ab1376515b42d4294c079" kindref="member">NDXLChannel</ref> objects referenced by its elements. These pointers refer to the original objects in the owning network of _Edge, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.</para>
+</simplesect>
+<simplesect kind="warning"><para>The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Channels is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga9a94b25401f370a604ba1131ab87995f" kindref="member">ndxlGetEdgeChannelCount</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="329" column="13" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="329" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga32aa08af9f090cb3651c91fe6716011f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double</type>
+        <definition>const double ndxlGetEdgeDelay</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeDelay</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the delay of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the delay of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the delay of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If the delay of _Edge is nonzero, ndxlGetEdgeRelativeState(_Edge) and ndxlGetVertexNeighbourState(_Vertex, _Edge) should be used instead of ndxlEdgeState(_Edge) and ndxlVertexState(ndxlVertexNeighbour(_Vertex, _Edge)) for getting the respective state vectors, as the former functions factor in the edge delay while the latter do not.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga9d08c32c646317343fb9e99b78e204eb" kindref="member">ndxlGetEdgeRelativeState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__getters_1gad7f8cbc780425384693f7e4163f51ed7" kindref="member">ndxlGetVertexNeighbourState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__vertex__functions_1ga1f59cebd8575f89020b590ba036006c8" kindref="member">ndxlVertexState</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="354" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="354" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga1524e771b7bbea6e1f5a66e5139d9114" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char</type>
+        <definition>const char ndxlGetEdgeDirected</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeDirected</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the directedness of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the directedness of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns 1 if the edge is directed, and 0 if the edge is undirected.</para>
+</simplesect>
+<simplesect kind="note"><para>If the edge is directed, ndxlGetEdgeRelativeState(_Edge, _Vertex) should be used instead of ndxlEdgeState(_Edge), as the former factors in the directedness and returns the zero-vector if queried from the <computeroutput>source</computeroutput> vertex, while the latter does not.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga9d08c32c646317343fb9e99b78e204eb" kindref="member">ndxlGetEdgeRelativeState</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="376" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="376" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga4b0faece419ea412b4506096337c4d72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__edge__dnc_1gaaa6e3ed5b81b15dcfafe1c21d41815a4" kindref="member">NDXLEdgeDynamics</ref></type>
+        <definition>NDXLEdgeDynamics ndxlGetEdgeDynamics</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeDynamics</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the dynamics function associated with an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the dynamics of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the dynamics function associated with _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the dynamics function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__setters_1gab27e3f0fea2363f9dc22fd6a92e7d362" kindref="member">ndxlSetEdgeDynamics</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="398" column="20" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="398" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1gad933029a0fb2ce04ad35d3da75bd466a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetEdgeFirstVertex</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeFirstVertex</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the <computeroutput>source</computeroutput> vertex of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the first vertex of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the <computeroutput>source</computeroutput> vertex of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If the edge is a self-loop, this is identical to calling ndxlGetEdgeSecondVertex(_Edge).</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga1cd64a902c4702ed87388ba9e4449fb7" kindref="member">ndxlGetEdgeSecondVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="419" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="419" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga7b872a26b82d1784daac83e1222b0174" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double *</type>
+        <definition>const double * ndxlGetEdgeInitialState</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeInitialState</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the initial state vector of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the initial state of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the initial state vector assigned to _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If the initial state vector was NULL, _Edge is assigned a zero-vector of length ndxlGetEdgeOrder(_Edge), meaning this function will still return a valid pointer containing the zero-vector.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1ga2d6bd43a6d934b6fbc8c3f0f1f66745d" kindref="member">ndxlGetEdgeOrder</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="441" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="441" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1gab02d477cbb3f43c7ebe64e32e83f96a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> *</type>
+        <definition>NDXLNetwork * ndxlGetEdgeNetwork</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeNetwork</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the owning network of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the network of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the <ref refid="group__ndxl__objects_1gaefd105209efdd9f61bea4c3f76770d37" kindref="member">NDXLNetwork</ref> pointer on which _Edge was created.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL. </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="457" column="15" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="457" declcolumn="15"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1gaea6db60d78d2de5b1c1a471775727983" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="group__edge__dnc_1ga751f34e2abaa42c496447193f3480e80" kindref="member">NDXLEdgeNoise</ref></type>
+        <definition>NDXLEdgeNoise ndxlGetEdgeNoise</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeNoise</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the noise function associated with an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the noise of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the noise function associated with _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as the noise function could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__setters_1ga1d420d681e8fd2b013bf6ac5fb954e8f" kindref="member">ndxlSetEdgeNoise</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="479" column="17" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="479" declcolumn="17"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga2d6bd43a6d934b6fbc8c3f0f1f66745d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const size_t</type>
+        <definition>const size_t ndxlGetEdgeOrder</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeOrder</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the size of an edge&apos;s state vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the order of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the size of the state vector of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If _State was NULL during construction, the edge is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in <ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge()</ref>.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="500" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="500" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1gafa36d7ca01f9a551808b73dafd2388e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * ndxlGetEdgeParams</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeParams</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the user-defined <computeroutput>void* _Params</computeroutput> of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the parameters of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the user-defined <computeroutput>void* _Params</computeroutput> of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>A return value of NULL does not necessarily indicate an error, as <computeroutput>void* _Params</computeroutput> could be NULL. If unsure, use <ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode()</ref> to check.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__ndxl__err_1ga431ccb893f54f2ce7fe5ead2a8abd3cf" kindref="member">ndxlGetLastErrorCode</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__setters_1ga11436b83042ee2c3812bd4b7fc42e3ea" kindref="member">ndxlSetEdgeParams</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="522" column="8" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="522" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga9d08c32c646317343fb9e99b78e204eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double *</type>
+        <definition>const double * ndxlGetEdgeRelativeState</definition>
+        <argsstring>(NDXLEdge *_Edge, NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlGetEdgeRelativeState</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Gets the time-delayed and directed state vector of an edge as seen by one of its vertices. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the relative state of.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The vertex from whose perspective the edge state vector is evaluated.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Edge or _Vertex are NULL, or _Edge is not connected to _Vertex, returns NULL, otherwise returns the delayed and directed state vector of the edge as seen by _Vertex.<itemizedlist>
+<listitem><para>If _Edge is directed and _Vertex is the <computeroutput>source</computeroutput> vertex of _Edge, always returns the zero-vector of the edge regardless of the delay.</para>
+</listitem><listitem><para>If _Edge is delayed, returns the zero-vector of the edge for t &lt; delay, and the current state vector for t greater than or equal to delay.</para>
+</listitem><listitem><para>If _Edge is neither directed nor delayed, returns the current state vector of _Edge.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="note"><para>If and only if both the delay of _Edge is zero and it is undirected, is this equivalent to calling ndxlEdgeState(_Edge).</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gafa88b2be61049bce770f14eeac651348" kindref="member">NDXL_VALUE_ERR</ref> : _Edge is not connected to _Vertex.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="551" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="551" declcolumn="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1ga1cd64a902c4702ed87388ba9e4449fb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+        <definition>NDXLVertex * ndxlGetEdgeSecondVertex</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeSecondVertex</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the <computeroutput>destination</computeroutput> vertex of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the second vertex of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns the <computeroutput>destination</computeroutput> vertex of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>If the edge is a self-loop, this is identical to calling ndxlGetEdgeFirstVertex(_Edge).</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__getters_1gad933029a0fb2ce04ad35d3da75bd466a" kindref="member">ndxlGetEdgeFirstVertex</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="573" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="573" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__getters_1gaea8df6de54f8eb323fd89b590cc5c7e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const double</type>
+        <definition>const double ndxlGetEdgeTime</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlGetEdgeTime</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Gets the local simulation time of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to retrieve the time of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns the local simulation time of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>The local simulation time only updates on a successful simulation step.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation" kindref="compound">Network Simulation</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="594" column="16" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="594" declcolumn="16"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Getter functions for querying edge properties. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

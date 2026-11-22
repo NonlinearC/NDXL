@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="group__edge__functions" kind="group">
+    <compoundname>edge_functions</compoundname>
+    <title>Functions</title>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="group__edge__functions_1ga0b8991772645a59dd9e72d5fadd9dc88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const char</type>
+        <definition>const char ndxlEdgeConnectsVertex</definition>
+        <argsstring>(NDXLEdge *_Edge, NDXLVertex *_Vertex)</argsstring>
+        <name>ndxlEdgeConnectsVertex</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <param>
+          <type><ref refid="ndxlcore_8h_1ad03a49b11a22416ba63273c4d7deb38b" kindref="member">NDXLVertex</ref> *</type>
+          <declname>_Vertex</declname>
+        </param>
+        <briefdescription>
+<para>Checks if an edge is connected to a vertex. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to query for vertex connectivity.</para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">_Vertex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The vertex to determine if _Edge is connected to.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If either _Edge or _Vertex are NULL, returns <ref refid="group__ndxl__err_1gae9261a8e1c9a6cebdc947ee5798cca1e" kindref="member">NDXL_ERR</ref>, otherwise returns a bitmask detailing the connection of _Edge to _Vertex:<itemizedlist>
+<listitem><para>0, if _Edge is not connected to _Vertex.</para>
+</listitem><listitem><para>1 (bit 0), if _Edge is connected to _Vertex.</para>
+</listitem><listitem><para>3 (bits 0 and 1), if _Edge is directed and _Vertex is the <computeroutput>source</computeroutput> vertex.</para>
+</listitem><listitem><para>5 (bits 0 and 2), if _Edge is directed and _Vertex is the <computeroutput>destination</computeroutput> vertex.</para>
+</listitem><listitem><para>7 (bits 0, 1, and 2) if _Edge is a self-loop.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem><listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Vertex is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__edge__creation_1ga64a610b6a899977bbf5722ca30f92114" kindref="member">ndxlCreateEdge</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="751" column="14" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="751" declcolumn="14"/>
+      </memberdef>
+      <memberdef kind="function" id="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double * ndxlEdgeState</definition>
+        <argsstring>(NDXLEdge *_Edge)</argsstring>
+        <name>ndxlEdgeState</name>
+        <param>
+          <type><ref refid="ndxlcore_8h_1aa30ac2f40da4dbe7d841088a78f957fe" kindref="member">NDXLEdge</ref> *</type>
+          <declname>_Edge</declname>
+        </param>
+        <briefdescription>
+<para>Provides direct access to the internal state vector of an edge. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">_Edge</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target edge to see the state of.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>If _Edge is NULL, returns NULL, otherwise returns a pointer to the internal state vector or, when called from within a dynamics function, the current Runge–Kutta stage vector of _Edge.</para>
+</simplesect>
+<simplesect kind="note"><para>When called outside a dynamics function, this function returns a pointer to the edge&apos;s primary state vector. When called from within a dynamics function, it instead returns a pointer to the current intermediate Runge–Kutta stage vector. This behaviour allows the same function to be used for directly modifying an edge&apos;s state outside integration and accessing its current integration stage during dynamics evaluation.</para>
+</simplesect>
+<simplesect kind="warning"><para>Direct modification of the returned vector is supported when it refers to the primary state vector. However, when called from within a dynamics function, the returned pointer refers to the intermediate Runge–Kutta stage vector. Modifying this vector directly is not intended for ordinary state updates and may interfere with the integration process.</para>
+</simplesect>
+<simplesect kind="par"><title>Errors raised</title><para><itemizedlist>
+<listitem><para><ref refid="group__ndxl__err_1gaf6b8bdcb87bdd7944810152b510101e4" kindref="member">NDXL_ARG_ERR</ref> : _Edge is NULL.</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="group__network__simulation" kindref="compound">Network Simulation</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" line="776" column="10" declfile="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/ndxl_edge.h" declline="776" declcolumn="10"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Functions for operating on edges. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="dir_dc83d616b00c3c191ac86497d3ad64e4" kind="dir">
+    <compoundname>C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl</compoundname>
+    <innerfile refid="ndxl__channel_8h">ndxl_channel.h</innerfile>
+    <innerfile refid="ndxl__edge_8h">ndxl_edge.h</innerfile>
+    <innerfile refid="ndxl__network_8h">ndxl_network.h</innerfile>
+    <innerfile refid="ndxl__vertex_8h">ndxl_vertex.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/Users/ethan/Documents/IT/C/NDXL/NDXL/include/ndxl/"/>
+  </compounddef>
+</doxygen>

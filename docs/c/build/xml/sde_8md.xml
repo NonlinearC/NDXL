@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="sde_8md" kind="file" language="Markdown">
+    <compoundname>sde.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Adding<sp/>Stochasticity<sp/>{#sde}</highlight></codeline>
+<codeline><highlight class="normal">\note<sp/>This<sp/>page<sp/>assumes<sp/>familiarity<sp/>with<sp/>the<sp/>basic<sp/>layout<sp/>and<sp/>API<sp/>usage<sp/>described<sp/>in<sp/>the<sp/>main<sp/>@ref<sp/>examples<sp/>page.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>preceeding<sp/>examples<sp/>have<sp/>all<sp/>looked<sp/>at<sp/>vertices<sp/>whose<sp/>agents<sp/>evolve<sp/>deterministically<sp/>i.e.,<sp/>repeated<sp/>runs<sp/>of<sp/>the<sp/>same<sp/>simulation<sp/>result<sp/>in<sp/>the<sp/>same<sp/>outputs<sp/>and<sp/>have<sp/>the<sp/>same<sp/>analytical<sp/>solution.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>not<sp/>the<sp/>case<sp/>for<sp/>stochastic<sp/>differential<sp/>equations<sp/>(SDEs),<sp/>which<sp/>are<sp/>explicitly<sp/>designed<sp/>to<sp/>simulate<sp/>agents<sp/>that<sp/>have<sp/>an<sp/>element<sp/>of<sp/>randomness<sp/>in<sp/>their<sp/>dynamics.</highlight></codeline>
+<codeline><highlight class="normal">Before<sp/>we<sp/>can<sp/>begin<sp/>solving<sp/>SDEs,<sp/>we<sp/>need<sp/>to<sp/>understand<sp/>several<sp/>key<sp/>concepts<sp/>used<sp/>in<sp/>their<sp/>definitions.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Brownian<sp/>Path</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>random<sp/>fluctuations<sp/>in<sp/>an<sp/>SDE<sp/>are<sp/>assumed<sp/>to<sp/>follow<sp/>Brownian<sp/>motion,<sp/>and<sp/>the<sp/>individual<sp/>microscopic<sp/>fluctuations<sp/>over<sp/>time<sp/>are<sp/>collectively<sp/>referred<sp/>to<sp/>as<sp/>a<sp/>Wiener<sp/>path.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>system<sp/>can<sp/>have<sp/>multiple<sp/>Wiener<sp/>paths<sp/>simultaneously<sp/>influencing<sp/>its<sp/>stochastic<sp/>motion,<sp/>and<sp/>these<sp/>are<sp/>called<sp/>noise<sp/>channels.</highlight></codeline>
+<codeline><highlight class="normal">NDXL<sp/>explicitly<sp/>defines<sp/>a<sp/>single<sp/>noise<sp/>channel<sp/>via<sp/>the<sp/>@ref<sp/>NDXLChannel<sp/>object<sp/>i.e.,<sp/>each<sp/>@ref<sp/>NDXLChannel<sp/>is<sp/>an<sp/>independent<sp/>Wiener<sp/>process.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>makes<sp/>local<sp/>@ref<sp/>NDXLVertexNoise<sp/>&quot;noise<sp/>functions&quot;<sp/>in<sp/>NDXL<sp/>only<sp/>responsible<sp/>for<sp/>returning<sp/>the<sp/>\f$D^\prime\times<sp/>M^\prime\f$<sp/>diffusion<sp/>submatrix<sp/>of<sp/>the<sp/>agent<sp/>they<sp/>are<sp/>associated<sp/>with,<sp/>where<sp/>\f$D^\prime\f$<sp/>and<sp/>\f$M^\prime\f$<sp/>are<sp/>respectively<sp/>the<sp/>state<sp/>vector<sp/>cardinality<sp/>and<sp/>number<sp/>of<sp/>noise<sp/>channels<sp/>of<sp/>that<sp/>agent.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Drift<sp/>and<sp/>Diffusion</highlight></codeline>
+<codeline><highlight class="normal">An<sp/>SDE<sp/>for<sp/>a<sp/>\f$D\f$-dimensional<sp/>state<sp/>vector<sp/>\f$\vec{X}\f$<sp/>is<sp/>defined<sp/>most<sp/>generally<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>d\vec{X}<sp/>=<sp/>f(\vec{X},~t)dt<sp/>+<sp/>g(\vec{X},~t)dW</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Here,<sp/>\f$f\f$<sp/>is<sp/>called<sp/>the<sp/>deterministic<sp/>drift<sp/>function,<sp/>\f$g\f$<sp/>is<sp/>the<sp/>stochastic<sp/>diffusion<sp/>matrix,<sp/>and<sp/>\f$W\f$<sp/>(\f$dW\sim\mathcal{N}(0,~h)\f$)<sp/>is<sp/>a<sp/>Wiener<sp/>process<sp/>(increment).</highlight></codeline>
+<codeline><highlight class="normal">Multiple<sp/>\f$M\f$<sp/>independent<sp/>noise<sp/>sources<sp/>can<sp/>influence<sp/>the<sp/>system<sp/>simultaneously,<sp/>so<sp/>the<sp/>diffusion<sp/>matrix<sp/>has<sp/>dimensions<sp/>\f$D\times<sp/>M\f$,<sp/>whose<sp/>entries<sp/>\f$g_{ij}\f$<sp/>are<sp/>the<sp/>amplitude<sp/>of<sp/>noise<sp/>channel<sp/>\f$j\f$<sp/>on<sp/>component<sp/>\f$i\f$<sp/>of<sp/>the<sp/>state<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>interpretation<sp/>has<sp/>several<sp/>important<sp/>consequences<sp/>for<sp/>agent-based<sp/>modelling:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>single<sp/>noise<sp/>channel<sp/>can<sp/>influence<sp/>multiple<sp/>elements<sp/>of<sp/>the<sp/>same<sp/>state<sp/>vector</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>single<sp/>element<sp/>in<sp/>a<sp/>state<sp/>vector<sp/>can<sp/>be<sp/>influenced<sp/>by<sp/>multiple<sp/>noise<sp/>channels</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Agents<sp/>can<sp/>share<sp/>noise<sp/>channels<sp/>independently<sp/>of<sp/>their<sp/>dynamics<sp/>or<sp/>state<sp/>vectors</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Path<sp/>Preservation<sp/>and<sp/>RSwM</highlight></codeline>
+<codeline><highlight class="normal">For<sp/>static<sp/>stepping<sp/>algorithms<sp/>like<sp/>@ref<sp/>ndxlNetworkSimulateEuler<sp/>&quot;Euler-Maruyama&quot;,<sp/>steps<sp/>are<sp/>taken<sp/>to<sp/>be<sp/>successful<sp/>regardless<sp/>of<sp/>the<sp/>local<sp/>error<sp/>or<sp/>behaviour<sp/>of<sp/>the<sp/>Brownian<sp/>path.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>makes<sp/>them<sp/>far<sp/>more<sp/>inaccurate<sp/>than<sp/>their<sp/>adaptive<sp/>counterparts,<sp/>and<sp/>should<sp/>only<sp/>ever<sp/>be<sp/>used<sp/>as<sp/>a<sp/>&quot;preview&quot;<sp/>of<sp/>the<sp/>stochastic<sp/>output<sp/>(assuming<sp/>a<sp/>very<sp/>small<sp/>step<sp/>size<sp/>e.g.,<sp/>\f$h\sim10^{-5}\f$)<sp/>rather<sp/>than<sp/>a<sp/>complete<sp/>simulation<sp/>output.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Adaptive<sp/>algorithms<sp/>like<sp/>@ref<sp/>ndxlNetworkSimulateHeun<sp/>&quot;Heun-Euler&quot;<sp/>estimate<sp/>local<sp/>error<sp/>based<sp/>on<sp/>user-defined<sp/>tolerances,<sp/>and<sp/>this<sp/>is<sp/>where<sp/>the<sp/>stochasticity<sp/>of<sp/>the<sp/>system<sp/>becomes<sp/>problematic.</highlight></codeline>
+<codeline><highlight class="normal">If<sp/>a<sp/>step<sp/>is<sp/>rejected<sp/>in<sp/>a<sp/>deterministic<sp/>ODE,<sp/>we<sp/>know<sp/>it<sp/>was<sp/>because<sp/>the<sp/>difference<sp/>between<sp/>the<sp/>two<sp/>solutions<sp/>was<sp/>too<sp/>large<sp/>over<sp/>that<sp/>step,<sp/>and<sp/>the<sp/>step<sp/>is<sp/>simply<sp/>reduced<sp/>and<sp/>retried.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>SDEs,<sp/>however,<sp/>the<sp/>deterministic<sp/>drift<sp/>functions<sp/>could<sp/>agree<sp/>nearly<sp/>perfectly,<sp/>but<sp/>the<sp/>stochastic<sp/>diffusion<sp/>components<sp/>cause<sp/>the<sp/>paths<sp/>to<sp/>diverge<sp/>too<sp/>much,<sp/>raising<sp/>the<sp/>local<sp/>error.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>means<sp/>a<sp/>step<sp/>can<sp/>be<sp/>rejected<sp/>effectively<sp/>by<sp/>random<sp/>chance.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">However,<sp/>the<sp/>rejection<sp/>event<sp/>itself<sp/>cannot<sp/>simply<sp/>be<sp/>discarded<sp/>as<sp/>a<sp/>&quot;chance<sp/>effect&quot;;<sp/>if<sp/>we<sp/>simply<sp/>reject<sp/>the<sp/>step<sp/>and<sp/>retry<sp/>with<sp/>a<sp/>fresh<sp/>Wiener<sp/>increment,<sp/>we<sp/>lose<sp/>information<sp/>about<sp/>why<sp/>the<sp/>step<sp/>was<sp/>initially<sp/>rejected,<sp/>which<sp/>introduces<sp/>statistical<sp/>bias<sp/>into<sp/>the<sp/>Wiener<sp/>path<sp/>as<sp/>a<sp/>whole.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>where<sp/>an<sp/>algorithm<sp/>called<sp/>&lt;i&gt;Rejection<sp/>Sampling<sp/>with<sp/>Memory&lt;/i&gt;<sp/>(RSwM)<sp/>comes<sp/>in.</highlight></codeline>
+<codeline><highlight class="normal">Without<sp/>going<sp/>into<sp/>too<sp/>much<sp/>detail,<sp/>RSwM<sp/>constructs<sp/>a<sp/>&lt;i&gt;Brownian<sp/>bridge&lt;/i&gt;<sp/>between<sp/>the<sp/>rejected<sp/>step<sp/>and<sp/>previously<sp/>accepted<sp/>step,<sp/>which<sp/>allows<sp/>for<sp/>a<sp/>deterministic<sp/>interpolation<sp/>of<sp/>an<sp/>intermediate<sp/>step<sp/>that<sp/>should<sp/>be<sp/>attempted<sp/>first,<sp/>followed<sp/>by<sp/>a<sp/>step<sp/>that<sp/>takes<sp/>us<sp/>back<sp/>to<sp/>the<sp/>originally<sp/>rejected<sp/>time<sp/>point.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>preserves<sp/>the<sp/>statistical<sp/>integrity<sp/>and<sp/>distribution<sp/>properties<sp/>of<sp/>the<sp/>underlying<sp/>Wiener<sp/>process,<sp/>making<sp/>adaptive<sp/>stochastic<sp/>methods<sp/>far<sp/>more<sp/>suitable<sp/>for<sp/>actual<sp/>simulations<sp/>involving<sp/>SDEs.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>It&amp;ocirc;<sp/>and<sp/>Stratonovich<sp/>Interpretations</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>further<sp/>complication<sp/>with<sp/>SDE<sp/>solvers<sp/>is<sp/>the<sp/>calculus<sp/>behind<sp/>the<sp/>solving<sp/>method,<sp/>which<sp/>we<sp/>eluded<sp/>to<sp/>in<sp/>the<sp/>@ref<sp/>meth-stochastic<sp/>section<sp/>of<sp/>the<sp/>@ref<sp/>concepts<sp/>page.</highlight></codeline>
+<codeline><highlight class="normal">Briefly,<sp/>the<sp/>two<sp/>main<sp/>schemes<sp/>are<sp/>the<sp/>It&amp;ocirc<sp/>and<sp/>Stratonovich<sp/>interpretations,<sp/>and<sp/>the<sp/>differences<sp/>between<sp/>them<sp/>come<sp/>down<sp/>to<sp/>the<sp/>mathematical<sp/>properties<sp/>preserved:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>It&amp;ocirc;<sp/>evaluates<sp/>the<sp/>integral<sp/>on<sp/>the<sp/>left-hand<sp/>side<sp/>of<sp/>the<sp/>interval,<sp/>preserving<sp/>the<sp/>martingale<sp/>property<sp/>but<sp/>not<sp/>the<sp/>chain<sp/>rule</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Stratonovich<sp/>evaluates<sp/>the<sp/>integral<sp/>at<sp/>the<sp/>midpoint<sp/>of<sp/>the<sp/>interval,<sp/>preserving<sp/>the<sp/>chain<sp/>rule<sp/>but<sp/>not<sp/>the<sp/>martingale<sp/>property</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Fortunately,<sp/>switching<sp/>between<sp/>the<sp/>schemes<sp/>is<sp/>rather<sp/>simple,<sp/>requiring<sp/>only<sp/>a<sp/>correction<sp/>term<sp/>in<sp/>the<sp/>drift<sp/>function.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>&quot;drift<sp/>correction<sp/>term&quot;<sp/>is<sp/>defined<sp/>for<sp/>component<sp/>\f$i\f$<sp/>of<sp/>the<sp/>state<sp/>vector<sp/>\f$\vec{X}\f$<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\frac{1}{2}\displaystyle\sum_{j=1}^M{\displaystyle\sum_{j=1}^D{g_{kj}(\vec{X},~t)\frac{\partial<sp/>g_{ij}(\vec{X},~t)}{\partial<sp/>x_k}}}</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">If<sp/>solving<sp/>a<sp/>Stratonovich<sp/>equation<sp/>using<sp/>an<sp/>It&amp;ocirc;<sp/>solver,<sp/>add<sp/>the<sp/>correction<sp/>to<sp/>the<sp/>drift...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dX_i<sp/>=<sp/>\left[f_i(\vec{X},~t)<sp/>+<sp/>\frac{1}{2}\displaystyle\sum_{j=1}^M{\displaystyle\sum_{j=1}^D{g_{kj}(\vec{X},~t)\frac{\partial<sp/>g_{ij}(\vec{X},~t)}{\partial<sp/>x_k}}}\right]dt<sp/>+<sp/>\displaystyle\sum_{j=1}^M{g_{ij}(\vec{X},~t)dW_j}</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">...and<sp/>subtract<sp/>it<sp/>if<sp/>using<sp/>a<sp/>Stratonovich<sp/>solver<sp/>to<sp/>solve<sp/>an<sp/>It&amp;ocirc;<sp/>equation.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Particle<sp/>Ensemble</highlight></codeline>
+<codeline><highlight class="normal">Let<sp/>us<sp/>now<sp/>simulate<sp/>an<sp/>ensemble<sp/>of<sp/>Ornstein-Uhlenbeck<sp/>particles,<sp/>which<sp/>models<sp/>the<sp/>position<sp/>\f$x\f$<sp/>of<sp/>particle<sp/>\f$i\f$<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dx_i<sp/>=<sp/>-\Gamma<sp/>x_i{\rm<sp/>d}t<sp/>+<sp/>\sigma<sp/>dW_i.</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">From<sp/>the<sp/>equation,<sp/>we<sp/>can<sp/>see<sp/>that<sp/>all<sp/>particles<sp/>are<sp/>affected<sp/>by<sp/>only<sp/>one<sp/>Wiener<sp/>process,<sp/>but<sp/>the<sp/>process<sp/>driving<sp/>each<sp/>particle<sp/>is<sp/>unique.</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>start<sp/>by<sp/>defining<sp/>our<sp/>drift<sp/>and<sp/>diffusion<sp/>functions,<sp/>which<sp/>correspond<sp/>to<sp/>the<sp/>dynamics<sp/>and<sp/>noise<sp/>functions<sp/>in<sp/>NDXL,<sp/>respectively.</highlight></codeline>
+<codeline><highlight class="normal">Where<sp/>the<sp/>dynamics<sp/>function&apos;s<sp/>output<sp/>was<sp/>an<sp/>array<sp/>with<sp/>length<sp/>\f$D\f$,<sp/>the<sp/>noise<sp/>function&apos;s<sp/>output<sp/>is<sp/>a<sp/>flattened<sp/>matrix<sp/>(array)<sp/>with<sp/>dimensions<sp/>(length)<sp/>\f$D\times<sp/>M\f$</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">int<sp/>drift(NDXLVertex*<sp/>particle,<sp/>double*<sp/>dx,<sp/>const<sp/>double*<sp/>x,<sp/>double<sp/>t,<sp/>void*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>Gamma<sp/>=<sp/>((double*)p)[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dx[0]<sp/>=<sp/>-Gamma<sp/>*<sp/>x[0];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>diffusion(NDXLVertex*<sp/>particle,<sp/>double*<sp/>dg,<sp/>const<sp/>double*<sp/>x,<sp/>double<sp/>t,<sp/>void*<sp/>p)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>sigma<sp/>=<sp/>((double*)p)[1];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>dg[0]<sp/>=<sp/>sigma;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Because<sp/>each<sp/>particle&apos;s<sp/>Wiener<sp/>driver<sp/>is<sp/>unique,<sp/>we<sp/>do<sp/>not<sp/>have<sp/>to<sp/>create<sp/>any<sp/>noise<sp/>channels.</highlight></codeline>
+<codeline><highlight class="normal">Instead,<sp/>we<sp/>can<sp/>simply<sp/>specify<sp/>the<sp/>noise<sp/>function<sp/>and<sp/>number<sp/>of<sp/>noise<sp/>channels,<sp/>leaving<sp/>the<sp/>`_Channels`<sp/>argument<sp/>itself<sp/>`NULL`,<sp/>which<sp/>NDXL<sp/>interprets<sp/>as<sp/>&quot;create<sp/>`_Nchannels`<sp/>new<sp/>noise<sp/>channels&quot;<sp/>(see<sp/>@ref<sp/>ndxlCreateVertex()).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Define<sp/>Gamma,<sp/>sigma,<sp/>and<sp/>initial<sp/>position</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>Gs[2]<sp/>=<sp/>{<sp/>1.5,<sp/>1.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>x0<sp/>=<sp/>-1.0;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>1000<sp/>particles<sp/>all<sp/>starting<sp/>at<sp/>x0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1000;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndxlCreateVertex(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;x0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drift,<sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Dynamics</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>diffusion,<sp/><sp/>//<sp/>Noise</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>We<sp/>did<sp/>not<sp/>create<sp/>any<sp/>channels,<sp/>so<sp/>we<sp/>leave<sp/>this<sp/>as<sp/>NULL<sp/>to<sp/>specify<sp/>&quot;all<sp/>channels<sp/>must<sp/>be<sp/>new<sp/>and<sp/>independent&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Each<sp/>particle<sp/>is<sp/>driven<sp/>by<sp/>only<sp/>one<sp/>Wiener<sp/>process<sp/>(channel)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;Gs</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Because<sp/>our<sp/>network<sp/>has<sp/>stochastic<sp/>agents,<sp/>NDXL<sp/>will<sp/>raise<sp/>a<sp/>@ref<sp/>NDXL_SIM_ERR<sp/>if<sp/>we<sp/>try<sp/>to<sp/>simulate<sp/>the<sp/>network<sp/>using<sp/>one<sp/>of<sp/>the<sp/>deterministic<sp/>methods<sp/>shown<sp/>previously<sp/>(similarly,<sp/>one<sp/>cannot<sp/>use<sp/>the<sp/>stochastic<sp/>methods<sp/>on<sp/>a<sp/>purely<sp/>deterministic<sp/>network).</highlight></codeline>
+<codeline><highlight class="normal">As<sp/>explained<sp/>above,<sp/>we<sp/>want<sp/>to<sp/>use<sp/>an<sp/>adaptive<sp/>method<sp/>so<sp/>that<sp/>the<sp/>RSwM<sp/>algorithm&apos;s<sp/>path<sp/>preservation<sp/>is<sp/>in<sp/>effect.</highlight></codeline>
+<codeline><highlight class="normal">Similar<sp/>to<sp/>the<sp/>@ref<sp/>highorder<sp/>&quot;N-Body<sp/>example&quot;,<sp/>we<sp/>will<sp/>also<sp/>define<sp/>a<sp/>series<sp/>of<sp/>time<sp/>stops<sp/>at<sp/>which<sp/>to<sp/>take<sp/>snapshots<sp/>of<sp/>the<sp/>simulated<sp/>output.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>double<sp/>tstops[6]<sp/>=<sp/>{<sp/>2.0,<sp/>4.0,<sp/>6.0,<sp/>8.0,<sp/>10.0,<sp/>12.0<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlNetworkSimulateHeun(nwk,<sp/>14.0,<sp/>1e-3,<sp/>1e-3,<sp/>tstops,<sp/>6,<sp/>cb);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Specifying<sp/>noise<sp/>channels</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>will<sp/>modify<sp/>our<sp/>Ornstein-Uhlenbeck<sp/>ensemble<sp/>above<sp/>to<sp/>have<sp/>all<sp/>particles<sp/>driven<sp/>by<sp/>the<sp/>same<sp/>Wiener<sp/>process;<sp/>what<sp/>we<sp/>expect<sp/>is<sp/>the<sp/>initial<sp/>distribution<sp/>to<sp/>simply<sp/>change<sp/>position,<sp/>not<sp/>shape,<sp/>as<sp/>all<sp/>particles<sp/>are<sp/>perturbed<sp/>by<sp/>the<sp/>same<sp/>random<sp/>amount<sp/>each<sp/>time<sp/>step.</highlight></codeline>
+<codeline><highlight class="normal">To<sp/>achieve<sp/>this,<sp/>we<sp/>will<sp/>create<sp/>a<sp/>@ref<sp/>NDXLChannel<sp/>before<sp/>the<sp/>vertices<sp/>and<sp/>assign<sp/>it<sp/>as<sp/>the<sp/>only<sp/>channel<sp/>to<sp/>each<sp/>vertex&apos;s<sp/>`_Channels`<sp/>array.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">```c</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>ndxlInit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Define<sp/>NDXLChannel<sp/>object</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>NDXLChannel*<sp/>channel<sp/>=<sp/>ndxlCreateChannel(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,<sp/><sp/><sp/><sp/>//<sp/>Host<sp/>network;<sp/>channel<sp/>can<sp/>only<sp/>influence<sp/>vertices<sp/>and<sp/>edges<sp/>in<sp/>this<sp/>network</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL<sp/><sp/><sp/><sp/>//<sp/>No<sp/>extra<sp/>`void*<sp/>params`<sp/>data</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>1000<sp/>particles<sp/>using<sp/>the<sp/>same<sp/>channel</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>1000;<sp/>i++)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ndxlCreateVertex(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nwk,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;x0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>drift,<sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Dynamics</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>diffusion,<sp/><sp/>//<sp/>Noise</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;channel,<sp/><sp/><sp/>//<sp/>Must<sp/>be<sp/>an<sp/>array<sp/>of<sp/>NDXLChannel<sp/>pointers,<sp/>hence<sp/>the<sp/>use<sp/>of<sp/>the<sp/>addressof<sp/>operator</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Each<sp/>particle<sp/>is<sp/>still<sp/>only<sp/>driven<sp/>by<sp/>one<sp/>Wiener<sp/>process<sp/>(now<sp/>defined<sp/>by<sp/>`channel`)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NULL,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;Gs</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Interestingly,<sp/>the<sp/>analytical<sp/>solution<sp/>to<sp/>this<sp/>model<sp/>approaches<sp/>a<sp/>Gaussian<sp/>distribution<sp/>with<sp/>zero<sp/>mean,<sp/>and<sp/>variance<sp/>\f$\Sigma^2=\frac{\sigma^2}{2\Gamma}\f$.</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>can<sp/>therefore<sp/>compare<sp/>our<sp/>distributions<sp/>(blue)<sp/>to<sp/>the<sp/>analytical<sp/>soltuion<sp/>(orange)<sp/>over<sp/>time,<sp/>as<sp/>shown<sp/>in<sp/>the<sp/>images<sp/>below.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\note<sp/>The<sp/>analytical<sp/>solution<sp/>is<sp/>only<sp/>valid<sp/>if<sp/>all<sp/>particles<sp/>are<sp/>driven<sp/>by<sp/>independent<sp/>Wiener<sp/>processes;<sp/>for<sp/>a<sp/>shared<sp/>process,<sp/>the<sp/>variance<sp/>is<sp/>zero,<sp/>and<sp/>the<sp/>distribution<sp/>collapses<sp/>into<sp/>a<sp/>Dirac-delta<sp/>distribution<sp/>that<sp/>moves<sp/>randomly<sp/>about<sp/>the<sp/>mean.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">&lt;center&gt;</highlight></codeline>
+<codeline><highlight class="normal">&lt;table&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&lt;tr&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;td<sp/>align=&quot;center&quot;&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>@image<sp/>html<sp/>ou.png<sp/>&quot;Independent<sp/>Wiener<sp/>processes&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;/td&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;td<sp/>align=&quot;center&quot;&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>@image<sp/>html<sp/>ou_1chan.png<sp/>&quot;Shared<sp/>Wiener<sp/>process&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;/td&gt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&lt;/tr&gt;</highlight></codeline>
+<codeline><highlight class="normal">&lt;/table&gt;</highlight></codeline>
+<codeline><highlight class="normal">&lt;/center&gt;</highlight></codeline>
+    </programlisting>
+    <location file="src/examples/sde.md"/>
+  </compounddef>
+</doxygen>

@@ -51,7 +51,7 @@ def cb(net, t, G, t_eval, r_eval):
 		t_eval.append(t)
 		r_eval.append([v.state.copy() for v in net.vertices])
 
-nwk.simulate(4.5, tstops=t_stops, cb=cb)
+nwk.simulate(4.5, method=ndxl.methods.rkck, tstops=t_stops, cb=cb)
 r_eval = np.array(nwk.params[2])
 
 

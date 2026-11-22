@@ -34,7 +34,7 @@ def cb(net, t, t_eval, prey_pop, pred_pop):
 	t_eval.append(t)
 	prey_pop.append(net.vertex_list[0].state[0])
 	pred_pop.append(net.vertex_list[1].state[0])
-nwk.simulate(20., method="rkck", cb=cb)
+nwk.simulate(20., method="ralston", cb=cb)
 
 
 # Plotting

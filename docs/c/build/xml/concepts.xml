@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="concepts" kind="page">
+    <compoundname>concepts</compoundname>
+    <title>Concepts</title>
+    <innerpage refid="nd">Network Dynamics</innerpage>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="concepts_1md_src_2concepts"/></para>
+<para>This section provides detailed descriptions of the broader terminology used to describe network dynamics, agent-based modelling, and numerical integration. The <ref refid="nd" kindref="compound">Network Dynamics</ref> section details API-specific terminology and implementation details.</para>
+<sect1 id="concepts_1autotoc_md16">
+<title>What is a Network?</title><para>A &quot;network&quot; is an abstraction of a (often) real/physical system to a graph, where vertices represent the resident components of the system, and edges represent the coupling/interactions between those components. Three important network variables arise when discussing its layout:</para>
+<para><itemizedlist>
+<listitem><para><bold>Size</bold>: the number of edges (directed and undirected) in a network</para>
+</listitem><listitem><para><bold>Order</bold>: the number of vertices (nodes) in a network</para>
+</listitem><listitem><para><bold>Topology</bold>: how the edges couple the vertices (represented by an <formula id="0">$Order\times Order$</formula> adjacency matrix)</para>
+</listitem></itemizedlist>
+</para>
+<para>Sparse topologies have very few or no edges, while dense topologies usually exhibit multiple edges per vertex. A common rule of thumb is that a network is &quot;sparse&quot; if less than 50% of its adjacency matrix has nonzero entries, and &quot;dense&quot; otherwise. The Irish power grid is a very intuitive example of a sparse network: we can represent individual generators and loads as vertices, power transmission lines as edges carrying power to and from the nodes, and the network has a very low edge to vertex ratio. A solid atomic lattice is then an example of a dense network: the atoms are the vertices, with the edges representing the bonds between neighbouring atoms, and there is a relatively higher edge to vertex ratio.</para>
+<para>The term &quot;network dynamics&quot; (see <ref refid="nd" kindref="compound">Network Dynamics</ref>) refers to how the network&apos;s agents - vertices and edges - evolve over time, usually expressed as a set of time differential equations. In a power grid, the dynamics are usually described by the swing equation; in an atomic lattice, by quantum harmonic oscillator models. Generally speaking, the differential equations governing a network&apos;s dynamics can be:</para>
+<para><itemizedlist>
+<listitem><para>Multidimensional (the state of an agent is described by multiple evolving parameters): see <ref refid="nd_1state-vector" kindref="member">State Vector</ref></para>
+</listitem><listitem><para>Heterogeneous (not every agent shares the same dynamics): see <ref refid="nd_1hetero-dynamics" kindref="member">Heterogeneous Dynamics</ref></para>
+</listitem><listitem><para>Stochastic (noise signals induce random fluctuations in an agent&apos;s dynamics): see <ref refid="nd_1stochasticity" kindref="member">Stochasticity</ref></para>
+</listitem><listitem><para>Delayed (the current time derivative of one agent depends on a past state of another agent): see <ref refid="nd_1delays" kindref="member">Delays</ref></para>
+</listitem><listitem><para>Higher order (second, third, fourth, etc time derivatives): see <ref refid="nd_1higherorder" kindref="member">Higher-Order Dynamics</ref></para>
+</listitem></itemizedlist>
+</para>
+<para>NDXL is built to simulate networks whose dynamics are any combination of the above, as shown in the <ref refid="examples" kindref="compound">Examples</ref> section. Simulation is done by means of numerical integration, which is detailed in the <ref refid="concepts_1integration" kindref="member">Numerical Integration</ref> section below.</para>
+<sect2 id="concepts_1autotoc_md17">
+<title>How many agents can a network have?</title><para>Theoretically, an infinite amount.</para>
+<para>In practice, software is limited by hardware, particularly RAM. Larger networks also take longer to simulate because the effective size of the network state vector grows proportional to the number of agents therein. In NDXL, the theoretical limit is around 10<superscript>8</superscript> nodes, though this will require a substantial amount of RAM (on the order of terrabytes).</para>
+</sect2>
+<sect2 id="concepts_1autotoc_md18">
+<title>Can the number of agents in a network change?</title><para>Theoretically, yes.</para>
+<para>In practice, this is often impossible (or at least, exceedingly difficult), so networks are treated as having static topologies. The reason for this is that agent state vectors are combined into one large, contiguous state vector, and the network dynamics are written as a set of differential equations over that one vector. This means that once the network is defined, its layout in memory is fixed, and the whole network state vector is passed to a dedicated differential equation solver (see <ref refid="concepts_1integration" kindref="member">Numerical Integration</ref>).</para>
+<para>NDXL targets this gap in numerical simulation specifically, by implementing custom integrator logic that operates over individual agents&apos; satte vectors, rather than the whole network at once. This allows vertices and edges to be added, removed, and reconfigured during simulation, resulting in a <ref refid="nd_1dyntop" kindref="member">Dynamic Topologies</ref>.</para>
+</sect2>
+<sect2 id="concepts_1autotoc_md19">
+<title>Can agent dynamics change during simulation?</title><para>Hypothetically yes, though this comes with the caveat of changing the numerical guarantees of the underlying integration method (see <ref refid="concepts_1integration" kindref="member">Numerical Integration</ref>).</para>
+<para>As with the number of agents, changing agent dynamics during simulation in practice is often difficult, if not impossible. NDXL&apos;s <ref refid="nd_1dyntop" kindref="member">Dynamic Topologies</ref> approach makes this process seamless; one simply updates the dynamics according to which an agent evolves in a discrete callback event (see <ref refid="group__network__callbacks" kindref="compound">Network Callbacks</ref>).</para>
+</sect2>
+</sect1>
+<sect1 id="concepts_1integration">
+<title>Numerical Integration</title><para>Complex network simulation is achieved by numerically solving (integrating) the differential equations governing the dynamics of a network&apos;s agents. One of the most widely used strategies for this - and the one that NDXL adopts - is the Runge-Kutta family of differential equation solvers. These methods approximate the solution to the initial value problem <formula id="1">$\frac{d\vec{Y}}{dt} = \vec{f}(\vec{Y},~t);~\vec{Y}(t=t_0)=\vec{Y}_0$</formula> as</para>
+<para><formula id="2">\[    \vec{Y}_{n+1} = \vec{Y}_n + h\sum_{i=1}^s{B_i\vec{K}_i},
+\]</formula></para>
+<para>where the <formula id="3">$\vec{K}_i$</formula> are called the intermediate stages (see e.g., <ref refid="group__vertex__functions_1ga1f59cebd8575f89020b590ba036006c8" kindref="member">ndxlVertexState()</ref>, <ref refid="group__edge__functions_1ga4cb7ce244310b79ccc6f266256f5ff33" kindref="member">ndxlEdgeState()</ref>), and are given by</para>
+<para><formula id="4">\[    \vec{K}_i = \vec{F}\left(\vec{Y}_n + h\sum_{j=1}^s{A_{ij}\vec{K}_j},~t_n + hC_i\right).
+\]</formula></para>
+<para>Here, <formula id="5">$h$</formula> is the step size (how far forward in time to integrate), <formula id="6">$s$</formula> is the number of stages, and the <formula id="7">$A$</formula>, <formula id="8">$B$</formula>, and <formula id="9">$C$</formula> coefficients are given by the method&apos;s Butcher tableau of the form</para>
+<para><formula id="10">\[\begin{array}{c|cccc}
+    C_1 &amp; A_{11} &amp; A_{12} &amp; \dots &amp; A_{1s} \\
+    C_2 &amp; A_{21} &amp; A_{22} &amp; \dots &amp; A_{2s} \\
+    \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+    C_s &amp; A_{s1} &amp; A_{s2} &amp; \dots &amp; A_{ss} \\
+    \hline
+    &amp; B_1 &amp; B_2 &amp; \dots &amp; B_s
+\end{array}
+\]</formula></para>
+<para>Methods that use the same <formula id="5">$h$</formula> for each step are called static stepping methods, and generally trade computational efficiency (higher <formula id="5">$h$</formula>, fewer steps) for precision (lower <formula id="5">$h$</formula>, more steps). They are best suited for simulations where the time scale matters for simulating discrete events, or if you want a quick, rough idea of the output that is (mostly) guaranteed to reach the final simulation time in a set number of steps.</para>
+<para>Methods that alter <formula id="5">$h$</formula> each step are called adaptive stepping methods, and increase (decrease) <formula id="5">$h$</formula> if the error is low (high). Accuracy of a high-order solution is assumed, while a lower-order solution estimates the local error based on user-defined absolute (number of correct decimal places) and relative (number of correct digits) tolerances. They are best suited for most simulations, but do not guarantee any particular time point will be evaluated, making discrete callback based events difficult to incorporate. In NDXL, this problem is tackled by passing an array of &quot;time stops&quot; to an adaptive solver, which is a list of time points the solver must evaluate.</para>
+<sect2 id="concepts_1meth-explicit">
+<title>Explicit methods</title><para>If <formula id="7">$A$</formula> is strictly lower triangular, the method is said to be explicit, as each $\vec{K}_i$ can be calculated before moving on to $\vec{K}_{i+1}$. Each agent&apos;s <formula id="3">$\vec{K}_i$</formula> must be evaluated before computing any agent&apos;s <formula id="11">$\vec{K}_{i+1}$</formula>, which in NDXL, is handled by storing the most recently computed intermediate stage for each agent separately, then updating the state that is exposed to other agents after all agents have been iterated over (see e.g., <ref refid="group__vertex__getters_1gad7f8cbc780425384693f7e4163f51ed7" kindref="member">ndxlGetVertexNeighbourState()</ref>, <ref refid="group__edge__getters_1ga9d08c32c646317343fb9e99b78e204eb" kindref="member">ndxlGetEdgeRelativeState()</ref>). Explicit methods are computationally efficient, and are suitable for low to moderately stiff dynamics. The explicit methods currently implemented in NDXL are:</para>
+<para><itemizedlist>
+<listitem><para>Ralston&apos;s static fourth-order method <ref refid="group__network__simulation_1ga86f19459b1504a9cc772383d5adc6556" kindref="member">ndxlNetworkSimulateRalston</ref></para>
+</listitem><listitem><para>Nystr<oumlaut/>m&apos;s static fifth-order method <ref refid="group__network__simulation_1gafb26d16d894bd6dc45fdd7b69c6c06f8" kindref="member">ndxlNetworkSimulateNystrom</ref></para>
+</listitem><listitem><para>Dormand and Prince&apos;s adaptive fifth-order method with fourth-order error estimate <ref refid="group__network__simulation_1ga13d5d8530b3b090dba5f9ebd39cb38a7" kindref="member">ndxlNetworkSimulateDopri</ref></para>
+</listitem><listitem><para>Cash and Karp&apos;s adaptive fifth-order method with fourth-order error estimate <ref refid="group__network__simulation_1ga4bbb15e23be3b5823fe6e0b572e2f7f3" kindref="member">ndxlNetworkSimulateRkck</ref></para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="concepts_1meth-implicit">
+<title>Implicit methods</title><para>Runge-Kutta methods where <formula id="7">$A$</formula> is not lower triangular are called implicit methods, and in these cases each <formula id="12">$\vec{K}$</formula> cannot be solved analytically, because they depend on each other simultaneously. Instead, the <formula id="3">$\vec{K}_i$</formula> are approximated over the entire network simultaneously using root-finding algorithms like Newton-Raphson iteration; then the intermediate states exposed by agents in this case correspond to the intermediate stage equations after each Newton-Raphson step. Implicit methods are favourable when the system dynamics exhibit highly stiff behaviour, but they are more computationally expensive than their explicit counterparts. NDXL currently only implements one implicit method:</para>
+<para><itemizedlist>
+<listitem><para>Radau IIA adaptive fifth-order method with third-order error estimate <ref refid="group__network__simulation_1ga29e43fa5832c6f5dbc41bd42dc0827fa" kindref="member">ndxlNetworkSimulateRadau</ref></para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="concepts_1meth-stochastic">
+<title>Stochastic methods</title><para>Because Butcher tableaus are constructed to provide a solution of desired order to a deterministic ODE, applying the same tableau directly to a stochastic differential equation (SDE) results in order reduction to an often unknown degree. Dedicated stochastic solvers are constructed around their own Butcher tableau&apos;s with a strong and weak order. Here, the strong order measures how fast an individual simulated path approaches the exact path, while the weak order measures how fast the probability distribution of simulated paths approach the true average.</para>
+<para>Numerically solving SDEs is further categorised into two classifications, namely, the Stratonovich and It<ocirc/> interpretations. The former preserves the chain rule of ordinary calculus, and is hence preferred in physics and engineering applications, while the latter preserves the martingale property, making it more suited to applications like financial analytics. The stochastic methods currently implemented in NDXL are:</para>
+<para><itemizedlist>
+<listitem><para>Euler and Maruyama&apos;s static It<ocirc/> method of strong order 0.5 <ref refid="group__network__simulation_1ga99092af87928bc85d65ac59e4b5efedc" kindref="member">ndxlNetworkSimulateEuler</ref></para>
+</listitem><listitem><para>Heun and Euler&apos;s adaptive Stratonovich method of strong order 1 with strong order 0.5 error estimate <ref refid="group__network__simulation_1gaee348d9f96ac667cb4a4a47eee869b22" kindref="member">ndxlNetworkSimulateHeun</ref></para>
+</listitem></itemizedlist>
+</para>
+<para>Switching between the Stratonovich and It<ocirc/> schemes is possible via means of a drift correction term, further detailed in the <ref refid="sde" kindref="compound">Adding Stochasticity</ref> examples. </para>
+</sect2>
+</sect1>
+    </detaileddescription>
+    <location file="src/concepts.md"/>
+  </compounddef>
+</doxygen>

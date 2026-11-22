@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.18.0" xml:lang="en-US">
+  <compounddef id="concepts_8md" kind="file" language="Markdown">
+    <compoundname>concepts.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">#<sp/>Concepts<sp/>{#concepts}</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>section<sp/>provides<sp/>detailed<sp/>descriptions<sp/>of<sp/>the<sp/>broader<sp/>terminology<sp/>used<sp/>to<sp/>describe<sp/>network<sp/>dynamics,<sp/>agent-based<sp/>modelling,<sp/>and<sp/>numerical<sp/>integration.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>@subpage<sp/>nd<sp/>section<sp/>details<sp/>API-specific<sp/>terminology<sp/>and<sp/>implementation<sp/>details.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>What<sp/>is<sp/>a<sp/>Network?</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>&quot;network&quot;<sp/>is<sp/>an<sp/>abstraction<sp/>of<sp/>a<sp/>(often)<sp/>real/physical<sp/>system<sp/>to<sp/>a<sp/>graph,<sp/>where<sp/>vertices<sp/>represent<sp/>the<sp/>resident<sp/>components<sp/>of<sp/>the<sp/>system,<sp/>and<sp/>edges<sp/>represent<sp/>the<sp/>coupling/interactions<sp/>between<sp/>those<sp/>components.</highlight></codeline>
+<codeline><highlight class="normal">Three<sp/>important<sp/>network<sp/>variables<sp/>arise<sp/>when<sp/>discussing<sp/>its<sp/>layout:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>&lt;b&gt;Size&lt;/b&gt;:<sp/>the<sp/>number<sp/>of<sp/>edges<sp/>(directed<sp/>and<sp/>undirected)<sp/>in<sp/>a<sp/>network</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>&lt;b&gt;Order&lt;/b&gt;:<sp/>the<sp/>number<sp/>of<sp/>vertices<sp/>(nodes)<sp/>in<sp/>a<sp/>network</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>&lt;b&gt;Topology&lt;/b&gt;:<sp/>how<sp/>the<sp/>edges<sp/>couple<sp/>the<sp/>vertices<sp/>(represented<sp/>by<sp/>an<sp/>\f$Order\times<sp/>Order\f$<sp/>adjacency<sp/>matrix)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Sparse<sp/>topologies<sp/>have<sp/>very<sp/>few<sp/>or<sp/>no<sp/>edges,<sp/>while<sp/>dense<sp/>topologies<sp/>usually<sp/>exhibit<sp/>multiple<sp/>edges<sp/>per<sp/>vertex.</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>common<sp/>rule<sp/>of<sp/>thumb<sp/>is<sp/>that<sp/>a<sp/>network<sp/>is<sp/>&quot;sparse&quot;<sp/>if<sp/>less<sp/>than<sp/>50%<sp/>of<sp/>its<sp/>adjacency<sp/>matrix<sp/>has<sp/>nonzero<sp/>entries,<sp/>and<sp/>&quot;dense&quot;<sp/>otherwise.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>Irish<sp/>power<sp/>grid<sp/>is<sp/>a<sp/>very<sp/>intuitive<sp/>example<sp/>of<sp/>a<sp/>sparse<sp/>network:<sp/>we<sp/>can<sp/>represent<sp/>individual<sp/>generators<sp/>and<sp/>loads<sp/>as<sp/>vertices,<sp/>power<sp/>transmission<sp/>lines<sp/>as<sp/>edges<sp/>carrying<sp/>power<sp/>to<sp/>and<sp/>from<sp/>the<sp/>nodes,<sp/>and<sp/>the<sp/>network<sp/>has<sp/>a<sp/>very<sp/>low<sp/>edge<sp/>to<sp/>vertex<sp/>ratio.</highlight></codeline>
+<codeline><highlight class="normal">A<sp/>solid<sp/>atomic<sp/>lattice<sp/>is<sp/>then<sp/>an<sp/>example<sp/>of<sp/>a<sp/>dense<sp/>network:<sp/>the<sp/>atoms<sp/>are<sp/>the<sp/>vertices,<sp/>with<sp/>the<sp/>edges<sp/>representing<sp/>the<sp/>bonds<sp/>between<sp/>neighbouring<sp/>atoms,<sp/>and<sp/>there<sp/>is<sp/>a<sp/>relatively<sp/>higher<sp/>edge<sp/>to<sp/>vertex<sp/>ratio.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>term<sp/>&quot;network<sp/>dynamics&quot;<sp/>(see<sp/>@subpage<sp/>nd)<sp/>refers<sp/>to<sp/>how<sp/>the<sp/>network&apos;s<sp/>agents<sp/>-<sp/>vertices<sp/>and<sp/>edges<sp/>-<sp/>evolve<sp/>over<sp/>time,<sp/>usually<sp/>expressed<sp/>as<sp/>a<sp/>set<sp/>of<sp/>time<sp/>differential<sp/>equations.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>a<sp/>power<sp/>grid,<sp/>the<sp/>dynamics<sp/>are<sp/>usually<sp/>described<sp/>by<sp/>the<sp/>swing<sp/>equation;<sp/>in<sp/>an<sp/>atomic<sp/>lattice,<sp/>by<sp/>quantum<sp/>harmonic<sp/>oscillator<sp/>models.</highlight></codeline>
+<codeline><highlight class="normal">Generally<sp/>speaking,<sp/>the<sp/>differential<sp/>equations<sp/>governing<sp/>a<sp/>network&apos;s<sp/>dynamics<sp/>can<sp/>be:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Multidimensional<sp/>(the<sp/>state<sp/>of<sp/>an<sp/>agent<sp/>is<sp/>described<sp/>by<sp/>multiple<sp/>evolving<sp/>parameters):<sp/>see<sp/>@ref<sp/>state-vector<sp/>&quot;State<sp/>Vector&quot;</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Heterogeneous<sp/>(not<sp/>every<sp/>agent<sp/>shares<sp/>the<sp/>same<sp/>dynamics):<sp/>see<sp/>@ref<sp/>hetero-dynamics</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Stochastic<sp/>(noise<sp/>signals<sp/>induce<sp/>random<sp/>fluctuations<sp/>in<sp/>an<sp/>agent&apos;s<sp/>dynamics):<sp/>see<sp/>@ref<sp/>stochasticity</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Delayed<sp/>(the<sp/>current<sp/>time<sp/>derivative<sp/>of<sp/>one<sp/>agent<sp/>depends<sp/>on<sp/>a<sp/>past<sp/>state<sp/>of<sp/>another<sp/>agent):<sp/>see<sp/>@ref<sp/>delays</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Higher<sp/>order<sp/>(second,<sp/>third,<sp/>fourth,<sp/>etc<sp/>time<sp/>derivatives):<sp/>see<sp/>@ref<sp/>higherorder</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">NDXL<sp/>is<sp/>built<sp/>to<sp/>simulate<sp/>networks<sp/>whose<sp/>dynamics<sp/>are<sp/>any<sp/>combination<sp/>of<sp/>the<sp/>above,<sp/>as<sp/>shown<sp/>in<sp/>the<sp/>@ref<sp/>examples<sp/>section.</highlight></codeline>
+<codeline><highlight class="normal">Simulation<sp/>is<sp/>done<sp/>by<sp/>means<sp/>of<sp/>numerical<sp/>integration,<sp/>which<sp/>is<sp/>detailed<sp/>in<sp/>the<sp/>@ref<sp/>integration<sp/>section<sp/>below.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>How<sp/>many<sp/>agents<sp/>can<sp/>a<sp/>network<sp/>have?</highlight></codeline>
+<codeline><highlight class="normal">Theoretically,<sp/>an<sp/>infinite<sp/>amount.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>practice,<sp/>software<sp/>is<sp/>limited<sp/>by<sp/>hardware,<sp/>particularly<sp/>RAM.</highlight></codeline>
+<codeline><highlight class="normal">Larger<sp/>networks<sp/>also<sp/>take<sp/>longer<sp/>to<sp/>simulate<sp/>because<sp/>the<sp/>effective<sp/>size<sp/>of<sp/>the<sp/>network<sp/>state<sp/>vector<sp/>grows<sp/>proportional<sp/>to<sp/>the<sp/>number<sp/>of<sp/>agents<sp/>therein.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>NDXL,<sp/>the<sp/>theoretical<sp/>limit<sp/>is<sp/>around<sp/>10&lt;sup&gt;8&lt;/sup&gt;<sp/>nodes,<sp/>though<sp/>this<sp/>will<sp/>require<sp/>a<sp/>substantial<sp/>amount<sp/>of<sp/>RAM<sp/>(on<sp/>the<sp/>order<sp/>of<sp/>terrabytes).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Can<sp/>the<sp/>number<sp/>of<sp/>agents<sp/>in<sp/>a<sp/>network<sp/>change?</highlight></codeline>
+<codeline><highlight class="normal">Theoretically,<sp/>yes.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">In<sp/>practice,<sp/>this<sp/>is<sp/>often<sp/>impossible<sp/>(or<sp/>at<sp/>least,<sp/>exceedingly<sp/>difficult),<sp/>so<sp/>networks<sp/>are<sp/>treated<sp/>as<sp/>having<sp/>static<sp/>topologies.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>reason<sp/>for<sp/>this<sp/>is<sp/>that<sp/>agent<sp/>state<sp/>vectors<sp/>are<sp/>combined<sp/>into<sp/>one<sp/>large,<sp/>contiguous<sp/>state<sp/>vector,<sp/>and<sp/>the<sp/>network<sp/>dynamics<sp/>are<sp/>written<sp/>as<sp/>a<sp/>set<sp/>of<sp/>differential<sp/>equations<sp/>over<sp/>that<sp/>one<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>means<sp/>that<sp/>once<sp/>the<sp/>network<sp/>is<sp/>defined,<sp/>its<sp/>layout<sp/>in<sp/>memory<sp/>is<sp/>fixed,<sp/>and<sp/>the<sp/>whole<sp/>network<sp/>state<sp/>vector<sp/>is<sp/>passed<sp/>to<sp/>a<sp/>dedicated<sp/>differential<sp/>equation<sp/>solver<sp/>(see<sp/>@ref<sp/>integration).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">NDXL<sp/>targets<sp/>this<sp/>gap<sp/>in<sp/>numerical<sp/>simulation<sp/>specifically,<sp/>by<sp/>implementing<sp/>custom<sp/>integrator<sp/>logic<sp/>that<sp/>operates<sp/>over<sp/>individual<sp/>agents&apos;<sp/>satte<sp/>vectors,<sp/>rather<sp/>than<sp/>the<sp/>whole<sp/>network<sp/>at<sp/>once.</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>allows<sp/>vertices<sp/>and<sp/>edges<sp/>to<sp/>be<sp/>added,<sp/>removed,<sp/>and<sp/>reconfigured<sp/>during<sp/>simulation,<sp/>resulting<sp/>in<sp/>a<sp/>@ref<sp/>dyntop.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Can<sp/>agent<sp/>dynamics<sp/>change<sp/>during<sp/>simulation?</highlight></codeline>
+<codeline><highlight class="normal">Hypothetically<sp/>yes,<sp/>though<sp/>this<sp/>comes<sp/>with<sp/>the<sp/>caveat<sp/>of<sp/>changing<sp/>the<sp/>numerical<sp/>guarantees<sp/>of<sp/>the<sp/>underlying<sp/>integration<sp/>method<sp/>(see<sp/>@ref<sp/>integration).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">As<sp/>with<sp/>the<sp/>number<sp/>of<sp/>agents,<sp/>changing<sp/>agent<sp/>dynamics<sp/>during<sp/>simulation<sp/>in<sp/>practice<sp/>is<sp/>often<sp/>difficult,<sp/>if<sp/>not<sp/>impossible.</highlight></codeline>
+<codeline><highlight class="normal">NDXL&apos;s<sp/>@ref<sp/>dyntop<sp/>approach<sp/>makes<sp/>this<sp/>process<sp/>seamless;<sp/>one<sp/>simply<sp/>updates<sp/>the<sp/>dynamics<sp/>according<sp/>to<sp/>which<sp/>an<sp/>agent<sp/>evolves<sp/>in<sp/>a<sp/>discrete<sp/>callback<sp/>event<sp/>(see<sp/>@ref<sp/>network_callbacks<sp/>&quot;Network<sp/>Callbacks&quot;).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Numerical<sp/>Integration<sp/>{#integration}</highlight></codeline>
+<codeline><highlight class="normal">Complex<sp/>network<sp/>simulation<sp/>is<sp/>achieved<sp/>by<sp/>numerically<sp/>solving<sp/>(integrating)<sp/>the<sp/>differential<sp/>equations<sp/>governing<sp/>the<sp/>dynamics<sp/>of<sp/>a<sp/>network&apos;s<sp/>agents.</highlight></codeline>
+<codeline><highlight class="normal">One<sp/>of<sp/>the<sp/>most<sp/>widely<sp/>used<sp/>strategies<sp/>for<sp/>this<sp/>-<sp/>and<sp/>the<sp/>one<sp/>that<sp/>NDXL<sp/>adopts<sp/>-<sp/>is<sp/>the<sp/>Runge-Kutta<sp/>family<sp/>of<sp/>differential<sp/>equation<sp/>solvers.</highlight></codeline>
+<codeline><highlight class="normal">These<sp/>methods<sp/>approximate<sp/>the<sp/>solution<sp/>to<sp/>the<sp/>initial<sp/>value<sp/>problem<sp/>\f$\frac{d\vec{Y}}{dt}<sp/>=<sp/>\vec{f}(\vec{Y},~t);~\vec{Y}(t=t_0)=\vec{Y}_0\f$<sp/>as</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\vec{Y}_{n+1}<sp/>=<sp/>\vec{Y}_n<sp/>+<sp/>h\sum_{i=1}^s{B_i\vec{K}_i},</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">where<sp/>the<sp/>\f$\vec{K}_i\f$<sp/>are<sp/>called<sp/>the<sp/>intermediate<sp/>stages<sp/>(see<sp/>e.g.,<sp/>@ref<sp/>ndxlVertexState(),<sp/>@ref<sp/>ndxlEdgeState()),<sp/>and<sp/>are<sp/>given<sp/>by</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\vec{K}_i<sp/>=<sp/>\vec{F}\left(\vec{Y}_n<sp/>+<sp/>h\sum_{j=1}^s{A_{ij}\vec{K}_j},~t_n<sp/>+<sp/>hC_i\right).</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Here,<sp/>\f$h\f$<sp/>is<sp/>the<sp/>step<sp/>size<sp/>(how<sp/>far<sp/>forward<sp/>in<sp/>time<sp/>to<sp/>integrate),<sp/>\f$s\f$<sp/>is<sp/>the<sp/>number<sp/>of<sp/>stages,<sp/>and<sp/>the<sp/>\f$A\f$,<sp/>\f$B\f$,<sp/>and<sp/>\f$C\f$<sp/>coefficients<sp/>are<sp/>given<sp/>by<sp/>the<sp/>method&apos;s<sp/>Butcher<sp/>tableau<sp/>of<sp/>the<sp/>form</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">\f[</highlight></codeline>
+<codeline><highlight class="normal">\begin{array}{c|cccc}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>C_1<sp/>&amp;<sp/>A_{11}<sp/>&amp;<sp/>A_{12}<sp/>&amp;<sp/>\dots<sp/>&amp;<sp/>A_{1s}<sp/>\\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>C_2<sp/>&amp;<sp/>A_{21}<sp/>&amp;<sp/>A_{22}<sp/>&amp;<sp/>\dots<sp/>&amp;<sp/>A_{2s}<sp/>\\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\vdots<sp/>&amp;<sp/>\vdots<sp/>&amp;<sp/>\vdots<sp/>&amp;<sp/>\ddots<sp/>&amp;<sp/>\vdots<sp/>\\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>C_s<sp/>&amp;<sp/>A_{s1}<sp/>&amp;<sp/>A_{s2}<sp/>&amp;<sp/>\dots<sp/>&amp;<sp/>A_{ss}<sp/>\\</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>\hline</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&amp;<sp/>B_1<sp/>&amp;<sp/>B_2<sp/>&amp;<sp/>\dots<sp/>&amp;<sp/>B_s</highlight></codeline>
+<codeline><highlight class="normal">\end{array}</highlight></codeline>
+<codeline><highlight class="normal">\f]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Methods<sp/>that<sp/>use<sp/>the<sp/>same<sp/>\f$h\f$<sp/>for<sp/>each<sp/>step<sp/>are<sp/>called<sp/>static<sp/>stepping<sp/>methods,<sp/>and<sp/>generally<sp/>trade<sp/>computational<sp/>efficiency<sp/>(higher<sp/>\f$h\f$,<sp/>fewer<sp/>steps)<sp/>for<sp/>precision<sp/>(lower<sp/>\f$h\f$,<sp/>more<sp/>steps).</highlight></codeline>
+<codeline><highlight class="normal">They<sp/>are<sp/>best<sp/>suited<sp/>for<sp/>simulations<sp/>where<sp/>the<sp/>time<sp/>scale<sp/>matters<sp/>for<sp/>simulating<sp/>discrete<sp/>events,<sp/>or<sp/>if<sp/>you<sp/>want<sp/>a<sp/>quick,<sp/>rough<sp/>idea<sp/>of<sp/>the<sp/>output<sp/>that<sp/>is<sp/>(mostly)<sp/>guaranteed<sp/>to<sp/>reach<sp/>the<sp/>final<sp/>simulation<sp/>time<sp/>in<sp/>a<sp/>set<sp/>number<sp/>of<sp/>steps.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Methods<sp/>that<sp/>alter<sp/>\f$h\f$<sp/>each<sp/>step<sp/>are<sp/>called<sp/>adaptive<sp/>stepping<sp/>methods,<sp/>and<sp/>increase<sp/>(decrease)<sp/>\f$h\f$<sp/>if<sp/>the<sp/>error<sp/>is<sp/>low<sp/>(high).</highlight></codeline>
+<codeline><highlight class="normal">Accuracy<sp/>of<sp/>a<sp/>high-order<sp/>solution<sp/>is<sp/>assumed,<sp/>while<sp/>a<sp/>lower-order<sp/>solution<sp/>estimates<sp/>the<sp/>local<sp/>error<sp/>based<sp/>on<sp/>user-defined<sp/>absolute<sp/>(number<sp/>of<sp/>correct<sp/>decimal<sp/>places)<sp/>and<sp/>relative<sp/>(number<sp/>of<sp/>correct<sp/>digits)<sp/>tolerances.</highlight></codeline>
+<codeline><highlight class="normal">They<sp/>are<sp/>best<sp/>suited<sp/>for<sp/>most<sp/>simulations,<sp/>but<sp/>do<sp/>not<sp/>guarantee<sp/>any<sp/>particular<sp/>time<sp/>point<sp/>will<sp/>be<sp/>evaluated,<sp/>making<sp/>discrete<sp/>callback<sp/>based<sp/>events<sp/>difficult<sp/>to<sp/>incorporate.</highlight></codeline>
+<codeline><highlight class="normal">In<sp/>NDXL,<sp/>this<sp/>problem<sp/>is<sp/>tackled<sp/>by<sp/>passing<sp/>an<sp/>array<sp/>of<sp/>&quot;time<sp/>stops&quot;<sp/>to<sp/>an<sp/>adaptive<sp/>solver,<sp/>which<sp/>is<sp/>a<sp/>list<sp/>of<sp/>time<sp/>points<sp/>the<sp/>solver<sp/>must<sp/>evaluate.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Explicit<sp/>methods<sp/>{#meth-explicit}</highlight></codeline>
+<codeline><highlight class="normal">If<sp/>\f$A\f$<sp/>is<sp/>strictly<sp/>lower<sp/>triangular,<sp/>the<sp/>method<sp/>is<sp/>said<sp/>to<sp/>be<sp/>explicit,<sp/>as<sp/>each<sp/>$\vec{K}_i$<sp/>can<sp/>be<sp/>calculated<sp/>before<sp/>moving<sp/>on<sp/>to<sp/>$\vec{K}_{i+1}$.</highlight></codeline>
+<codeline><highlight class="normal">Each<sp/>agent&apos;s<sp/>\f$\vec{K}_i\f$<sp/>must<sp/>be<sp/>evaluated<sp/>before<sp/>computing<sp/>any<sp/>agent&apos;s<sp/>\f$\vec{K}_{i+1}\f$,<sp/>which<sp/>in<sp/>NDXL,<sp/>is<sp/>handled<sp/>by<sp/>storing<sp/>the<sp/>most<sp/>recently<sp/>computed<sp/>intermediate<sp/>stage<sp/>for<sp/>each<sp/>agent<sp/>separately,<sp/>then<sp/>updating<sp/>the<sp/>state<sp/>that<sp/>is<sp/>exposed<sp/>to<sp/>other<sp/>agents<sp/>after<sp/>all<sp/>agents<sp/>have<sp/>been<sp/>iterated<sp/>over<sp/>(see<sp/>e.g.,<sp/>@ref<sp/>ndxlGetVertexNeighbourState(),<sp/>@ref<sp/>ndxlGetEdgeRelativeState()).</highlight></codeline>
+<codeline><highlight class="normal">Explicit<sp/>methods<sp/>are<sp/>computationally<sp/>efficient,<sp/>and<sp/>are<sp/>suitable<sp/>for<sp/>low<sp/>to<sp/>moderately<sp/>stiff<sp/>dynamics.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>explicit<sp/>methods<sp/>currently<sp/>implemented<sp/>in<sp/>NDXL<sp/>are:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Ralston&apos;s<sp/>static<sp/>fourth-order<sp/>method<sp/>@ref<sp/>ndxlNetworkSimulateRalston</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Nystr&amp;ouml;m&apos;s<sp/>static<sp/>fifth-order<sp/>method<sp/>@ref<sp/>ndxlNetworkSimulateNystrom</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Dormand<sp/>and<sp/>Prince&apos;s<sp/>adaptive<sp/>fifth-order<sp/>method<sp/>with<sp/>fourth-order<sp/>error<sp/>estimate<sp/>@ref<sp/>ndxlNetworkSimulateDopri</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Cash<sp/>and<sp/>Karp&apos;s<sp/>adaptive<sp/>fifth-order<sp/>method<sp/>with<sp/>fourth-order<sp/>error<sp/>estimate<sp/>@ref<sp/>ndxlNetworkSimulateRkck</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Implicit<sp/>methods<sp/>{#meth-implicit}</highlight></codeline>
+<codeline><highlight class="normal">Runge-Kutta<sp/>methods<sp/>where<sp/>\f$A\f$<sp/>is<sp/>not<sp/>lower<sp/>triangular<sp/>are<sp/>called<sp/>implicit<sp/>methods,<sp/>and<sp/>in<sp/>these<sp/>cases<sp/>each<sp/>\f$\vec{K}\f$<sp/>cannot<sp/>be<sp/>solved<sp/>analytically,<sp/>because<sp/>they<sp/>depend<sp/>on<sp/>each<sp/>other<sp/>simultaneously.</highlight></codeline>
+<codeline><highlight class="normal">Instead,<sp/>the<sp/>\f$\vec{K}_i\f$<sp/>are<sp/>approximated<sp/>over<sp/>the<sp/>entire<sp/>network<sp/>simultaneously<sp/>using<sp/>root-finding<sp/>algorithms<sp/>like<sp/>Newton-Raphson<sp/>iteration;<sp/>then<sp/>the<sp/>intermediate<sp/>states<sp/>exposed<sp/>by<sp/>agents<sp/>in<sp/>this<sp/>case<sp/>correspond<sp/>to<sp/>the<sp/>intermediate<sp/>stage<sp/>equations<sp/>after<sp/>each<sp/>Newton-Raphson<sp/>step.</highlight></codeline>
+<codeline><highlight class="normal">Implicit<sp/>methods<sp/>are<sp/>favourable<sp/>when<sp/>the<sp/>system<sp/>dynamics<sp/>exhibit<sp/>highly<sp/>stiff<sp/>behaviour,<sp/>but<sp/>they<sp/>are<sp/>more<sp/>computationally<sp/>expensive<sp/>than<sp/>their<sp/>explicit<sp/>counterparts.</highlight></codeline>
+<codeline><highlight class="normal">NDXL<sp/>currently<sp/>only<sp/>implements<sp/>one<sp/>implicit<sp/>method:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Radau<sp/>IIA<sp/>adaptive<sp/>fifth-order<sp/>method<sp/>with<sp/>third-order<sp/>error<sp/>estimate<sp/>@ref<sp/>ndxlNetworkSimulateRadau</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Stochastic<sp/>methods<sp/>{#meth-stochastic}</highlight></codeline>
+<codeline><highlight class="normal">Because<sp/>Butcher<sp/>tableaus<sp/>are<sp/>constructed<sp/>to<sp/>provide<sp/>a<sp/>solution<sp/>of<sp/>desired<sp/>order<sp/>to<sp/>a<sp/>deterministic<sp/>ODE,<sp/>applying<sp/>the<sp/>same<sp/>tableau<sp/>directly<sp/>to<sp/>a<sp/>stochastic<sp/>differential<sp/>equation<sp/>(SDE)<sp/>results<sp/>in<sp/>order<sp/>reduction<sp/>to<sp/>an<sp/>often<sp/>unknown<sp/>degree.</highlight></codeline>
+<codeline><highlight class="normal">Dedicated<sp/>stochastic<sp/>solvers<sp/>are<sp/>constructed<sp/>around<sp/>their<sp/>own<sp/>Butcher<sp/>tableau&apos;s<sp/>with<sp/>a<sp/>strong<sp/>and<sp/>weak<sp/>order.</highlight></codeline>
+<codeline><highlight class="normal">Here,<sp/>the<sp/>strong<sp/>order<sp/>measures<sp/>how<sp/>fast<sp/>an<sp/>individual<sp/>simulated<sp/>path<sp/>approaches<sp/>the<sp/>exact<sp/>path,<sp/>while<sp/>the<sp/>weak<sp/>order<sp/>measures<sp/>how<sp/>fast<sp/>the<sp/>probability<sp/>distribution<sp/>of<sp/>simulated<sp/>paths<sp/>approach<sp/>the<sp/>true<sp/>average.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Numerically<sp/>solving<sp/>SDEs<sp/>is<sp/>further<sp/>categorised<sp/>into<sp/>two<sp/>classifications,<sp/>namely,<sp/>the<sp/>Stratonovich<sp/>and<sp/>It&amp;ocirc;<sp/>interpretations.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>former<sp/>preserves<sp/>the<sp/>chain<sp/>rule<sp/>of<sp/>ordinary<sp/>calculus,<sp/>and<sp/>is<sp/>hence<sp/>preferred<sp/>in<sp/>physics<sp/>and<sp/>engineering<sp/>applications,<sp/>while<sp/>the<sp/>latter<sp/>preserves<sp/>the<sp/>martingale<sp/>property,<sp/>making<sp/>it<sp/>more<sp/>suited<sp/>to<sp/>applications<sp/>like<sp/>financial<sp/>analytics.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>stochastic<sp/>methods<sp/>currently<sp/>implemented<sp/>in<sp/>NDXL<sp/>are:</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>Euler<sp/>and<sp/>Maruyama&apos;s<sp/>static<sp/>It&amp;ocirc;<sp/>method<sp/>of<sp/>strong<sp/>order<sp/>0.5<sp/>@ref<sp/>ndxlNetworkSimulateEuler</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Heun<sp/>and<sp/>Euler&apos;s<sp/>adaptive<sp/>Stratonovich<sp/>method<sp/>of<sp/>strong<sp/>order<sp/>1<sp/>with<sp/>strong<sp/>order<sp/>0.5<sp/>error<sp/>estimate<sp/>@ref<sp/>ndxlNetworkSimulateHeun</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Switching<sp/>between<sp/>the<sp/>Stratonovich<sp/>and<sp/>It&amp;ocirc;<sp/>schemes<sp/>is<sp/>possible<sp/>via<sp/>means<sp/>of<sp/>a<sp/>drift<sp/>correction<sp/>term,<sp/>further<sp/>detailed<sp/>in<sp/>the<sp/>@ref<sp/>sde<sp/>examples.</highlight></codeline>
+    </programlisting>
+    <location file="src/concepts.md"/>
+  </compounddef>
+</doxygen>
