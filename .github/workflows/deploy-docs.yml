@@ -399,6 +399,7 @@ jobs:
           EOF
           } > published/index.html
 
+
       - name: Commit updated website
         run: |
           touch published/.nojekyll
@@ -426,11 +427,26 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Verify documentation artifact
+        run: |
+          echo "Checking published website..."
+
+          test -d public
+          test -f public/index.html
+          test -f public/latest/index.html
+
+          echo "Files available for deployment:"
+          find public -maxdepth 2 -type f | head -30
+
       - name: Upload documentation
+        id: upload
         uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: public
 
       - name: Deploy documentation
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
