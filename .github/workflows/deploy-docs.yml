@@ -5,9 +5,14 @@ on:
     types: [published]
 
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to build (e.g. v1.2.3)"
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -24,8 +29,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout release source
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.release_tag }}
+
+      - name: Extract release version
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG"
+            echo "Expected format: vMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+
+          echo "version=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "minor=v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
 
       - name: Install Doxygen 1.18.0
         run: |
@@ -44,11 +65,150 @@ jobs:
           doxygen --version
 
       - name: Build documentation
-        run: doxygen Doxyfile
         working-directory: docs/c
+        env:
+          NDXL_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          sed -i "s/@NDXL_VERSION@/${NDXL_VERSION}/g" introduction.md
+          doxygen Doxyfile
 
-      - name: Prepare GitHub Pages
-        run: touch docs/c/build/html/.nojekyll
+          test -f build/html/index.html
+
+      - name: Checkout published website
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: published
+
+      - name: Update versioned documentation
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.version }}
+          MINOR_VERSION: ${{ steps.version.outputs.minor }}
+        run: |
+          TARGET="published/$MINOR_VERSION"
+
+          UPDATE_VERSION=true
+
+          if [[ -f "$TARGET/NDXL_VERSION.txt" ]]; then
+            EXISTING_VERSION=$(cat "$TARGET/NDXL_VERSION.txt")
+            NEWEST_VERSION=$(printf '%s\n%s\n' \
+              "$EXISTING_VERSION" "$RELEASE_TAG" | sort -V | tail -n 1)
+
+            if [[ "$NEWEST_VERSION" != "$RELEASE_TAG" ]]; then
+              echo "Skipping older release $RELEASE_TAG."
+              echo "Documentation already contains $EXISTING_VERSION."
+              UPDATE_VERSION=false
+            fi
+          fi
+
+          if [[ "$UPDATE_VERSION" == true ]]; then
+            rm -rf "$TARGET"
+            mkdir -p "$TARGET"
+
+            cp -a docs/c/build/html/. "$TARGET/"
+            echo "$RELEASE_TAG" > "$TARGET/NDXL_VERSION.txt"
+          fi
+
+      - name: Update latest documentation
+        run: |
+          LATEST_VERSION=$(
+            find published \
+              -mindepth 2 -maxdepth 2 \
+              -type f -name NDXL_VERSION.txt \
+              -not -path 'published/latest/*' \
+              -exec cat {} \; \
+              | sort -V \
+              | tail -n 1
+          )
+
+          if [[ -z "$LATEST_VERSION" ]]; then
+            echo "No published documentation versions found."
+            exit 1
+          fi
+
+          LATEST_MINOR="${LATEST_VERSION%.*}"
+
+          rm -rf published/latest
+          mkdir -p published/latest
+
+          cp -a "published/$LATEST_MINOR/." published/latest/
+
+      - name: Generate version index
+        run: |
+          {
+            cat <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>NDXL Documentation</title>
+            <style>
+              body {
+                max-width: 800px;
+                margin: 4rem auto;
+                padding: 0 1.5rem;
+                font-family: system-ui, sans-serif;
+                line-height: 1.6;
+              }
+              h1 { margin-bottom: 0.5rem; }
+              a { color: #0969da; }
+              li { margin: 0.5rem 0; }
+            </style>
+          </head>
+          <body>
+            <h1>NDXL Documentation</h1>
+            <p>Select the documentation corresponding to your NDXL release.</p>
+            <h2>Latest release</h2>
+            <p><a href="latest/">Latest stable documentation</a></p>
+            <h2>Previous releases</h2>
+            <ul>
+          EOF
+
+            while IFS= read -r VERSION_DIR; do
+              RELEASE=$(cat "published/$VERSION_DIR/NDXL_VERSION.txt")
+              printf '<li><a href="%s/">%s</a> (documentation for %s)</li>\n' \
+                "$VERSION_DIR" "$VERSION_DIR" "$RELEASE"
+            done < <(
+              find published \
+                -mindepth 2 -maxdepth 2 \
+                -type f -name NDXL_VERSION.txt \
+                -not -path 'published/latest/*' \
+                -printf '%h\n' \
+                | sed 's#^published/##' \
+                | sort -Vr
+            )
+
+            cat <<'EOF'
+            </ul>
+          </body>
+          </html>
+          EOF
+          } > published/index.html
+
+      - name: Commit updated website
+        run: |
+          touch published/.nojekyll
+
+          git -C published config user.name "github-actions[bot]"
+          git -C published config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git -C published add -A
+
+          if ! git -C published diff --cached --quiet; then
+            git -C published commit -m \
+              "Update documentation for ${{ steps.version.outputs.version }}"
+
+            git -C published push origin HEAD:gh-pages
+          fi
+
+      - name: Prepare GitHub Pages artifact
+        run: |
+          mkdir -p public
+          cp -a published/. public/
+          rm -rf public/.git
+          touch public/.nojekyll
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -56,7 +216,7 @@ jobs:
       - name: Upload documentation
         uses: actions/upload-pages-artifact@v4
         with:
-          path: docs/c/build/html
+          path: public
 
       - name: Deploy documentation
         id: deployment
