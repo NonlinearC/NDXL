@@ -3,28 +3,232 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
   <title>NDXL Documentation</title>
+
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05080e;
+      --header: #080d16;
+      --surface: #101a2a;
+      --surface-hover: #19263a;
+      --border: #26354d;
+      --text: #c9d6e5;
+      --text-muted: #91a4bd;
+      --heading: #e5edf7;
+      --link: #81b4ff;
+      --link-hover: #b1d0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      max-width: 800px;
-      margin: 4rem auto;
-      padding: 0 1.5rem;
-      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Lato", "Segoe UI", sans-serif;
+      font-size: 16px;
       line-height: 1.6;
     }
-    h1 { margin-bottom: 0.5rem; }
-    a { color: #0969da; }
-    li { margin: 0.5rem 0; }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+
+    .topbar {
+      background: var(--header);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+    }
+
+    .brand {
+      color: var(--heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    main {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      padding: 4rem 2rem 5rem;
+    }
+
+    .intro {
+      margin-bottom: 3rem;
+    }
+
+    .intro h1 {
+      color: var(--heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0 0 1rem;
+    }
+
+    .intro p {
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .latest {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .latest h2 {
+      color: var(--heading);
+      font-size: 1.8rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .release-version {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin: 0 0 1.5rem;
+    }
+
+    .latest-link {
+      display: inline-block;
+      background: #315d91;
+      border: 1px solid #4779b4;
+      border-radius: 5px;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 0.65rem 1.2rem;
+      transition: background 0.15s ease;
+    }
+
+    .latest-link:hover {
+      background: #3e73ad;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .previous h2 {
+      color: var(--heading);
+      font-size: 1.5rem;
+      margin: 0 0 1rem;
+    }
+
+    .release-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .release-list li {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .release-list a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      transition: background 0.15s ease;
+    }
+
+    .release-list a:hover {
+      background: var(--surface);
+      text-decoration: none;
+    }
+
+    .release-name {
+      color: var(--link);
+      font-weight: 600;
+    }
+
+    .release-detail {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 2.5rem 1.25rem 3rem;
+      }
+
+      .intro h1 {
+        font-size: 2rem;
+      }
+
+      .latest {
+        padding: 1.5rem;
+      }
+
+      .release-list a {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .release-detail {
+        text-align: left;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <h1>NDXL Documentation</h1>
-  <p>Select the documentation corresponding to your NDXL release.</p>
-  <h2>Latest release</h2>
-  <p><a href="latest/">Latest stable documentation</a></p>
-  <h2>Previous releases</h2>
-  <ul>
-<li><a href="v1.0/">v1.0</a> (documentation for v1.0.0)</li>
-  </ul>
+  <header class="topbar">
+    <div class="brand">NDXL</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>NDXL Documentation</h1>
+      <p>
+        Network Dynamics eXperimentation Library.
+        Documentation and API reference for NDXL.
+      </p>
+    </section>
+
+    <section class="latest">
+      <h2>Latest version</h2>
+      <p class="release-version">
+v1.0.0
+      </p>
+
+      <a class="latest-link" href="latest/">
+        Browse latest documentation →
+      </a>
+    </section>
+
+    <section class="previous">
+      <h2>Previous releases</h2>
+
+      <ul class="release-list">
+<li><a href="v1.0/"><span class="release-name">v1.0</span><span class="release-detail">Documentation for v1.0.0 →</span></a></li>
+      </ul>
+    </section>
+
+    <footer>
+      NDXL · Network Dynamics eXperimentation Library
+    </footer>
+  </main>
 </body>
 </html>
