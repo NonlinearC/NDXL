@@ -1,6 +1,8 @@
 # Simulating Higher-Order Dynamics {#highorder}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/nbody-problem/).
+
 Suppose we want to simulate a network of interacting objects whose dynamics are defined by second-order differential equations \f$\frac{d^2\vec{x}}{dt^2}\f$.
 A famous example of this is the \f$N\f$-body problem, in which the motion of each body is driven by the forces exerted on it by the other \f$N-1\f$ bodies, similar to the Kuramoto model (though the coupling is fundamentally different).
 The \f$i^{th}\f$ body's position vector \f$\vec{r}\f$ evolves according to
@@ -49,8 +51,8 @@ Additionally, the scale of the variables involved differ by several orders of ma
 
 typedef struct
 {
-	double G,
-	FILE* f_output
+	double G;
+	FILE* f_output;
 } nbody_params;
 
 int main(int argc, char** argv)

@@ -601,8 +601,8 @@ const int __ndxlNetworkSimulateRalston(NDXLNetwork* _Network, const double _Time
 
 	// Setup simulatiuon variables
 	const size_t _Steps = (size_t)(_Time / _Step);
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 
 	for (size_t i = 1; i <= _Steps; i++)
 	{
@@ -630,12 +630,15 @@ const int __ndxlNetworkSimulateRalston(NDXLNetwork* _Network, const double _Time
 		}
 
 		// Update vertex states and resolve callbacks
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
+        vert = _Network->vertex_head;
+		while (vert)
 		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Step;
-			if (__ndxlVertexProcessCallback(vert))
+            vtmp = vert;
+            vert = vert->next;
+			if (vtmp->func)
+				memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Step;
+			if (__ndxlVertexProcessCallback(vtmp))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRalston: external error encountered in vertex callback.");
 				return NDXL_ERR;
@@ -643,12 +646,15 @@ const int __ndxlNetworkSimulateRalston(NDXLNetwork* _Network, const double _Time
 		}
 
 		// Update edge states, resolve callbacks, and accumulate vertex states
-		for (edge = _Network->edge_head; edge; edge = edge->next)
+        edge = _Network->edge_head;
+		while (edge)
 		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Step);
-			if (__ndxlEdgeProcessCallback(edge))
+            etmp = edge;
+            edge = edge->next;
+			if (etmp->func)
+				memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+			__ndxlEdgeAccumulateEffects(etmp, _Step);
+			if (__ndxlEdgeProcessCallback(etmp))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRalston: external error encountered in edge callback.");
 				return NDXL_ERR;
@@ -691,8 +697,8 @@ const int __ndxlNetworkSimulateNystrom(NDXLNetwork* _Network, const double _Time
 
 	// Setup simulatiuon variables
 	const size_t _Steps = (size_t)(_Time / _Step);
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 
 	for (size_t i = 1; i <= _Steps; i++)
 	{
@@ -719,31 +725,37 @@ const int __ndxlNetworkSimulateNystrom(NDXLNetwork* _Network, const double _Time
 				}
 		}
 
-		// Update vertex states and resolve callbacks
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
-		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Step;
-			if (__ndxlVertexProcessCallback(vert))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateNystrom: external error encountered in vertex callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update vertex states and resolve callbacks
+        vert = _Network->vertex_head;
+        while (vert)
+        {
+            vtmp = vert;
+            vert = vert->next;
+            if (vtmp->func)
+                memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Step;
+            if (__ndxlVertexProcessCallback(vtmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateNystrom: external error encountered in vertex callback.");
+                return NDXL_ERR;
+            }
+        }
 
-		// Update edge states, resolve callbacks, and accumulate vertex states
-		for (edge = _Network->edge_head; edge; edge = edge->next)
-		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Step);
-			if (__ndxlEdgeProcessCallback(edge))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateNystrom: external error encountered in edge callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update edge states, resolve callbacks, and accumulate vertex states
+        edge = _Network->edge_head;
+        while (edge)
+        {
+            etmp = edge;
+            edge = edge->next;
+            if (etmp->func)
+                memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+            __ndxlEdgeAccumulateEffects(etmp, _Step);
+            if (__ndxlEdgeProcessCallback(etmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateNystrom: external error encountered in edge callback.");
+                return NDXL_ERR;
+            }
+        }
 
 		// Process network callback, if any
 		if (_Callback)
@@ -785,8 +797,8 @@ const int __ndxlNetworkSimulateDopri(NDXLNetwork* _Network, const double _Time, 
 	double t = _Network->time;
 	size_t _Tidx = 0;
 	double _Errsum, _Hnew, _Tnext;
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 
 	while (t < _Endtime)
 	{
@@ -833,31 +845,37 @@ const int __ndxlNetworkSimulateDopri(NDXLNetwork* _Network, const double _Time, 
 			}
 		}
 
-		// Update vertex state vectors
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
-		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Network->h;
-			if (__ndxlVertexProcessCallback(vert))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateDopri: external error encountered in vertex callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update vertex states and resolve callbacks
+        vert = _Network->vertex_head;
+        while (vert)
+        {
+            vtmp = vert;
+            vert = vert->next;
+            if (vtmp->func)
+                memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Network->h;
+            if (__ndxlVertexProcessCallback(vtmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateDopri: external error encountered in vertex callback.");
+                return NDXL_ERR;
+            }
+        }
 
-		// Update edge state vectors
-		for (edge = _Network->edge_head; edge; edge = edge->next)
-		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Network->h);
-			if (__ndxlEdgeProcessCallback(edge))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateDopri: external error encountered in edge callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update edge states, resolve callbacks, and accumulate vertex states
+        edge = _Network->edge_head;
+        while (edge)
+        {
+            etmp = edge;
+            edge = edge->next;
+            if (etmp->func)
+                memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+            __ndxlEdgeAccumulateEffects(etmp, _Network->h);
+            if (__ndxlEdgeProcessCallback(etmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateDopri: external error encountered in edge callback.");
+                return NDXL_ERR;
+            }
+        }
 
 		// Check for time stops/end of simulation time and adapt h accordingly
 		_Tnext = t + _Hnew;
@@ -909,8 +927,8 @@ const int __ndxlNetworkSimulateRkck(NDXLNetwork* _Network, const double _Time, c
 	double t = _Network->time;
 	size_t _Tidx = 0;
 	double _Errsum, _Hnew, _Tnext;
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 
 	while (t < _Endtime)
 	{
@@ -957,31 +975,37 @@ const int __ndxlNetworkSimulateRkck(NDXLNetwork* _Network, const double _Time, c
 			}
 		}
 
-		// Update vertex state vectors
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
-		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Network->h;
-			if (__ndxlVertexProcessCallback(vert))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRkck: external error encountered in vertex callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update vertex states and resolve callbacks
+        vert = _Network->vertex_head;
+        while (vert)
+        {
+            vtmp = vert;
+            vert = vert->next;
+            if (vtmp->func)
+                memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Network->h;
+            if (__ndxlVertexProcessCallback(vtmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRkck: external error encountered in vertex callback.");
+                return NDXL_ERR;
+            }
+        }
 
-		// Update edge state vectors
-		for (edge = _Network->edge_head; edge; edge = edge->next)
-		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Network->h);
-			if (__ndxlEdgeProcessCallback(edge))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRkck: external error encountered in edge callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update edge states, resolve callbacks, and accumulate vertex states
+        edge = _Network->edge_head;
+        while (edge)
+        {
+            etmp = edge;
+            edge = edge->next;
+            if (etmp->func)
+                memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+            __ndxlEdgeAccumulateEffects(etmp, _Network->h);
+            if (__ndxlEdgeProcessCallback(etmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRkck: external error encountered in edge callback.");
+                return NDXL_ERR;
+            }
+        }
 
 		// Check for time stops/end of simulation time and adapt h accordingly
 		_Tnext = t + _Hnew;
@@ -1030,8 +1054,8 @@ const int __ndxlNetworkSimulateEuler(NDXLNetwork* _Network, const double _Time, 
 
 	// Setup simulatiuon variables
 	const size_t _Steps = (size_t)(_Time / _Step);
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 	NDXLChannel* channel;
 	NDXLVertexChannel* vchannel;
 	NDXLEdgeChannel* echannel;
@@ -1067,31 +1091,37 @@ const int __ndxlNetworkSimulateEuler(NDXLNetwork* _Network, const double _Time, 
 				}
 		}
 
-		// Update vertex states and resolve callbacks
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
-		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Step;
-			if (__ndxlVertexProcessCallback(vert))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateEuler: external error encountered in vertex callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update vertex states and resolve callbacks
+        vert = _Network->vertex_head;
+        while (vert)
+        {
+            vtmp = vert;
+            vert = vert->next;
+            if (vtmp->func)
+                memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Step;
+            if (__ndxlVertexProcessCallback(vtmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateEuler: external error encountered in vertex callback.");
+                return NDXL_ERR;
+            }
+        }
 
-		// Update edge states, resolve callbacks, and accumulate vertex states
-		for (edge = _Network->edge_head; edge; edge = edge->next)
-		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Step);
-			if (__ndxlEdgeProcessCallback(edge))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateEuler: external error encountered in edge callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update edge states, resolve callbacks, and accumulate vertex states
+        edge = _Network->edge_head;
+        while (edge)
+        {
+            etmp = edge;
+            edge = edge->next;
+            if (etmp->func)
+                memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+            __ndxlEdgeAccumulateEffects(etmp, _Step);
+            if (__ndxlEdgeProcessCallback(etmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateEuler: external error encountered in edge callback.");
+                return NDXL_ERR;
+            }
+        }
 
 		// Process network callback, if any
 		if (_Callback)
@@ -1133,8 +1163,8 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 	double t = _Network->time;
 	size_t _Tidx = 0;
 	double _Errsum, _Hnew, _Tnext;
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 	NDXLChannel* channel;
 
 	while (t < _Endtime)
@@ -1188,31 +1218,37 @@ const int __ndxlNetworkSimulateHeun(NDXLNetwork* _Network, const double _Time, c
 			}
 		}
 
-		// Update vertex state vectors
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
-		{
-			if (vert->func)
-				memcpy(vert->state, vert->stage_state[0], vert->order * sizeof(double));
-			vert->time += _Network->h;
-			if (__ndxlVertexProcessCallback(vert))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateHeun: external error encountered in vertex callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update vertex states and resolve callbacks
+        vert = _Network->vertex_head;
+        while (vert)
+        {
+            vtmp = vert;
+            vert = vert->next;
+            if (vtmp->func)
+                memcpy(vtmp->state, vtmp->stage_state[0], vtmp->order * sizeof(double));
+            vtmp->time += _Network->h;
+            if (__ndxlVertexProcessCallback(vtmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateHeun: external error encountered in vertex callback.");
+                return NDXL_ERR;
+            }
+        }
 
-		// Update edge state vectors
-		for (edge = _Network->edge_head; edge; edge = edge->next)
-		{
-			if (edge->func)
-				memcpy(edge->state, edge->stage_state[0], edge->order * sizeof(double));
-			__ndxlEdgeAccumulateEffects(edge, _Network->h);
-			if (__ndxlEdgeProcessCallback(edge))
-			{
-				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateHeun: external error encountered in edge callback.");
-				return NDXL_ERR;
-			}
-		}
+        // Update edge states, resolve callbacks, and accumulate vertex states
+        edge = _Network->edge_head;
+        while (edge)
+        {
+            etmp = edge;
+            edge = edge->next;
+            if (etmp->func)
+                memcpy(etmp->state, etmp->stage_state[0], etmp->order * sizeof(double));
+            __ndxlEdgeAccumulateEffects(etmp, _Network->h);
+            if (__ndxlEdgeProcessCallback(etmp))
+            {
+                __setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateHeun: external error encountered in edge callback.");
+                return NDXL_ERR;
+            }
+        }
 
 		// Check for time stops/end of simulation time and adapt h accordingly
 		_Tnext = t + _Hnew;
@@ -1273,8 +1309,8 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 	size_t _Aidx, _Datsz;
 	double _Dk[3], _Dy, _Err, _Errsum, _Hnew, _Tnext;
 	char NEWTON_ITER;
-	NDXLVertex* vert;
-	NDXLEdge* edge;
+	NDXLVertex* vert, *vtmp;
+	NDXLEdge* edge, *etmp;
 
 	while (t < _Endtime)
 	{
@@ -1582,15 +1618,18 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 		}
 
 		// Update vertex state vectors
-		for (vert = _Network->vertex_head; vert; vert = vert->next)
+        vert = _Network->vertex_head;
+		while (vert)
 		{
-			if (vert->func)
+            vtmp = vert;
+            vert = vert->next;
+			if (vtmp->func)
 			{
-				memcpy(vert->state, vert->rkf[2], vert->order * sizeof(double));
-				memcpy(vert->stage_state[0], vert->rkf[2], vert->order * sizeof(double));
+				memcpy(vtmp->state, vtmp->rkf[2], vtmp->order * sizeof(double));
+				memcpy(vtmp->stage_state[0], vtmp->rkf[2], vtmp->order * sizeof(double));
 			}
-			vert->time += _Network->h;
-			if (__ndxlVertexProcessCallback(vert))
+            vtmp->time += _Network->h;
+			if (__ndxlVertexProcessCallback(vtmp))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRadau: external error encountered in vertex callback.");
 				return NDXL_ERR;
@@ -1598,15 +1637,18 @@ const int __ndxlNetworkSimulateRadau(NDXLNetwork* _Network, const double _Time, 
 		}
 
 		// Update edge state vectors
-		for (edge = _Network->edge_head; edge; edge = edge->next)
+        edge = _Network->edge_head;
+		while (edge)
 		{
-			if (edge->func)
+            etmp = edge;
+            edge = edge->next;
+			if (etmp->func)
 			{
-				memcpy(edge->state, edge->rkf[2], edge->order * sizeof(double));
-				memcpy(edge->stage_state[0], edge->rkf[2], edge->order * sizeof(double));
+				memcpy(etmp->state, etmp->rkf[2], etmp->order * sizeof(double));
+				memcpy(etmp->stage_state[0], etmp->rkf[2], etmp->order * sizeof(double));
 			}
-			__ndxlEdgeAccumulateEffects(edge, _Network->h);
-			if (__ndxlEdgeProcessCallback(edge))
+			__ndxlEdgeAccumulateEffects(etmp, _Network->h);
+			if (__ndxlEdgeProcessCallback(etmp))
 			{
 				__setLastError(NDXL_SIM_ERR, "ndxlNetworkSimulateRadau: external error encountered in edge callback.");
 				return NDXL_ERR;

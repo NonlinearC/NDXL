@@ -43,7 +43,7 @@ The reason for this is that agent state vectors are combined into one large, con
 This means that once the network is defined, its layout in memory is fixed, and the whole network state vector is passed to a dedicated differential equation solver (see @ref integration).
 
 NDXL targets this gap in numerical simulation specifically, by implementing custom integrator logic that operates over individual agents' satte vectors, rather than the whole network at once.
-This allows vertices and edges to be added, removed, and reconfigured during simulation, resulting in a @ref dyntop.
+This allows vertices and edges to be added, removed, and reconfigured during simulation, resulting in a @ref dyntop "Dynamic Topology".
 
 ### Can agent dynamics change during simulation?
 Hypothetically yes, though this comes with the caveat of changing the numerical guarantees of the underlying integration method (see @ref integration).

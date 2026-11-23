@@ -121,7 +121,7 @@ typedef int(*NDXLVertexNoise)(NDXLVertex* _Vertex, double* _dG, const double* _Y
 */
 typedef int(*NDXLVertexCallback)(NDXLVertex* _Vertex, double* _Y, double _Time, void* _Params);
 
-///** @}*/
+/** @}*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -686,7 +686,7 @@ _NDXLIMP_ const double _CDECL ndxlGetVertexTime(
  * If _Vertex is NULL, returns @ref NDXL_ERR, otherwise updates the callback of _Vertex, and returns NDXL_OK.
  * 
  * @warning
- * This function should never be used from within an existing callback function, as replacing a callback while it is executing can corrupt the calling stack. Additionally, this function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.
+ * This function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Vertex is NULL.

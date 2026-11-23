@@ -64,10 +64,13 @@ Because the C API exposes many configuration parameters directly, constructing a
 Languages with features such as default arguments and function overloading can provide more convenient interfaces to the same underlying functionality.
 This is why the library is also designed with cross-language interoperability in mind - it is much easier, from a user perspective, to use the [Python version](https://pypi.org/project/ndxl/), for example.
 With that said, language-specific wrappers can introduce their own significant amount of overhead, depending on how many inter-language translations need to be done during simulation.
-
+NDXL's @ref dyntop architecure also makes it substantially slower and more memory intensive than existing software for simulating large static networks, with the difference being negligble for small static networks.
 A general rule of thumb would therefore be:
-- Use C when performance is important e.g., simulating a 10<sup>7</sup> node algal cluster.
-- Use another language wrapper if the simulation is small and convenience matters more than control.
+
+- Use the NDXL C API when performance is important e.g., simulating a 10<sup>7</sup> node algal cluster with births, deaths, and harvesting.
+- Use an NDXL wrapper if the simulation is small and convenience matters more than control e.g., a local power grid with node addition and failure.
+- Use either NDXL API when simulating small static networks e.g., a \f$100\f$-node Kuramoto network.
+- Use a package like [NetworkDynamics.jl](https://juliadynamics.github.io/NetworkDynamics.jl/stable/) when simulating large static networks e.g., a \f$10000\f$-node swing equation.
 
 ### What kinds of networks can NDXL simulate?
 Almost everything.

@@ -80,7 +80,9 @@ This process is further detailed in the @ref highorder "Higher-Order Dynamics" e
 ## Dynamic Topologies {#dyntop}
 The size, order, and topology are usually fixed for a given network i.e., once the network is created, these variables cannot - and do not - change.
 For some applications and models, this approach is sufficient.
-However, there also exist networks for which these variables are not constant (see the examples listed in the @ref introduction); in these cases, "dead" agents are usually simulated by zeroing their contributions to the overall dynamics, and "new" agents are simulated by reserving space before the simulation for their eventual existence.
-This wastes computational resources, and also provides a hard limit on the amount of new agents that can be brought into the network.
-Simulating these kinds of networks is specifically what NDXL was designed for: by allowing agents to be created and destroyed during simulation, only ever those that are still part of the network are actually simulated.
+However, there also exist networks for which these variables are not constant (see the examples listed in the @ref introduction); we call these networks <b><i>Dynamic Networks</i></b>, and is the specific class of network NDXL was built around simulating.
+
+While other packages can theoretically simulate dynamic networks, their approach often wastes computational resources, and/or imposes a hard limit on the amount of new agents that can be brought into the network.
+The reason for this is "dead" agents are usually simulated by zeroing their contributions to the overall dynamics, and "new" agents are simulated by reserving space before the simulation for their eventual existence.
+By allowing agents to be created and destroyed during simulation, only ever those that are still part of the network are actually simulated, making NDXL the optimal choice for simulating dynamic networks.
 See @ref dynnet for details how to simulate dynamic topology networks, what the rules are for when and how to add/remove/rearrange agents, and what the limitations, mathematical implications, and performance impacts are.

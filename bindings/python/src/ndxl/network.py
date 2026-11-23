@@ -230,14 +230,29 @@ class network:
 		self._params[-2] = err
 
 	@property
-	def _Int_ptr(self):
+	def _Int_ptr(self)->int:
+		'''
+		Gets the raw C pointer associated with this network.
+		
+		:returns: The underlying C NDXLNetwork pointer wrapped by this network, as its integer representation.
+		'''
 		return ctypes.cast(self._ptr, ctypes.c_void_p).value
 
 	@property
-	def c_ptr(self):
+	def c_ptr(self)->LP_NDXLNetwork:
+		'''
+		Gets the ctypes object pointing to the underlying C object pointer.
+		
+		:returns: The NDXLNetwork pointer managed by this network.
+		'''
 		return self._ptr
 
-	def destroy(self):
+	def destroy(self)->int:
+		'''
+		Destroys the NDXLNetwork pointer associated with this network.
+		
+		:returns: NDXL_OK if the network is successfully destroyed, or NDXL_ERR on failure.
+		'''
 		del network.nwkdict[self._Int_ptr]
 		_res = lib.ndxlDestroyNetwork(ctypes.pointer(self._ptr))
 		del self._pptr
@@ -496,6 +511,13 @@ class network:
 		return _edge
 
 def create_network(args=None):
+	'''
+	Creates and returns an empty ndxl.network object.
+	
+	:param args: Tuple of extra information used by the network. Default is None.
+	
+	:returns: A new ndxl.network object.
+	'''
 	_args = () if args is None else ((args,) if np.isscalar(args) else copy.deepcopy(args))
 	_pptr = ctypes.cast(ctypes.pointer(ctypes.py_object([None, dict(), dict(), dict(), None, _args])), ctypes.c_void_p)
 	return network(lib.ndxlCreateNetwork(_pptr), _pptr)

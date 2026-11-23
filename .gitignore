@@ -72,6 +72,11 @@ htmlcov/
 docs/c/build/
 docs/python/build/
 
+# Examples build files
+examples/*/NDXL.dll
+examples/*/ndxl.exe
+examples/*/*.py
+
 # Temporary files and logs
 *.log
 *.tmp

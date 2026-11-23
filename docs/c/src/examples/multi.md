@@ -1,6 +1,8 @@
 # Adding Multiple Agents {#multi}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/adding-agents/).
+
 Adding multiple agents to a network allows us to simulate a wider variety of dynamical conditions.
 For now, we will only modify the initial conditions and parameters of agents, but later we will see how to assign different dynamics, noise, and discrete callback functions to them and simulate everything together.
 The most important point to remember when dealing with multiple agents is that each one's `void* params` must persist in memory as long as the agent is alive.
@@ -35,6 +37,7 @@ int main(int argc, char** argv)
 		vertices[i] = ndxlCreateVertex(nwk, &x0, 1, dynamics, NULL, NULL, 0, NULL, &A[i]);
 	}
 	
+	fclose(f_output);
 	return 0;
 }
 ```

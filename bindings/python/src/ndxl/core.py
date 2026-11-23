@@ -69,20 +69,42 @@ lib.ndxlInit.argtypes = []
 
 
 # Wrapper functions
-def libinit():
+def libinit()->int:
+	'''
+	Initialises the library's internal variables and garbage collection.
+	'''
 	return lib.ndxlInit()
 
-def get_last_error_code():
+def get_last_error_code()->int:
+	'''
+	Gets the most recently raised error code.
+	'''
 	return lib.ndxlGetLastErrorCode()
 
-def get_last_error_msg():
+def get_last_error_msg()->str:
+	'''
+	Gets the most recently raised error message.
+	'''
 	return lib.ndxlGetLastErrorMsg().decode('utf-8')
 
-def network_count():
+def network_count()->int:
+	'''
+	Gets the number of individual NDXLNetwork objects currently alive.
+	'''
 	return lib.ndxlGetNetworkCount()
 
-def print_error():
+def print_error()->None:
+	'''
+	Prints the most recent error code and message in an easily readable format.
+	'''
 	lib.ndxlPrintError()
 
-def raise_error(code, msg):
+def raise_error(code: int, msg: str)->None:
+	'''
+	Manually sets the library's most recent error.
+	Allows users to explicitly set an NDXL error code and associated error message.
+	
+	:param code: Error code to set.
+	:param msg: Error message associated with `code`.
+	'''
 	lib.ndxlRaiseError(code, msg.encode('utf-8'))

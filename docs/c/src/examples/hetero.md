@@ -1,6 +1,8 @@
 # Networks With Heterogeneous Agents {#hetero}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/heterogeneous-dynamics/).
+
 As explained in the @ref hetero-dynamics section, agents in a network do not necessarily need to share dynamics, noise, or discrete callback functions.
 Whenever any of these are distinct for any two agents, the network is said to exhibit heterogeneous dynamics.
 Let us modify the basic example shown in the @ref multi section to have the three vertices instead evolve according to
@@ -143,6 +145,9 @@ int main(int argc, char** argv)
 ![](@ref hetero.png)
 
 ## Single-Agent Heterogeneity
+
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/lotka-volterra/).
+
 The above example is one way to simulate heterogeneous dynamics, but not the only way.
 One could just as easily combine the state vectors of all the vertices into a single, contiguous vector, and define the heterogeneous dynamics in the dynamics function.
 The code is identical to @ref highorder, and indeed one could consider a coupled system of ODEs as having distinct dynamics equations, because the right-hand side of the equation differs for each variable.

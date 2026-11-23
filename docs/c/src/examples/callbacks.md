@@ -1,6 +1,8 @@
 ## Injecting Perturbations {#callbacks}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/kuramoto-model/).
+
 One of the most intuitive introductory examples to simulating network dynamics is the Kuramoto model, which we briefly illustrated on the [C API homepage](https://github.com/NonlinearC/NDXL/tree/main/NDXL).
 The example shown here includes a perturbation of one of the oscillators to hint at the discrete callback functionality of NDXL.
 The Kuramoto model describes the phase \f$\theta\f$ evolution of an oscillator with eigenfrequency \f$\omega\f$ as
@@ -73,7 +75,7 @@ int main(int argc, char** argv)
 	omega[0] = randdbl(0.9, 1.1);
 	oscillators[0] = ndxlCreateVertex(
 		nwk,
-		&theta0,r
+		&theta0,
 		1,
 		kuramoto,		// Assign Kuramoto dynamics
 		NULL,
@@ -148,7 +150,7 @@ int main(int argc, char** argv)
 		oscillators[1],	// "Destination" vertex (interchangeable with "Source" in undirected edge)
 		&K,				// State vector
 		1,				// Length of state vector
-		0.0,			// No delay (see @ref dde)
+		0.0,			// No delay (see the "Adding Delays" page)
 		0,				// Not directed (if this value is nonzero, information only flows from "Source" to "Destination" but not the other way around)
 		NULL,			// No dynamics (static edge)
 		NULL,			// No noise
@@ -192,7 +194,7 @@ int main(int argc, char** argv)
 	// Define the time stops array
 	double tstops = 2.5;
 	
-	// @ref ndxlNetworkSimulateRkck() would also be a suitable choice here
+	// Cash-Karp would also be a suitable choice here
 	ndxlNetworkSimulateDopri(
 		nwk,
 		5.0,		// Simulation duration; the time stops array must be between the current network time (which starts at 0) and that time plus the duration

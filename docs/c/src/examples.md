@@ -7,6 +7,9 @@ We also strongly recommend first reading through the @ref concepts page, as we w
 \note This is NOT a replacement for the <b>[API documentation](topics.html)</b>, which provides detailed explanations on functions, objects, and typedefs used. The sections should be absorbed in tandem.
 
 ## Getting Started
+
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/getting-started/).
+
 All NDXL programs <b>MUST</b> call @ref ndxlInit() before any NDXL functionality.
 This function initialises crucial internal variables, and registers garbage collection functions that automatically and safely release any remaining NDXL objects when the program terminates.
 
@@ -78,7 +81,7 @@ int main(int argc, char** argv)
 		&x0,		// Initial state vector - must be a pointer to double
 		1,			// Length of state vector
 		dynamics,	// Dynamics function the vertex state must evolve according to
-		NULL,		// No noise function (see @ref sde)
+		NULL,		// No noise function (see the "Adding Stochasticity" page)
 		NULL,		// No noise channels (must be NULL if noise function is NULL)
 		0,			// Number of noise channels (must be 0 if noise function is NULL)
 		NULL,		// No discrete callback
@@ -182,7 +185,7 @@ If the network successfully simulates, `states.csv` will contain two columns, na
 We can compare the outputs to the analytical solution of our dynamics function, which is
 
 \f[
-x(t) = \exp{\left(\frac{A}{2}t^2\right)}
+    x(t) = \exp{\left(\frac{A}{2}t^2\right)}
 \f]
 
 given that \f$x(t=0)=1\f$.
@@ -219,4 +222,4 @@ The remainder of the examples cover:
 - Heterogeneous agent dynamics: @subpage hetero
 - Delayed states: @subpage dde
 - Stochastic agents: @subpage sde
-- Dynamic topologies: @subpage dynnet
+- Dynamic topologies: @subpage dynnet and @subpage dynpow
