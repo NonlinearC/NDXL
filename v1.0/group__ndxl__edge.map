@@ -1,9 +1,0 @@
-<map id="NDXLEdge" name="NDXLEdge">
-<area shape="rect" id="Node000004" href="$group__edge__creation.html" title="Functions for creating and destroying edges." alt="" coords="341,5,520,32"/>
-<area shape="rect" id="Node000003" href="$group__edge__dnc.html" title="Dynamics, noise, and callback functions for edge objects." alt="" coords="355,56,506,99"/>
-<area shape="rect" id="Node000007" href="$group__edge__functions.html" title="Functions for operating on edges." alt="" coords="392,123,470,149"/>
-<area shape="rect" id="Node000005" href="$group__edge__getters.html" title="Getter functions for querying edge properties." alt="" coords="398,173,463,200"/>
-<area shape="rect" id="Node000006" href="$group__edge__setters.html" title="Setter functions for updating edge properties." alt="" coords="399,224,462,251"/>
-<area shape="rect" id="Node000001" title="Edge object representing a connection between two vertices." alt="" coords="206,123,293,149"/>
-<area shape="rect" id="Node000002" href="$group__ndxl__objects.html" title="Opaque type declarations of the objects defined by NDXL, and detailed explanations on the functions t..." alt="" coords="5,123,158,149"/>
-</map>
