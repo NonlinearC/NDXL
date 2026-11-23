@@ -123,7 +123,175 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dynnet.html','
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2dynnet"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
-<p>The main network class </p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
+The full code for these examples can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/failing-vertices/">here</a>.</h2>
+<p>The focal point of NDXL's architecture is its ability to simulate dynamic networks, which we <a class="el" href="nd.html#dyntop" title="Dynamic Topologies">outlined earlier</a>. This is facilitated by storing the state vector, intermediate stages, slope evaluations, noise matrices, and much more information locally for each agent, rather than in contiguous array over the entire network. Unfortunately, this approach makes NDXL slower and more memory intensive than existing software solutions when simulating large static networks; its advantage remains specifically in dynamic networks.</p>
+<p>The most important rule to keep in mind when simulating dynamic networks is that of when agents and noise channels in a network can be added, removed, or modified. To that end, we distinguish between <b>calculation</b> (something that evolves an agent's state vector) and <b>modification</b> (something that alters the dynamics, noise, <span class="tt">void* params</span>, or callback of an agent).</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md34"></a>
+Agent dynamics (<a class="el" href="group__vertex__dnc.html#ga1140d9424f744e76f6ae10fde2d3329e" title="NDXLVertexDynamics">NDXLVertexDynamics</a>; <a class="el" href="group__edge__dnc.html#gaaa6e3ed5b81b15dcfafe1c21d41815a4" title="NDXLEdgeDynamics">NDXLEdgeDynamics</a>) and noise functions (<a class="el" href="group__vertex__dnc.html#ga0e85c54f67da8f77c7ff75720724fab0" title="NDXLVertexNoise">NDXLVertexNoise</a>; <a class="el" href="group__edge__dnc.html#ga751f34e2abaa42c496447193f3480e80" title="NDXLEdgeNoise">NDXLEdgeNoise</a>) must ONLY be used for calculation</h2>
+<p>These functions are called multiple times per step, because all integration methods have multiple stages, and steps in an adaptive stepping algorithm may fail, triggering a retry with a smaller step. Furthermore, intermediate stages are evaluated at fractional increments of the time step between the previous and next step, meaning any modifications in these functions would happen at different times, on different scales, multiple times per step. Such modifications could therefore cause, among other issues: unexpected arithmetic errors, numerical instability, and incorrect error calculations.</p>
+<p><b>Your program will not necessarily crash, your simulation will just be very, very wrong!</b></p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
+Agent callbacks (<a class="el" href="group__vertex__dnc.html#ga8157fab181cba9d4fc99244e4179cbfb" title="NDXLVertexCallback">NDXLVertexCallback</a>; <a class="el" href="group__edge__dnc.html#ga497617ccf30d07fdb6e08f13fb35ef05" title="NDXLEdgeCallback">NDXLEdgeCallback</a>) can be used for calculation and modification</h2>
+<p>Callbacks are only evaluated once at the end of a successful time step, so modifications made will take effect on the next step. You could even use the callback of one agent to modify the properties of another agent, or destroy the calling agent (though this should be the last action taken in the callback to avoid dereferencing <span class="tt">NULL</span>).</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md36"></a>
+Network callbacks (<a class="el" href="group__network__callbacks.html#ga791bb7d3068fd4f39c72846ce7645400" title="NDXLNetworkCallback">NDXLNetworkCallback</a>) can be used for calculation and modification</h2>
+<p>A network callback is like Annie Oakley: anything the agent callback can do, the network callback can do better.</p>
+<p>Network callbacks, as we have seen before, are primarily used to capture simulation output over the whole network as once. In the context of dynamic networks, they are also typically used to</p>
+<ul>
+<li>Update the states of agents based on network wide rules</li>
+<li>Evaluate agents and add or remove agents based on certain criteria</li>
+<li>Reconfigure the topology by changing edge properties</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="failvert"></a>
+Failing Vertices</h1>
+<p>As an introductory example, let us consider a network with \(10\) homogeneous vertices whose state vectors evolve according to</p>
+<p class="formulaDsp">
+\[    \frac{dx}{dt} = xt
+\]
+</p>
+   <p class="formulaDsp">
+\[    x_0 = 1
+\]
+</p>
+<p>Each vertex is then given a unique "upper limit" to their state, uniformly random between \(0.5\) and \(7\).</p>
+<div class="fragment"><div class="line"><span class="comment">// ...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> dynamics(<a class="code hl_typedef" href="ndxlcore_8h.html#ad03a49b11a22416ba63273c4d7deb38b">NDXLVertex</a>* vert, <span class="keywordtype">double</span>* dx, <span class="keyword">const</span> <span class="keywordtype">double</span>* x, <span class="keywordtype">double</span> t, <span class="keywordtype">void</span>* p)</div>
+<div class="line">{</div>
+<div class="line">    dx[0] = x[0] * t;</div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_function" href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a>();</div>
+<div class="line">    <a class="code hl_typedef" href="group__ndxl__objects.html#gaefd105209efdd9f61bea4c3f76770d37">NDXLNetwork</a>* nwk = <a class="code hl_function" href="group__network__creation.html#gaceb794444113eebd20d8a6fabdc2e2f9">ndxlCreateNetwork</a>(NULL);</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Prepare initial state and space for each vertex&#39;s `void* params`</span></div>
+<div class="line">    <span class="keywordtype">double</span> x0 = 1.0;</div>
+<div class="line">    <span class="keywordtype">double</span> ulim[20];</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Create vertices</span></div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10; i++)</div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// Define the upper limit</span></div>
+<div class="line">        ulim[2 * i] = randdbl(0.5, 7.0);</div>
+<div class="line">        </div>
+<div class="line">        <span class="comment">// Give each vertex an ID for callback output (see below)</span></div>
+<div class="line">        ulim[2 * i + 1] = i;</div>
+<div class="line">        </div>
+<div class="line">        <a class="code hl_function" href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a>(nwk, &amp;x0, 1, dynamics, NULL, NULL, 0, NULL, ulim + 2 * i);</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__lib__mgmt_html_gaf795d2bbc114d928901bc9700830df4e"><div class="ttname"><a href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a></div><div class="ttdeci">const int ndxlInit()</div><div class="ttdoc">Initialises the NDXL library.</div></div>
+<div class="ttc" id="agroup__ndxl__objects_html_gaefd105209efdd9f61bea4c3f76770d37"><div class="ttname"><a href="group__ndxl__objects.html#gaefd105209efdd9f61bea4c3f76770d37">NDXLNetwork</a></div><div class="ttdeci">struct NDXLNetwork NDXLNetwork</div><div class="ttdef"><b>Definition</b> ndxlcore.h:57</div></div>
+<div class="ttc" id="agroup__network__creation_html_gaceb794444113eebd20d8a6fabdc2e2f9"><div class="ttname"><a href="group__network__creation.html#gaceb794444113eebd20d8a6fabdc2e2f9">ndxlCreateNetwork</a></div><div class="ttdeci">NDXLNetwork * ndxlCreateNetwork(void *_Params)</div><div class="ttdoc">Creates an empty NDXLNetwork object and returns a pointer to it.</div></div>
+<div class="ttc" id="agroup__vertex__creation_html_gaec4b6881830464281fc35817e96bfaf3"><div class="ttname"><a href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a></div><div class="ttdeci">NDXLVertex * ndxlCreateVertex(NDXLNetwork *_Network, const double *_State, const size_t _Order, NDXLVertexDynamics _Dynamics, NDXLVertexNoise _Noise, NDXLChannel **_Channels, const size_t _Nchannels, NDXLVertexCallback _Callback, void *_Params)</div><div class="ttdoc">Creates a vertex in a network and returns a pointer to it.</div></div>
+<div class="ttc" id="andxlcore_8h_html_ad03a49b11a22416ba63273c4d7deb38b"><div class="ttname"><a href="ndxlcore_8h.html#ad03a49b11a22416ba63273c4d7deb38b">NDXLVertex</a></div><div class="ttdeci">struct NDXLVertex NDXLVertex</div><div class="ttdef"><b>Definition</b> ndxlcore.h:91</div></div>
+</div><!-- fragment --><p>What makes this network dynamic is the upper limit: if the state of a vertex reaches or exceeds this limit, the vertex "fails" and is removed from the network. To do this, we'll define a vertex callback which destroys its called if this condition is met.</p>
+<div class="fragment"><div class="line"><span class="comment">// ...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> callback(<a class="code hl_typedef" href="ndxlcore_8h.html#ad03a49b11a22416ba63273c4d7deb38b">NDXLVertex</a>* vert, <span class="keywordtype">double</span>* x, <span class="keywordtype">double</span> t, <span class="keywordtype">void</span>* p)</div>
+<div class="line">{</div>
+<div class="line">    <span class="comment">// Extract limit and ID from `void* params`</span></div>
+<div class="line">    <span class="keywordtype">double</span> limit = ((<span class="keywordtype">double</span>*)p)[0];</div>
+<div class="line">    <span class="keywordtype">int</span> <span class="keywordtype">id</span> = (int)(((<span class="keywordtype">double</span>*)p)[1]);</div>
+<div class="line">    </div>
+<div class="line">    <span class="keywordflow">if</span> (x[0] &gt;= limit)</div>
+<div class="line">    {</div>
+<div class="line">        printf(<span class="stringliteral">&quot;Vertex %d destroyed at t = %f\n&quot;</span>, <span class="keywordtype">id</span>, t);</div>
+<div class="line">        <a class="code hl_function" href="group__vertex__creation.html#gaa537bc4e552f86796d1c09d2d2beb247">ndxlDestroyVertex</a>(&amp;vert);</div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Importantly, we do not operate on `vert` after it has been destroyed</span></div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// ...</span></div>
+<div class="ttc" id="agroup__vertex__creation_html_gaa537bc4e552f86796d1c09d2d2beb247"><div class="ttname"><a href="group__vertex__creation.html#gaa537bc4e552f86796d1c09d2d2beb247">ndxlDestroyVertex</a></div><div class="ttdeci">const int ndxlDestroyVertex(NDXLVertex **_Vertex)</div><div class="ttdoc">Destroys a vertex created using ndxlCreateVertex(), and zeroes the pointer.</div></div>
+</div><!-- fragment --><p>We can then set the callback of each vertex either by modifying the creation loop...</p>
+<div class="fragment"><div class="line"><span class="comment">// ...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_function" href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a>();</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// ...</span></div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Create vertices</span></div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10; i++)</div>
+<div class="line">    {</div>
+<div class="line">        ulim[2 * i] = randdbl(0.5, 7.0);</div>
+<div class="line">        ulim[2 * i + 1] = i;</div>
+<div class="line">        <a class="code hl_function" href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a>(nwk, &amp;x0, 1, dynamics, NULL, NULL, 0, callback, ulim + 2 * i);</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>...or post-creation using <a class="el" href="group__vertex__setters.html#gadbca55fb7a8e6353144f33394b047ab5" title="ndxlSetVertexCallback()">ndxlSetVertexCallback()</a>.</p>
+<div class="fragment"><div class="line"><span class="comment">// ...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_function" href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a>();</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// ...</span></div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Create vertices</span></div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10; i++)</div>
+<div class="line">    {</div>
+<div class="line">        ulim[2 * i] = randdbl(0.5, 7.0);</div>
+<div class="line">        ulim[2 * i + 1] = i;</div>
+<div class="line">        <a class="code hl_function" href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a>(nwk, &amp;x0, 1, dynamics, NULL, NULL, 0, NULL, ulim + 2 * i);</div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Assign callbacks</span></div>
+<div class="line">    <span class="keywordflow">for</span> (<a class="code hl_typedef" href="ndxlcore_8h.html#ad03a49b11a22416ba63273c4d7deb38b">NDXLVertex</a>* vert = <a class="code hl_function" href="group__network__traversal.html#ga654f02fad350c904b773221e86d687a8">ndxlGetNetworkFirstVertex</a>(nwk); vert; vert = <a class="code hl_function" href="group__network__traversal.html#gab9fecd9843a351db1ab4a355ef840faf">ndxlGetNetworkNextVertex</a>(vert))</div>
+<div class="line">        <a class="code hl_function" href="group__vertex__setters.html#gadbca55fb7a8e6353144f33394b047ab5">ndxlSetVertexCallback</a>(vert, callback);</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__network__traversal_html_ga654f02fad350c904b773221e86d687a8"><div class="ttname"><a href="group__network__traversal.html#ga654f02fad350c904b773221e86d687a8">ndxlGetNetworkFirstVertex</a></div><div class="ttdeci">NDXLVertex * ndxlGetNetworkFirstVertex(NDXLNetwork *_Network)</div><div class="ttdoc">Gets the first vertex in a network.</div></div>
+<div class="ttc" id="agroup__network__traversal_html_gab9fecd9843a351db1ab4a355ef840faf"><div class="ttname"><a href="group__network__traversal.html#gab9fecd9843a351db1ab4a355ef840faf">ndxlGetNetworkNextVertex</a></div><div class="ttdeci">NDXLVertex * ndxlGetNetworkNextVertex(NDXLVertex *_Vertex)</div><div class="ttdoc">Gets the next vertex in the network vertex sequence.</div></div>
+<div class="ttc" id="agroup__vertex__setters_html_gadbca55fb7a8e6353144f33394b047ab5"><div class="ttname"><a href="group__vertex__setters.html#gadbca55fb7a8e6353144f33394b047ab5">ndxlSetVertexCallback</a></div><div class="ttdeci">const int ndxlSetVertexCallback(NDXLVertex *_Vertex, NDXLVertexCallback _Callback)</div><div class="ttdoc">Sets the callback function of a vertex.</div></div>
+</div><!-- fragment --><p>Before simulating the network, there is one thing we need to decide, namely, time scale. Because <span class="tt">callback</span> is evaluated after each successful time step, a vertex could be destroyed much later than it is supposed to be; consider, for example:</p>
+<ul>
+<li>Vertex \(1\) has state \(3\) at time \(2\) with a <span class="tt">limit</span> of \(5\)</li>
+<li>The next time step size is 1.7, taking us to time \(3.7\)</li>
+<li>At \(t=3.7\), vertex \(1\) has a state of \(6\), meaning it will be destroyed</li>
+<li>But \(6\) is so much larger than \(5\) that it should have been destroyed quite some time before \(3.7\)</li>
+</ul>
+<p>Ordinarily this is solved with a continuous condition checker e.g., continuous callbacks in Julia's <b><a href="https://docs.sciml.ai/DiffEqDocs/stable/"><span class="tt">DifferentialEquations.jl</span></a></b>, or events in Python's <b><a href="https://scipy.org/"><span class="tt">SciPy</span></a></b>. However, NDXL does not (yet) have a mechanism for this, so we must instead poll the callback on such a small time scale that the time of each vertex's destruction is sufficiently accurate. We could do this in one of two ways:</p>
+<ul>
+<li>Use an adaptive method with time stops at regular intervals</li>
+<li>Use a static method with a very small step size</li>
+</ul>
+<p>Efficiency points us to the second option, so we will use <a class="el" href="group__network__simulation.html#ga86f19459b1504a9cc772383d5adc6556" title="ndxlNetworkSimulateRalston()">ndxlNetworkSimulateRalston()</a> with \(h=10^{-3}\). We will also print the number of vertices in <span class="tt">nwk</span> afterwards to verify the agents have all been destroyed.</p>
+<div class="fragment"><div class="line"><span class="comment">// ...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_function" href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a>();</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// ...</span></div>
+<div class="line">    </div>
+<div class="line">    <a class="code hl_function" href="group__network__simulation.html#ga86f19459b1504a9cc772383d5adc6556">ndxlNetworkSimulateRalston</a>(nwk, 2.0, 1e-3, NULL);</div>
+<div class="line">    printf(<span class="stringliteral">&quot;After simulation, network has %d vertices left\n&quot;</span>, <a class="code hl_function" href="group__network__getters.html#ga601d40984c3b2321857b8b34ce618817">ndxlGetNetworkOrder</a>(nwk));</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__network__getters_html_ga601d40984c3b2321857b8b34ce618817"><div class="ttname"><a href="group__network__getters.html#ga601d40984c3b2321857b8b34ce618817">ndxlGetNetworkOrder</a></div><div class="ttdeci">const size_t ndxlGetNetworkOrder(NDXLNetwork *_Network)</div><div class="ttdoc">Gets the number of vertices in a network.</div></div>
+<div class="ttc" id="agroup__network__simulation_html_ga86f19459b1504a9cc772383d5adc6556"><div class="ttname"><a href="group__network__simulation.html#ga86f19459b1504a9cc772383d5adc6556">ndxlNetworkSimulateRalston</a></div><div class="ttdeci">const int ndxlNetworkSimulateRalston(NDXLNetwork *_Network, const double _Time, const double _Step, NDXLNetworkCallback _Callback)</div><div class="ttdoc">Simulates a network using the static explicit Ralston method of order 4.</div></div>
+</div><!-- fragment --><p>The simulation outputs to <span class="tt">stdout</span>:</p>
+<div class="fragment"><div class="line">Vertex 5 destroyed at t = 0.001000</div>
+<div class="line">Vertex 4 destroyed at t = 0.544000</div>
+<div class="line">Vertex 3 destroyed at t = 0.967000</div>
+<div class="line">Vertex 0 destroyed at t = 1.098000</div>
+<div class="line">Vertex 8 destroyed at t = 1.724000</div>
+<div class="line">Vertex 7 destroyed at t = 1.750000</div>
+<div class="line">Vertex 6 destroyed at t = 1.821000</div>
+<div class="line">Vertex 2 destroyed at t = 1.919000</div>
+<div class="line">Vertex 9 destroyed at t = 1.929000</div>
+<div class="line">Vertex 1 destroyed at t = 1.960000</div>
+<div class="line">After simulation, network has 0 vertices left</div>
+</div><!-- fragment --><p>To see how one failure can induce another, and how agents can be re-added to a network, see <a class="el" href="dynpow.html" title="Dynamic Power Grids">Dynamic Power Grids</a>. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

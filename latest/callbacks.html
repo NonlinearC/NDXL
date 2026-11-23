@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('callbacks.html
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2callbacks"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/kuramoto-model/">here</a>.</h2>
 <p>One of the most intuitive introductory examples to simulating network dynamics is the Kuramoto model, which we briefly illustrated on the <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL">C API homepage</a>. The example shown here includes a perturbation of one of the oscillators to hint at the discrete callback functionality of NDXL. The Kuramoto model describes the phase \(\theta\) evolution of an oscillator with eigenfrequency \(\omega\) as</p>
 <p class="formulaDsp">
 \[    \frac{d\theta_i}{dt} = \omega_i + \frac{1}{N_i}\displaystyle\sum_{j=1}^N{K_{ij}\sin{\left(\theta_j - \theta_i\right)}}.
@@ -184,7 +186,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('callbacks.html
 <div class="line">    omega[0] = randdbl(0.9, 1.1);</div>
 <div class="line">    oscillators[0] = <a class="code hl_function" href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a>(</div>
 <div class="line">        nwk,</div>
-<div class="line">        &amp;theta0,r</div>
+<div class="line">        &amp;theta0,</div>
 <div class="line">        1,</div>
 <div class="line">        kuramoto,       <span class="comment">// Assign Kuramoto dynamics</span></div>
 <div class="line">        NULL,</div>
@@ -253,7 +255,7 @@ Defining the Topology</h1>
 <div class="line">        oscillators[1], <span class="comment">// &quot;Destination&quot; vertex (interchangeable with &quot;Source&quot; in undirected edge)</span></div>
 <div class="line">        &amp;K,             <span class="comment">// State vector</span></div>
 <div class="line">        1,              <span class="comment">// Length of state vector</span></div>
-<div class="line">        0.0,            <span class="comment">// No delay (see @ref dde)</span></div>
+<div class="line">        0.0,            <span class="comment">// No delay (see the &quot;Adding Delays&quot; page)</span></div>
 <div class="line">        0,              <span class="comment">// Not directed (if this value is nonzero, information only flows from &quot;Source&quot; to &quot;Destination&quot; but not the other way around)</span></div>
 <div class="line">        NULL,           <span class="comment">// No dynamics (static edge)</span></div>
 <div class="line">        NULL,           <span class="comment">// No noise</span></div>
@@ -289,7 +291,7 @@ Defining the Topology</h1>
 <div class="line">    <span class="comment">// Define the time stops array</span></div>
 <div class="line">    <span class="keywordtype">double</span> tstops = 2.5;</div>
 <div class="line">    </div>
-<div class="line">    <span class="comment">// @ref ndxlNetworkSimulateRkck() would also be a suitable choice here</span></div>
+<div class="line">    <span class="comment">// Cash-Karp would also be a suitable choice here</span></div>
 <div class="line">    <a class="code hl_function" href="group__network__simulation.html#ga13d5d8530b3b090dba5f9ebd39cb38a7">ndxlNetworkSimulateDopri</a>(</div>
 <div class="line">        nwk,</div>
 <div class="line">        5.0,        <span class="comment">// Simulation duration; the time stops array must be between the current network time (which starts at 0) and that time plus the duration</span></div>

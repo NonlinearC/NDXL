@@ -123,11 +123,13 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('sde.html','','
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2sde"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md42"></a>
+The full code for these examples can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/ornstein-uhlenbeck/">here</a>.</h2>
 <p>The preceeding examples have all looked at vertices whose agents evolve deterministically i.e., repeated runs of the same simulation result in the same outputs and have the same analytical solution. This is not the case for stochastic differential equations (SDEs), which are explicitly designed to simulate agents that have an element of randomness in their dynamics. Before we can begin solving SDEs, we need to understand several key concepts used in their definitions.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
 Brownian Path</h2>
 <p>The random fluctuations in an SDE are assumed to follow Brownian motion, and the individual microscopic fluctuations over time are collectively referred to as a Wiener path. The system can have multiple Wiener paths simultaneously influencing its stochastic motion, and these are called noise channels. NDXL explicitly defines a single noise channel via the <a class="el" href="ndxlcore_8h.html#a40b73c1a687ab1376515b42d4294c079" title="NDXLChannel">NDXLChannel</a> object i.e., each <a class="el" href="ndxlcore_8h.html#a40b73c1a687ab1376515b42d4294c079" title="NDXLChannel">NDXLChannel</a> is an independent Wiener process. This makes local <a class="el" href="group__vertex__dnc.html#ga0e85c54f67da8f77c7ff75720724fab0" title="NDXLVertexNoise">noise functions</a> in NDXL only responsible for returning the \(D^\prime\times M^\prime\) diffusion submatrix of the agent they are associated with, where \(D^\prime\) and \(M^\prime\) are respectively the state vector cardinality and number of noise channels of that agent.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md44"></a>
 Drift and Diffusion</h2>
 <p>An SDE for a \(D\)-dimensional state vector \(\vec{X}\) is defined most generally as</p>
 <p class="formulaDsp">
@@ -140,12 +142,12 @@ Drift and Diffusion</h2>
 <li>A single element in a state vector can be influenced by multiple noise channels</li>
 <li>Agents can share noise channels independently of their dynamics or state vectors</li>
 </ul>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md31"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md45"></a>
 Path Preservation and RSwM</h2>
 <p>For static stepping algorithms like <a class="el" href="group__network__simulation.html#ga99092af87928bc85d65ac59e4b5efedc" title="ndxlNetworkSimulateEuler">Euler-Maruyama</a>, steps are taken to be successful regardless of the local error or behaviour of the Brownian path. This makes them far more inaccurate than their adaptive counterparts, and should only ever be used as a "preview" of the stochastic output (assuming a very small step size e.g., \(h\sim10^{-5}\)) rather than a complete simulation output.</p>
 <p>Adaptive algorithms like <a class="el" href="group__network__simulation.html#gaee348d9f96ac667cb4a4a47eee869b22" title="ndxlNetworkSimulateHeun">Heun-Euler</a> estimate local error based on user-defined tolerances, and this is where the stochasticity of the system becomes problematic. If a step is rejected in a deterministic ODE, we know it was because the difference between the two solutions was too large over that step, and the step is simply reduced and retried. In SDEs, however, the deterministic drift functions could agree nearly perfectly, but the stochastic diffusion components cause the paths to diverge too much, raising the local error. This means a step can be rejected effectively by random chance.</p>
 <p>However, the rejection event itself cannot simply be discarded as a "chance effect"; if we simply reject the step and retry with a fresh Wiener increment, we lose information about why the step was initially rejected, which introduces statistical bias into the Wiener path as a whole. This is where an algorithm called <em>Rejection Sampling with Memory</em> (RSwM) comes in. Without going into too much detail, RSwM constructs a <em>Brownian bridge</em> between the rejected step and previously accepted step, which allows for a deterministic interpolation of an intermediate step that should be attempted first, followed by a step that takes us back to the originally rejected time point. This preserves the statistical integrity and distribution properties of the underlying Wiener process, making adaptive stochastic methods far more suitable for actual simulations involving SDEs.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md32"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md46"></a>
 It&ocirc; and Stratonovich Interpretations</h2>
 <p>A further complication with SDE solvers is the calculus behind the solving method, which we eluded to in the <a class="el" href="concepts.html#meth-stochastic" title="Stochastic methods">Stochastic methods</a> section of the <a class="el" href="concepts.html" title="Concepts">Concepts</a> page. Briefly, the two main schemes are the It&amp;ocirc and Stratonovich interpretations, and the differences between them come down to the mathematical properties preserved:</p>
 <ul>
@@ -163,7 +165,7 @@ It&ocirc; and Stratonovich Interpretations</h2>
 \]
 </p>
 <p>...and subtract it if using a Stratonovich solver to solve an It&ocirc; equation.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md47"></a>
 Particle Ensemble</h1>
 <p>Let us now simulate an ensemble of Ornstein-Uhlenbeck particles, which models the position \(x\) of particle \(i\) as</p>
 <p class="formulaDsp">
@@ -233,7 +235,7 @@ Particle Ensemble</h1>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup__network__simulation_html_gaee348d9f96ac667cb4a4a47eee869b22"><div class="ttname"><a href="group__network__simulation.html#gaee348d9f96ac667cb4a4a47eee869b22">ndxlNetworkSimulateHeun</a></div><div class="ttdeci">const int ndxlNetworkSimulateHeun(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</div><div class="ttdoc">Simulates a network using the adaptive explicit Euler-Heun method of strong order 1(0....</div></div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md34"></a>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md48"></a>
 Specifying noise channels</h1>
 <p>We will modify our Ornstein-Uhlenbeck ensemble above to have all particles driven by the same Wiener process; what we expect is the initial distribution to simply change position, not shape, as all particles are perturbed by the same random amount each time step. To achieve this, we will create a <a class="el" href="ndxlcore_8h.html#a40b73c1a687ab1376515b42d4294c079" title="NDXLChannel">NDXLChannel</a> before the vertices and assign it as the only channel to each vertex's <span class="tt">_Channels</span> array.</p>
 <div class="fragment"><div class="line"><span class="comment">// ...</span></div>

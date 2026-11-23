@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['use_20ndxl_0',['Why use NDXL?',['../index.html#autotoc_md2',1,'']]],
-  ['use_20ndxl_20from_20c_1',['Should I use NDXL from C?',['../index.html#autotoc_md7',1,'']]],
-  ['use_20ndxl_20from_20other_20programming_20languages_2',['How do I use NDXL from other programming languages?',['../index.html#autotoc_md5',1,'']]]
+  ['unbalanced_20grid_0',['Cascading Failure in an Unbalanced Grid',['../dynpow.html#autotoc_md32',1,'']]],
+  ['use_20ndxl_1',['Why use NDXL?',['../index.html#autotoc_md2',1,'']]],
+  ['use_20ndxl_20from_20c_2',['Should I use NDXL from C?',['../index.html#autotoc_md7',1,'']]],
+  ['use_20ndxl_20from_20other_20programming_20languages_3',['How do I use NDXL from other programming languages?',['../index.html#autotoc_md5',1,'']]],
+  ['used_20for_20calculation_4',['Agent dynamics (&lt;a class=&quot;el&quot; href=&quot;group__vertex__dnc.html#ga1140d9424f744e76f6ae10fde2d3329e&quot; title=&quot;NDXLVertexDynamics&quot;&gt;NDXLVertexDynamics&lt;/a&gt;; &lt;a class=&quot;el&quot; href=&quot;group__edge__dnc.html#gaaa6e3ed5b81b15dcfafe1c21d41815a4&quot; title=&quot;NDXLEdgeDynamics&quot;&gt;NDXLEdgeDynamics&lt;/a&gt;) and noise functions (&lt;a class=&quot;el&quot; href=&quot;group__vertex__dnc.html#ga0e85c54f67da8f77c7ff75720724fab0&quot; title=&quot;NDXLVertexNoise&quot;&gt;NDXLVertexNoise&lt;/a&gt;; &lt;a class=&quot;el&quot; href=&quot;group__edge__dnc.html#ga751f34e2abaa42c496447193f3480e80&quot; title=&quot;NDXLEdgeNoise&quot;&gt;NDXLEdgeNoise&lt;/a&gt;) must ONLY be used for calculation',['../dynnet.html#autotoc_md34',1,'']]],
+  ['used_20for_20calculation_20and_20modification_5',['used for calculation and modification',['../dynnet.html#autotoc_md35',1,'Agent callbacks (&lt;a class=&quot;el&quot; href=&quot;group__vertex__dnc.html#ga8157fab181cba9d4fc99244e4179cbfb&quot; title=&quot;NDXLVertexCallback&quot;&gt;NDXLVertexCallback&lt;/a&gt;; &lt;a class=&quot;el&quot; href=&quot;group__edge__dnc.html#ga497617ccf30d07fdb6e08f13fb35ef05&quot; title=&quot;NDXLEdgeCallback&quot;&gt;NDXLEdgeCallback&lt;/a&gt;) can be used for calculation and modification'],['../dynnet.html#autotoc_md36',1,'Network callbacks (&lt;a class=&quot;el&quot; href=&quot;group__network__callbacks.html#ga791bb7d3068fd4f39c72846ce7645400&quot; title=&quot;NDXLNetworkCallback&quot;&gt;NDXLNetworkCallback&lt;/a&gt;) can be used for calculation and modification']]]
 ];

@@ -12,7 +12,7 @@ var concepts =
     ] ],
     [ "Network Dynamics", "nd.html", [
       [ "What is Meant by \"State Vector\"?", "nd.html#state-vector", [
-        [ "Do all elements of a state vector change over time?", "nd.html#autotoc_md21", null ],
+        [ "Do all elements of a state vector change over time?", "nd.html#autotoc_md22", null ],
         [ "What if agent dynamics depend on constants in the equation?", "nd.html#dynamicsexample", null ]
       ] ],
       [ "Heterogeneous Dynamics", "nd.html#hetero-dynamics", null ],

@@ -1,12 +1,13 @@
 var searchData=
 [
   ['have_0',['How many agents can a network have?',['../concepts.html#autotoc_md17',1,'']]],
-  ['hetero_2emd_1',['hetero.md',['../hetero_8md.html',1,'']]],
-  ['heterogeneity_2',['Single-Agent Heterogeneity',['../hetero.html#autotoc_md28',1,'']]],
-  ['heterogeneous_20agents_3',['Networks With Heterogeneous Agents',['../hetero.html',1,'examples']]],
-  ['heterogeneous_20dynamics_4',['Heterogeneous Dynamics',['../nd.html#hetero-dynamics',1,'']]],
-  ['higher_20order_20dynamics_5',['Higher Order Dynamics',['../nd.html#higherorder',1,'Higher-Order Dynamics'],['../highorder.html',1,'Simulating Higher-Order Dynamics']]],
-  ['highorder_2emd_6',['highorder.md',['../highorder_8md.html',1,'']]],
-  ['how_20do_20i_20use_20ndxl_20from_20other_20programming_20languages_7',['How do I use NDXL from other programming languages?',['../index.html#autotoc_md5',1,'']]],
-  ['how_20many_20agents_20can_20a_20network_20have_8',['How many agents can a network have?',['../concepts.html#autotoc_md17',1,'']]]
+  ['here_1',['here',['../dynpow.html#autotoc_md31',1,'The full code for these examples can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/cascading-failure/&quot;&gt;here&lt;/a&gt;.'],['../dynnet.html#autotoc_md33',1,'The full code for these examples can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/failing-vertices/&quot;&gt;here&lt;/a&gt;.'],['../sde.html#autotoc_md42',1,'The full code for these examples can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/ornstein-uhlenbeck/&quot;&gt;here&lt;/a&gt;.'],['../multi.html#autotoc_md41',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/adding-agents/&quot;&gt;here&lt;/a&gt;.'],['../examples.html#autotoc_md21',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/getting-started/&quot;&gt;here&lt;/a&gt;.'],['../hetero.html#autotoc_md37',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/heterogeneous-dynamics/&quot;&gt;here&lt;/a&gt;.'],['../callbacks.html#autotoc_md29',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/kuramoto-model/&quot;&gt;here&lt;/a&gt;.'],['../hetero.html#autotoc_md39',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/lotka-volterra/&quot;&gt;here&lt;/a&gt;.'],['../highorder.html#autotoc_md40',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/nbody-problem/&quot;&gt;here&lt;/a&gt;.'],['../dde.html#autotoc_md30',1,'The full code for this example can be found &lt;a href=&quot;https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/ovm-traffic/&quot;&gt;here&lt;/a&gt;.']]],
+  ['hetero_2emd_2',['hetero.md',['../hetero_8md.html',1,'']]],
+  ['heterogeneity_3',['Single-Agent Heterogeneity',['../hetero.html#autotoc_md38',1,'']]],
+  ['heterogeneous_20agents_4',['Networks With Heterogeneous Agents',['../hetero.html',1,'examples']]],
+  ['heterogeneous_20dynamics_5',['Heterogeneous Dynamics',['../nd.html#hetero-dynamics',1,'']]],
+  ['higher_20order_20dynamics_6',['Higher Order Dynamics',['../nd.html#higherorder',1,'Higher-Order Dynamics'],['../highorder.html',1,'Simulating Higher-Order Dynamics']]],
+  ['highorder_2emd_7',['highorder.md',['../highorder_8md.html',1,'']]],
+  ['how_20do_20i_20use_20ndxl_20from_20other_20programming_20languages_8',['How do I use NDXL from other programming languages?',['../index.html#autotoc_md5',1,'']]],
+  ['how_20many_20agents_20can_20a_20network_20have_9',['How many agents can a network have?',['../concepts.html#autotoc_md17',1,'']]]
 ];

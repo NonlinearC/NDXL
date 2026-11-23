@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__vertex_
 <div class="dynheader">
 Collaboration diagram for Setters:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" loading="lazy" frameborder="0" src="group__vertex__setters.svg" width="216" height="38"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><!-- SVG 0 --></div>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
@@ -169,7 +169,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If _Vertex is NULL, returns <a class="el" href="group__ndxl__err.html#gae9261a8e1c9a6cebdc947ee5798cca1e" title="NDXL_ERR">NDXL_ERR</a>, otherwise updates the callback of _Vertex, and returns NDXL_OK.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This function should never be used from within an existing callback function, as replacing a callback while it is executing can corrupt the calling stack. Additionally, this function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.</dd></dl>
 <dl class="section user"><dt>Errors raised</dt><dd><ul>
 <li><a class="el" href="group__ndxl__err.html#gaf6b8bdcb87bdd7944810152b510101e4" title="NDXL_ARG_ERR">NDXL_ARG_ERR</a> : _Vertex is NULL.</li>
 </ul>

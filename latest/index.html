@@ -122,9 +122,9 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('index.html',''
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2introduction"></a></p>
-<p>Welcome to the Network Dynamics eXperimentation Library (NDXL) documentation. If this is your first visit, we recommend treating the documentation as a book, going from basic concepts to advanced tutorials and implementation details.</p>
-<p><b>Documentation version:</b> vv1.0.0</p>
-<p><a href="https://nonlinearc.github.io/NDXL/">View documentation for other releases</a></p>
+<p>Welcome to the Network Dynamics eXperimentation Library (NDXL) documentation v1.0.0.</p>
+<p>Looking for another release? Visit the <a href="https://nonlinearc.github.io/NDXL/">documentation version index</a>.</p>
+<p>If this is your first visit, we recommend treating the documentation as a book, going from basic concepts to advanced tutorials and implementation details.</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
 What is NDXL?</h1>
 <p>NDXL is a cross-platform and programming language-independent package for simulating complex network dynamics, with an emphasis on dynamic topologies. What this simply means is:</p>
@@ -168,10 +168,12 @@ Can I write my own language-specific wrappers?</h2>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
 Should I use NDXL from C?</h2>
 <p>Situationally.</p>
-<p>The API is designed to provide the user with as much control as possible over the underlying mechanics of the network. Because the C API exposes many configuration parameters directly, constructing and configuring objects can become rather verbose, particularly when many optional parameters are set to <span class="tt">0</span> or <span class="tt">NULL</span>. Languages with features such as default arguments and function overloading can provide more convenient interfaces to the same underlying functionality. This is why the library is also designed with cross-language interoperability in mind - it is much easier, from a user perspective, to use the <a href="https://pypi.org/project/ndxl/">Python version</a>, for example. With that said, language-specific wrappers can introduce their own significant amount of overhead, depending on how many inter-language translations need to be done during simulation.</p>
-<p>A general rule of thumb would therefore be:</p><ul>
-<li>Use C when performance is important e.g., simulating a 10<sup>7</sup> node algal cluster.</li>
-<li>Use another language wrapper if the simulation is small and convenience matters more than control.</li>
+<p>The API is designed to provide the user with as much control as possible over the underlying mechanics of the network. Because the C API exposes many configuration parameters directly, constructing and configuring objects can become rather verbose, particularly when many optional parameters are set to <span class="tt">0</span> or <span class="tt">NULL</span>. Languages with features such as default arguments and function overloading can provide more convenient interfaces to the same underlying functionality. This is why the library is also designed with cross-language interoperability in mind - it is much easier, from a user perspective, to use the <a href="https://pypi.org/project/ndxl/">Python version</a>, for example. With that said, language-specific wrappers can introduce their own significant amount of overhead, depending on how many inter-language translations need to be done during simulation. NDXL's <a class="el" href="nd.html#dyntop" title="Dynamic Topologies">Dynamic Topologies</a> architecure also makes it substantially slower and more memory intensive than existing software for simulating large static networks, with the difference being negligble for small static networks. A general rule of thumb would therefore be:</p>
+<ul>
+<li>Use the NDXL C API when performance is important e.g., simulating a 10<sup>7</sup> node algal cluster with births, deaths, and harvesting.</li>
+<li>Use an NDXL wrapper if the simulation is small and convenience matters more than control e.g., a local power grid with node addition and failure.</li>
+<li>Use either NDXL API when simulating small static networks e.g., a \(100\)-node Kuramoto network.</li>
+<li>Use a package like <a href="https://juliadynamics.github.io/NetworkDynamics.jl/stable/">NetworkDynamics.jl</a> when simulating large static networks e.g., a \(10000\)-node swing equation.</li>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
 What kinds of networks can NDXL simulate?</h2>

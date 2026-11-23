@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('hetero.html','
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2hetero"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/heterogeneous-dynamics/">here</a>.</h2>
 <p>As explained in the <a class="el" href="nd.html#hetero-dynamics" title="Heterogeneous Dynamics">Heterogeneous Dynamics</a> section, agents in a network do not necessarily need to share dynamics, noise, or discrete callback functions. Whenever any of these are distinct for any two agents, the network is said to exhibit heterogeneous dynamics. Let us modify the basic example shown in the <a class="el" href="multi.html" title="Adding Multiple Agents">Adding Multiple Agents</a> section to have the three vertices instead evolve according to</p>
 <p class="formulaDsp">
 \[    \frac{dx_1}{dt} = Ax_1t,
@@ -251,8 +253,10 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('hetero.html','
 </div><!-- fragment --><div class="image">
 <img src="hetero.png" alt=""/>
 </div>
-    <h1 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
+    <h1 class="doxsection"><a class="anchor" id="autotoc_md38"></a>
 Single-Agent Heterogeneity</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md39"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/lotka-volterra/">here</a>.</h2>
 <p>The above example is one way to simulate heterogeneous dynamics, but not the only way. One could just as easily combine the state vectors of all the vertices into a single, contiguous vector, and define the heterogeneous dynamics in the dynamics function. The code is identical to <a class="el" href="highorder.html" title="Simulating Higher-Order Dynamics">Simulating Higher-Order Dynamics</a>, and indeed one could consider a coupled system of ODEs as having distinct dynamics equations, because the right-hand side of the equation differs for each variable. As an example, consider a Lotka-Volterra type interaction between a predator \(N_{pred}\) and prey \(N_{prey}\) population, given by</p>
 <p class="formulaDsp">
 \[    \frac{{\rm d}N_{prey}}{{\rm d}t} = \alpha N_{prey} - \beta N_{prey}N_{pred},

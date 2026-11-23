@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('highorder.html
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2highorder"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md40"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/nbody-problem/">here</a>.</h2>
 <p>Suppose we want to simulate a network of interacting objects whose dynamics are defined by second-order differential equations \(\frac{d^2\vec{x}}{dt^2}\). A famous example of this is the \(N\)-body problem, in which the motion of each body is driven by the forces exerted on it by the other \(N-1\) bodies, similar to the Kuramoto model (though the coupling is fundamentally different). The \(i^{th}\) body's position vector \(\vec{r}\) evolves according to</p>
 <p class="formulaDsp">
 \[    \frac{d^2\vec{r}_i}{dt^2} = -G \sum_{\substack{j=1 \\ j \neq i}}^{N}{m_j \frac{\vec{r}_i - \vec{r}_j}{|\vec{r}_i - \vec{r}_j|^3}},
@@ -155,8 +157,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('highorder.html
 <div class="line"> </div>
 <div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
 <div class="line">{</div>
-<div class="line">    <span class="keywordtype">double</span> G,</div>
-<div class="line">    FILE* f_output</div>
+<div class="line">    <span class="keywordtype">double</span> G;</div>
+<div class="line">    FILE* f_output;</div>
 <div class="line">} nbody_params;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>

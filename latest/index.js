@@ -10,11 +10,11 @@ var index =
       [ "What kinds of networks can NDXL simulate?", "index.html#autotoc_md8", null ]
     ] ],
     [ "Cross-Language Interoperability", "crosslang.html", [
-      [ "Design Framework", "crosslang.html#autotoc_md22", null ],
-      [ "Loading the Library", "crosslang.html#autotoc_md23", null ],
-      [ "Defining Class-Specific Functions", "crosslang.html#autotoc_md24", null ],
-      [ "Defining the Class", "crosslang.html#autotoc_md25", null ],
-      [ "Class Properties and Object Constructors", "crosslang.html#autotoc_md26", null ],
-      [ "Simulation", "crosslang.html#autotoc_md27", null ]
+      [ "Design Framework", "crosslang.html#autotoc_md23", null ],
+      [ "Loading the Library", "crosslang.html#autotoc_md24", null ],
+      [ "Defining Class-Specific Functions", "crosslang.html#autotoc_md25", null ],
+      [ "Defining the Class", "crosslang.html#autotoc_md26", null ],
+      [ "Class Properties and Object Constructors", "crosslang.html#autotoc_md27", null ],
+      [ "Simulation", "crosslang.html#autotoc_md28", null ]
     ] ]
 ];

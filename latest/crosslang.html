@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('crosslang.html
 <div class="textblock"><p><a class="anchor" id="md_src_2cross-language"></a></p>
 <p>As we eluded to earlier, the architecture of NDXL is designed with two core concepts in mind, namely, maximum user control, and programming language-independence. The raw C functions therefore expose many parameters, most of which are unusued most of the time, and the whole API is structured around only primitive and opaque types, making direct usage thereof very verbose. For these reasons, the intended use of NDXL is a standalone library that can be imported into and used from other programming languages, with those language-specific bindings handling much of the boilerplate code. This page demonstrates this process, using the <a href="https://pypi.org/project/ndxl/">Python version</a> of NDXL as an example, the source code of which can be found on <a href="https://github.com/NonlinearC/NDXL/tree/main/bindings/python">GitHub</a>.</p>
 <dl class="section note"><dt>Note</dt><dd>To avoid clutter and repetition, we will not show every file and function in the library. Instead, we stick to core concepts, design philosophy, and the basics of the "how to import" procedure.</dd></dl>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
 Design Framework</h1>
 <p>To import NDXL into another programming language, we need a foreign library interface in that language that handles external library loading, symbol exposure, and data type conversion. This interface is usually in the form of language-specific functionality (e.g., <span class="tt">dllimport</span> in C/C++), or a package that mediates the operations (e.g., <a href="https://docs.python.org/3/library/ctypes.html">ctypes</a> in Python; <a href="https://docs.julialang.org/en/v1/stdlib/Libdl/">Libdl</a> in Julia). We then make use of the interface to</p>
 <ul>
@@ -135,7 +135,7 @@ Design Framework</h1>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>Perhaps most crucially, because NDXL manages its own memory, we do not want our wrapper classes "managing" the underlying memory so much as "simply using" it. We distinguish between the destructor of a wrapper class, which simply releases its handle on the underlying object memory, and the C destructor of the object itself e.g., <a class="el" href="group__network__creation.html#ga41c3dace543bac6ff2d0597bd5cb03e1" title="ndxlDestroyNetwork()">ndxlDestroyNetwork()</a>.</dd></dl>
 <p>Almost always will the dynamic versions (<span class="tt">NDXL.dll</span>, <span class="tt">libNDXL.so</span>, <span class="tt">libNDXL.dylib</span>) of NDXL be used from the foreign library interface. Since NDXL supports Windows, Unix, and x86-64 macOS operating systems, we also need to detect the operating system and load the corresponding library file. The wrapper code is ideally platform independent maintatining NDXL's "write once, run anywhere" design semantic.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
 Loading the Library</h1>
 <p>In Python, we make use of the <span class="tt">pathlib</span> and <span class="tt">platform</span> libraries to detect, respectively</p>
 <ul>
@@ -220,7 +220,7 @@ Loading the Library</h1>
 <div class="line"> </div>
 <div class="line"><span class="keyword">def </span>raise_error(code, msg):</div>
 <div class="line">    lib.ndxlRaiseError(code, msg.encode(<span class="stringliteral">&#39;utf-8&#39;</span>))</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
 Defining Class-Specific Functions</h1>
 <p>The files <span class="tt">network.py</span>, <span class="tt">channel.py</span>, <span class="tt">vertex.py</span>, and <span class="tt">edge.py</span> each define their own wrapper classes for the corresponding NDXL objects. They begin by specifying the <span class="tt">restype</span> and <span class="tt">argtypes</span> properties of each function pertaining to the eventual wrapper object; basically, whatever is in <span class="tt"><a class="el" href="ndxl__network_8h.html" title="Public API for NDXL network management and simulation.">ndxl_network.h</a></span> will have a corresponding <span class="tt">ctypes</span> signature and wrapper in <span class="tt">network.py</span>, and so forth. Again, to avoid clutter, we will only show a few functions here, but the design philosophy remains the same throughout all the Python wrapper files.</p>
 <div class="fragment"><div class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> annotations</div>
@@ -353,7 +353,7 @@ Defining Class-Specific Functions</h1>
 <div class="line"><span class="keyword">class </span>methods(metaclass=methodnames):</div>
 <div class="line">    <span class="keywordflow">pass</span></div>
 </div><!-- fragment --><p>The <span class="tt">methods</span> interface allows the user to pass either a <span class="tt">simulationmethod</span> directly e.g., <span class="tt">ndxl.methods.dopri</span>, or by name e.g., <span class="tt">"ralston"</span>.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
 Defining the Class</h1>
 <p>The <span class="tt">network</span> class can now be designed. The constructor takes in a raw <a class="el" href="group__ndxl__objects.html#gaefd105209efdd9f61bea4c3f76770d37" title="NDXLNetwork">NDXLNetwork</a> pointer and its corresponding <span class="tt">void* params</span> for reasons we will see later with callbacks. It also registers the network with the class' internal <span class="tt">nwkdict</span> dictionary, but only if the pointer does not exist yet. The destructor then simply releases handles on the underlying C memory, in line with the design choice of "memory ownership" vs "memory usage". Networks are created using an external factory function, <span class="tt">create_network()</span>.</p>
 <div class="fragment"><div class="line"><span class="keyword">class </span>network:</div>
@@ -417,7 +417,7 @@ Defining the Class</h1>
 <div class="line"><span class="preprocessor">@property</span></div>
 <div class="line"><span class="keyword">def </span>_Int_ptr(self):</div>
 <div class="line">    <span class="keywordflow">return</span> ctypes.cast(self._ptr, ctypes.c_void_p).value</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
 Class Properties and Object Constructors</h1>
 <p>Most of the getter and setter functions, and the destructor <span class="tt">destroy()</span>, interface with and return values directly from the C API, while the traversal functions simply wrap the traversed objects in the Python classes.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">@property</span></div>
@@ -509,7 +509,7 @@ Class Properties and Object Constructors</h1>
 <div class="line">        self._vdict[_vert._Int_ptr] = _vert</div>
 <div class="line">        <span class="keywordflow">return</span> _vert</div>
 </div><!-- fragment --><p>Of course, error checking and input validation are yet to be added, as this is still the barebones implementation of an object constructor. Vertices can then be destroyed using their own <span class="tt">destroy()</span> destructors.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
 Simulation</h1>
 <p>The final method we will show is the network's <span class="tt">simulate()</span> method, illustrating how method-specific keyword arguments are handled, and how the interface makes usage far simpler and less verbose than in C.</p>
 <div class="fragment"><div class="line"><span class="keyword">def </span>simulate(self, tspan, method=None, **simkwargs):</div>

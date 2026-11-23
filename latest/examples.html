@@ -126,6 +126,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('examples.html'
 <dl class="section note"><dt>Note</dt><dd>This is NOT a replacement for the <b><a href="topics.html">API documentation</a></b>, which provides detailed explanations on functions, objects, and typedefs used. The sections should be absorbed in tandem.</dd></dl>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
 Getting Started</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/getting-started/">here</a>.</h2>
 <p>All NDXL programs <b>MUST</b> call <a class="el" href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e" title="ndxlInit()">ndxlInit()</a> before any NDXL functionality. This function initialises crucial internal variables, and registers garbage collection functions that automatically and safely release any remaining NDXL objects when the program terminates.</p>
 <dl class="section warning"><dt>Warning</dt><dd>The garbage collection in NDXL handles <b>only</b> memory allocated by NDXL. Any memory alloctaed by the user using e.g., <span class="tt">malloc()</span>, <span class="tt">calloc()</span>, <span class="tt">realloc()</span>, must still be manually released by the user using <span class="tt">free()</span>.</dd></dl>
 <p>The core object in NDXL is a <a class="el" href="group__ndxl__network.html" title="NDXLNetwork">NDXLNetwork</a> <a class="el" href="group__ndxl__objects.html#gaefd105209efdd9f61bea4c3f76770d37">NDXLNetwork</a>, which is a (initially empty) host object for creating vertices, edges, and noise channels, and which later becomes the target of <a class="el" href="group__network__simulation.html" title="Simulation">simulation</a> functions. We will start by defining an empty network using <a class="el" href="group__network__creation.html#gaceb794444113eebd20d8a6fabdc2e2f9" title="ndxlCreateNetwork()">ndxlCreateNetwork()</a>, which takes in a single parameter, a <span class="tt">void*</span> containing any extra data we want the network to use. We will pass <span class="tt">0</span> for now, since we do not yet have any data the network should rely on.</p>
@@ -181,7 +183,7 @@ Getting Started</h1>
 <div class="line">        &amp;x0,        <span class="comment">// Initial state vector - must be a pointer to double</span></div>
 <div class="line">        1,          <span class="comment">// Length of state vector</span></div>
 <div class="line">        dynamics,   <span class="comment">// Dynamics function the vertex state must evolve according to</span></div>
-<div class="line">        NULL,       <span class="comment">// No noise function (see @ref sde)</span></div>
+<div class="line">        NULL,       <span class="comment">// No noise function (see the &quot;Adding Stochasticity&quot; page)</span></div>
 <div class="line">        NULL,       <span class="comment">// No noise channels (must be NULL if noise function is NULL)</span></div>
 <div class="line">        0,          <span class="comment">// Number of noise channels (must be 0 if noise function is NULL)</span></div>
 <div class="line">        NULL,       <span class="comment">// No discrete callback</span></div>
@@ -267,7 +269,7 @@ Getting Started</h1>
 <div class="ttc" id="agroup__network__simulation_html_ga13d5d8530b3b090dba5f9ebd39cb38a7"><div class="ttname"><a href="group__network__simulation.html#ga13d5d8530b3b090dba5f9ebd39cb38a7">ndxlNetworkSimulateDopri</a></div><div class="ttdeci">const int ndxlNetworkSimulateDopri(NDXLNetwork *_Network, const double _Time, const double _Atol, const double _Rtol, const double *_Tstops, const size_t _Tcount, NDXLNetworkCallback _Callback)</div><div class="ttdoc">Simulates a network using the adaptive explicit Dormand-Prince method of order 5(4).</div></div>
 </div><!-- fragment --><p>If the network successfully simulates, <span class="tt">states.csv</span> will contain two columns, namely, the evaluated times, and the state of <span class="tt">vert</span> at those times. We can compare the outputs to the analytical solution of our dynamics function, which is</p>
 <p class="formulaDsp">
-\[x(t) = \exp{\left(\frac{A}{2}t^2\right)}
+\[    x(t) = \exp{\left(\frac{A}{2}t^2\right)}
 \]
 </p>
 <p>given that \(x(t=0)=1\). We plot the analytical and numerical solutions using a plotting library like <b><a href="https://matplotlib.org/">matplotlib</a></b>.</p>
@@ -299,7 +301,7 @@ Getting Started</h1>
 <li>Heterogeneous agent dynamics: <a class="el" href="hetero.html" title="Networks With Heterogeneous Agents">Networks With Heterogeneous Agents</a></li>
 <li>Delayed states: <a class="el" href="dde.html" title="Adding Delays">Adding Delays</a></li>
 <li>Stochastic agents: <a class="el" href="sde.html" title="Adding Stochasticity">Adding Stochasticity</a></li>
-<li>Dynamic topologies: <a class="el" href="dynnet.html" title="Simulating Networks With Dynamic Topologies">Simulating Networks With Dynamic Topologies</a> </li>
+<li>Dynamic topologies: <a class="el" href="dynnet.html" title="Simulating Networks With Dynamic Topologies">Simulating Networks With Dynamic Topologies</a> and <a class="el" href="dynpow.html" title="Dynamic Power Grids">Dynamic Power Grids</a> </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

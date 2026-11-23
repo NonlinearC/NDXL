@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('multi.html',''
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_src_2examples_2multi"></a></p>
 <dl class="section note"><dt>Note</dt><dd>This page assumes familiarity with the basic layout and API usage described in the main <a class="el" href="examples.html" title="Examples">Examples</a> page.</dd></dl>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
+The full code for this example can be found <a href="https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/adding-agents/">here</a>.</h2>
 <p>Adding multiple agents to a network allows us to simulate a wider variety of dynamical conditions. For now, we will only modify the initial conditions and parameters of agents, but later we will see how to assign different dynamics, noise, and discrete callback functions to them and simulate everything together. The most important point to remember when dealing with multiple agents is that each one's <span class="tt">void* params</span> must persist in memory as long as the agent is alive. The same is not true for its initial state vector, as this is copied and stored internally by NDXL. As a demonstration, let us modify the network we created in the <a class="el" href="examples.html" title="Examples">Examples</a> section to contain three vertices, each with different values for \(A\) and \(\vec{x}_0\). Also for demonstration purposes, we will assume there exists a function <span class="tt">randdbl()</span> which takes in two parameters, <span class="tt">low</span> and <span class="tt">high</span>, and returns a random number in the interval \(\left[low,~high\right]\).</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;../include/ndxl.h&quot;</span></div>
 <div class="line"> </div>
@@ -150,6 +152,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('multi.html',''
 <div class="line">        vertices[i] = <a class="code hl_function" href="group__vertex__creation.html#gaec4b6881830464281fc35817e96bfaf3">ndxlCreateVertex</a>(nwk, &amp;x0, 1, dynamics, NULL, NULL, 0, NULL, &amp;A[i]);</div>
 <div class="line">    }</div>
 <div class="line">    </div>
+<div class="line">    fclose(f_output);</div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup__lib__mgmt_html_gaf795d2bbc114d928901bc9700830df4e"><div class="ttname"><a href="group__lib__mgmt.html#gaf795d2bbc114d928901bc9700830df4e">ndxlInit</a></div><div class="ttdeci">const int ndxlInit()</div><div class="ttdoc">Initialises the NDXL library.</div></div>
