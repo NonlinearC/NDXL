@@ -7,8 +7,6 @@ The library is written in C using only primitive and opaque types, making it str
 ## Documentation
 
 - [Latest documentation](https://nonlinearc.github.io/NDXL/latest/)
-/// - [Version 1.2](https://nonlinearc.github.io/NDXL/v1.2/)
-/// - [Version 1.1](https://nonlinearc.github.io/NDXL/v1.1/)
 - [Version 1.0](https://nonlinearc.github.io/NDXL/v1.0/)
 
 ## Features
