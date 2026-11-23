@@ -1,7 +1,7 @@
 ## Injecting Perturbations {#callbacks}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
-### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/kuramoto-model/).
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/kuramoto-model/).
 
 One of the most intuitive introductory examples to simulating network dynamics is the Kuramoto model, which we briefly illustrated on the [C API homepage](https://github.com/NonlinearC/NDXL/tree/main/NDXL).
 The example shown here includes a perturbation of one of the oscillators to hint at the discrete callback functionality of NDXL.

@@ -8,7 +8,7 @@ We also strongly recommend first reading through the @ref concepts page, as we w
 
 ## Getting Started
 
-### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/getting-started/).
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/getting-started/).
 
 All NDXL programs <b>MUST</b> call @ref ndxlInit() before any NDXL functionality.
 This function initialises crucial internal variables, and registers garbage collection functions that automatically and safely release any remaining NDXL objects when the program terminates.

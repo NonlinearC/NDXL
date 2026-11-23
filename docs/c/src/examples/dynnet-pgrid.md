@@ -1,7 +1,7 @@
 # Dynamic Power Grids {#dynpow}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page, and familiarity with the dynamic networks semantics described in @ref dynnet.
 
-### The full code for these examples can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/cascading-failure/).
+### The full code for these examples can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/cascading-failure/).
 
 In these examples, we will use a model power grid to analyse how a single failure on one edge can propagate through the network, a phenomenon known as a cascading failure.
 Power grids are often expressed as networks of generator and load nodes (vertices) coupled by power lines (edges), where the phase angle \f$\Theta\f$ of node \f$i\f$ is given by the swing equation

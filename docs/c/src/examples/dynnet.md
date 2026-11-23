@@ -1,7 +1,7 @@
 # Simulating Networks With Dynamic Topologies {#dynnet}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
-### The full code for these examples can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/failing-vertices/).
+### The full code for these examples can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/failing-vertices/).
 
 The focal point of NDXL's architecture is its ability to simulate dynamic networks, which we @ref dyntop "outlined earlier".
 This is facilitated by storing the state vector, intermediate stages, slope evaluations, noise matrices, and much more information locally for each agent, rather than in contiguous array over the entire network.

@@ -1,7 +1,7 @@
 # Simulating Higher-Order Dynamics {#highorder}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
-### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/nbody-problem/).
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/nbody-problem/).
 
 Suppose we want to simulate a network of interacting objects whose dynamics are defined by second-order differential equations \f$\frac{d^2\vec{x}}{dt^2}\f$.
 A famous example of this is the \f$N\f$-body problem, in which the motion of each body is driven by the forces exerted on it by the other \f$N-1\f$ bodies, similar to the Kuramoto model (though the coupling is fundamentally different).

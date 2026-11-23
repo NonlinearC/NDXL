@@ -1,0 +1,55 @@
+using Graphs;
+using NetworkDynamics;
+using OrdinaryDiffEqLowOrderRK;
+using Statistics;
+
+function kuramoto_vertex!(dtheta, theta, K_sum, (w, N), t)
+	dtheta[1] = w + K_sum[1] / (1.0 + N);
+	nothing
+end
+
+function kuramoto_edge!(e, theta_src, theta_dst, (K,), t)
+	e[1] = K * sin(theta_src[1] - theta_dst[1]);
+	nothing
+end
+
+vertex = VertexModel(; f=kuramoto_vertex!, g=1, sym=[:theta], psym=[:w, :N]);
+edge = EdgeModel(; g=AntiSymmetric(kuramoto_edge!), outsym=[:P], psym=[:K=>1.0]);
+f_bm = open("julia.csv", "w");
+simtimes = [10.0, 20.0, 30.0];
+j = 0;
+
+for n = [20, 200, 2000]
+	global j
+	j += 1;
+	println("Simulating " * string(n) * "-node networks");
+	for S in 1:10
+		s = 0.1 * S;
+		t_set = [];
+		t_sim = [];
+		println("s=" * string(round(s, digits=1)));
+		
+		for rep in 1:30
+			t_set0 = time();
+			grp = erdos_renyi(n, s);
+			coupling = adjacency_matrix(grp);
+			nw = Network(grp, vertex, edge);
+			u0 = NWState(nw);
+			u0.v[:, :theta] = 2π .* rand(n) .- π;
+			u0.p.v[:, :w] = 9.9 .+ 0.2 .* rand(n);
+			u0.p.v[:, :N] = vec(count(!iszero, coupling, dims=1));
+			t_set1 = time();
+			push!(t_set, t_set1 - t_set0);
+			
+			t_sim0 = time();
+			solve(ODEProblem(nw, uflat(u0), (0.0, simtimes[j]), pflat(u0)), DP5());
+			t_sim1 = time();
+			push!(t_sim, t_sim1 - t_sim0);
+		end
+
+		println(f_bm, string(mean(t_set)) * "," * string(std(t_set)) * "," * string(mean(t_sim)) * "," * string(std(t_sim)));
+	end
+	println();
+end
+
+close(f_bm);

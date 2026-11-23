@@ -1,7 +1,7 @@
 # Adding Multiple Agents {#multi}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
-### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/adding-agents/).
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/adding-agents/).
 
 Adding multiple agents to a network allows us to simulate a wider variety of dynamical conditions.
 For now, we will only modify the initial conditions and parameters of agents, but later we will see how to assign different dynamics, noise, and discrete callback functions to them and simulate everything together.

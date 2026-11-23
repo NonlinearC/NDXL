@@ -1,7 +1,7 @@
 # Adding Delays {#dde}
 \note This page assumes familiarity with the basic layout and API usage described in the main @ref examples page.
 
-### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/examples/ovm-traffic/).
+### The full code for this example can be found [here](https://github.com/NonlinearC/NDXL/tree/main/NDXL/examples/ovm-traffic/).
 
 Delay differential equations (DDEs) are characterised by delayed (historical) states influencing the current state of an agent, written as
 
