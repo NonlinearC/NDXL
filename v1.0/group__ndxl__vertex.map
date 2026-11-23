@@ -1,0 +1,10 @@
+<map id="NDXLVertex" name="NDXLVertex">
+<area shape="rect" id="Node000002" href="$group__ndxl__objects.html" title="Opaque type declarations of the objects defined by NDXL, and detailed explanations on the functions t..." alt="" coords="5,148,158,175"/>
+<area shape="rect" id="Node000001" title="Vertex object representing an individual resident component of a network." alt="" coords="206,148,299,175"/>
+<area shape="rect" id="Node000004" href="$group__vertex__creation.html" title="Functions for creating and destroying vertices." alt="" coords="347,5,526,32"/>
+<area shape="rect" id="Node000003" href="$group__vertex__dnc.html" title="Dynamics, noise, and callback functions for vertex objects." alt="" coords="361,56,512,99"/>
+<area shape="rect" id="Node000008" href="$group__vertex__functions.html" title="Functions for operating on vertices." alt="" coords="398,123,476,149"/>
+<area shape="rect" id="Node000005" href="$group__vertex__getters.html" title="Getter functions for querying vertex properties." alt="" coords="404,173,469,200"/>
+<area shape="rect" id="Node000006" href="$group__vertex__setters.html" title="Setter functions for updating vertex properties." alt="" coords="405,224,468,251"/>
+<area shape="rect" id="Node000007" href="$group__vertex__traversal.html" title="Functions for traversing the edges and nearest neighbours of vertices." alt="" coords="382,275,491,301"/>
+</map>
