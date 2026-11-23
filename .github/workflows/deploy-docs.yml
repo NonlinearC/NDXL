@@ -70,7 +70,7 @@ jobs:
           NDXL_VERSION: ${{ steps.version.outputs.version }}
         run: |
           sed -i "s/@NDXL_VERSION@/${NDXL_VERSION}/g" src/introduction.md
-          doxygen Doxyfile
+          doxygen
 
           test -f build/html/index.html
 
