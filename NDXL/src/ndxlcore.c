@@ -6,6 +6,7 @@ char* __ndxlLastErrorMsg = 0;
 double __ndxlSqrtEpsilon = 1.4901161193847656e-08;
 NDXLNetwork** __ndxlNetworks = 0;
 size_t __ndxlNetworkCount = 0;
+size_t __ndxlNetworkIndex = 0;
 size_t __ndxlNetworkCap = 3;
 
 // Internal functions vvvvv
@@ -93,6 +94,31 @@ _NDXLEXP_ void ndxlPrintError()
 _NDXLEXP_ void ndxlRaiseError(const int _Code, const char* const _Msg)
 {
 	__ndxlSetLastError(_Code, _Msg);
+}
+
+_NDXLEXP_ NDXLNetwork* ndxlGetNetwork(const size_t _Idx)
+{
+    NDXLNetwork* network = 0;
+    if (_Idx < 0)
+        __ndxlSetLastError(NDXL_VALUE_ERR, "ndxlGetNetwork: negative array index.");
+    else if (_Idx >= __ndxlNetworkCount)
+        __ndxlSetLastError(NDXL_VALUE_ERR, "ndxlGetNetwork: array index out of bounds.");
+    else
+        network = __ndxlNetworks[_Idx];
+    return network;
+}
+
+_NDXLEXP_ NDXLNetwork* ndxlGetNetworkByIndex(const size_t _Idx)
+{
+    for (size_t i = 0; i < __ndxlNetworkCount; i++)
+        if (__ndxlNetworks[i]->idx == _Idx)
+            return __ndxlNetworks[i];
+    return 0;
+}
+
+_NDXLEXP_ const size_t ndxlGetNetworkCount()
+{
+    return __ndxlNetworkCount;
 }
 
 // ^^^^^ External functions

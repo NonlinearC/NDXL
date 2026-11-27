@@ -685,7 +685,7 @@ _NDXLIMP_ const int _CDECL ndxlSetEdgeParams(
  * Relative index (position) of channel in the array. Must be greater than or equal to zero, and less than ndxlGetEdgeNoiseDimension(_Edge).
  *
  * @return
- * If _Edge is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLChannel pointer currently at position _Idx in the edge's underlying channel array.
+ * If _Edge is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLChannel pointer currently at position _Idx in the edge's underlying channel array.
  *
  * @note
  * The pointer refers to the original object in the edge, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.

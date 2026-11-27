@@ -16,6 +16,7 @@ extern char* __ndxlLastErrorMsg;
 extern double __ndxlSqrtEpsilon;
 extern NDXLNetwork** __ndxlNetworks;
 extern size_t __ndxlNetworkCount;
+extern size_t __ndxlNetworkIndex;
 extern size_t __ndxlNetworkCap;
 
 _NDXLEXP_ void __ndxlInit();
@@ -39,7 +40,7 @@ struct NDXLNetwork
 {
 	void* params;					// Arbitrary pointer to extra data used by this network
 
-	size_t idx;						// Position in global network array
+	size_t idx, nidx;				// Absolute index (how manieth network) and relative index (position in network array), respectively
 	size_t nv, nsv;					// Number of vertices, and how many are stochastic, respectively
 	size_t ne, nse;					// Number of edges, and how many are stochastic, respectively
 	size_t nc;						// Number of noise channels

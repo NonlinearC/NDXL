@@ -37,7 +37,8 @@ NDXLNetwork* __ndxlCreateNetwork(void* _Params)
 
 	// Initialise implicit variables
 	__ndxlResizeNetworkArray();
-	nwk->idx = __ndxlNetworkCount;
+	nwk->idx = __ndxlNetworkIndex++;
+    nwk->nidx = __ndxlNetworkCount;
 	nwk->nv = 0;
 	nwk->nsv = 0;
 	nwk->ne = 0;

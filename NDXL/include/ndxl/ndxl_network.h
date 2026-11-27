@@ -292,7 +292,7 @@ _NDXLIMP_ const int _CDECL ndxlSetNetworkParams(
  * Relative index (position) of channel in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkNoiseDimension(_Network).
  *
  * @return
- * If _Network is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLChannel pointer currently at position _Idx in the network's underlying channel array.
+ * If _Network is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLChannel pointer currently at position _Idx in the network's underlying channel array.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
@@ -325,10 +325,13 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlNetworkChannel(
  * Absolute index (id) of channel in the array. Equivalent to calling ndxlGetChannelIndex(_Channel).
  *
  * @return
- * If _Network is NULL or contains no channels, or no channel exists with the id _Idx, returns NULL, otherwise returns NDXLChannel pointer currently in the network's underlying channel array whose id is _Idx.
+ * If _Network is NULL or contains no channels, or no channel exists with the id _Idx, returns NULL, otherwise returns the NDXLChannel pointer currently in the network's underlying channel array whose id is _Idx.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ * 
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
@@ -352,7 +355,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlNetworkChannelByIndex(
  * Relative index (position) of edge in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkSize(_Network).
  *
  * @return
- * If _Network is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLEdge pointer currently at position _Idx in the network's underlying edge array.
+ * If _Network is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLEdge pointer currently at position _Idx in the network's underlying edge array.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
@@ -385,11 +388,14 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlNetworkEdge(
  * Absolute index (id) of edge in the array. Equivalent to calling ndxlGetEdgeIndex(_Edge).
  *
  * @return
- * If _Network is NULL or contains no edges, or no edge exists with the id _Idx, returns NULL, otherwise returns NDXLEdge pointer currently in the network's underlying edge array whose id is _Idx.
+ * If _Network is NULL or contains no edges, or no edge exists with the id _Idx, returns NULL, otherwise returns the NDXLEdge pointer currently in the network's underlying edge array whose id is _Idx.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
  *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
+ * 
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
  * - @ref NDXL_VALUE_ERR : No edge with id _Idx was found.
@@ -412,7 +418,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlNetworkEdgeByIndex(
  * Relative index (position) of vertex in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkOrder(_Network).
  *
  * @return
- * If _Network is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLVertex pointer currently at position _Idx in the network's underlying vertex array.
+ * If _Network is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLVertex pointer currently at position _Idx in the network's underlying vertex array.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
@@ -445,10 +451,13 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlNetworkVertex(
  * Absolute index (id) of vertex in the array. Equivalent to calling ndxlGetVertexIndex(_Vertex).
  *
  * @return
- * If _Network is NULL or contains no vertices, or no vertex exists with the id _Idx, returns NULL, otherwise returns NDXLVertex pointer currently in the network's underlying vertex array whose id is _Idx.
+ * If _Network is NULL or contains no vertices, or no vertex exists with the id _Idx, returns NULL, otherwise returns the NDXLVertex pointer currently in the network's underlying vertex array whose id is _Idx.
  *
  * @note
  * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ * 
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
  *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.

@@ -53,6 +53,8 @@
  * 
  * @see ndxlCreateNetwork
  * @see ndxlDestroyNetwork
+ * 
+ * @{
 */
 typedef struct NDXLNetwork NDXLNetwork;
 /** @}*/
@@ -71,6 +73,8 @@ typedef struct NDXLNetwork NDXLNetwork;
  * @see ndxlDestroyChannel
  * @see ndxlCreateVertex
  * @see ndxlCreateEdge
+ * 
+ * @{
 */
 typedef struct NDXLChannel NDXLChannel;
 /** @}*/
@@ -87,6 +91,8 @@ typedef struct NDXLChannel NDXLChannel;
  * 
  * @see ndxlCreateVertex
  * @see ndxlCreateEdge
+ * 
+ * @{
 */
 typedef struct NDXLVertex NDXLVertex;
 /** @}*/
@@ -104,8 +110,6 @@ typedef struct NDXLVertex NDXLVertex;
  * @see ndxlCreateEdge
 */
 typedef struct NDXLEdge NDXLEdge;
-/** @}*/
-
 /** @}*/
 
 
@@ -300,12 +304,76 @@ _NDXLIMP_ void _CDECL ndxlRaiseError(_In_ const int _Code, _In_z_ const char* co
 
 
 /**
+ * @defgroup ndxl_nwkmgmt Network Management
+ *
+ * @brief Functions for accessing and tracking networks.
+ *
+ * @details
+ * If a edges, vertices, and channels belong to a network, then a network belongs to the API.
+ * Each network is its own, independent state machine, and multiple such objects can exist simultaneously.
+ * Only one network can be simulated at a time, and all networks share the same internal error variables.
+ *
+ * @{
+*/
+
+/**
+ * @brief Provides directed access to a network object.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of network in the global array. Must be greater than or equal to zero, and less than ndxlGetNetworkCount().
+ *
+ * @return
+ * If no networks have been created yet, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLNetwork pointer currently at position _Idx in the underlying network array.
+ *
+ * @note
+ * The pointer refers to the original network object, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as no networks could have been created yet. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when networks are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetNetworkCount
+ * @see ndxlNetworkByIndex
+*/
+_NDXLIMP_ NDXLNetwork* _CDECL ndxlGetNetwork(_In_ const size_t _Idx) _NOEXCEPT;
+
+/**
+ * @brief Provides directed access to a network object.
+ *
+ * @param[in] _Idx
+ * Absolute index (id) of network in the array. Equivalent to calling ndxlGetNetworkIndex(_Network).
+ *
+ * @return
+ * If no networks have been created, or no network exists with the id _Idx, returns NULL, otherwise returns the NDXLNetwork pointer currently in the underlying network array whose id is _Idx.
+ *
+ * @note
+ * The pointer refers to the original network object, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ * 
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as no networks could have been created yet. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @par Errors raised
+ * - @ref NDXL_VALUE_ERR : No network with id _Idx was found.
+ *
+ * @see ndxlGetNetworkIndex
+ * @see ndxlNetwork
+*/
+_NDXLIMP_ NDXLNetwork* _CDECL ndxlGetNetworkByIndex(_In_ const size_t _Idx) _NOEXCEPT;
+
+/**
  * @brief Gets the number of individual NDXLNetwork objects currently alive.
  *
  * @return
  * Returns the number of NDXLNetwork pointers that have not yet been destroyed.
 */
 _NDXLIMP_ const size_t _CDECL ndxlGetNetworkCount() _NOEXCEPT;
+
+/** @}*/
 
 #ifdef __cplusplus
 }

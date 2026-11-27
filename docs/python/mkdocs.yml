@@ -1,0 +1,19 @@
+site_name: NDXL Python Documentation
+docs_dir: src
+dev_addr: 127.0.0.1:8080
+
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [../../bindings/python/src]
+          options:
+            docstring_style: numpy
+            show_source: true
+            show_root_heading: true
+            merge_init_into_class: true

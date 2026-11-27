@@ -230,7 +230,7 @@ _NDXLIMP_ const int _CDECL ndxlSetChannelParams(
  * Relative index (position) of edge in the array. Must be greater than or equal to zero, and less than ndxlGetChannelEdgeDimension(_Channel).
  *
  * @return
- * If _Channel is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLEdge pointer currently at position _Idx in the channel's underlying edge array.
+ * If _Channel is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLEdge pointer currently at position _Idx in the channel's underlying edge array.
  *
  * @note
  * The pointer refers to the original object in the channel, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
@@ -262,7 +262,7 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlChannelEdge(
  * Relative index (position) of vertex in the array. Must be greater than or equal to zero, and less than ndxlGetChannelVertexDimension(_Channel).
  *
  * @return
- * If _Channel is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLVertex pointer currently at position _Idx in the channel's underlying vertex array.
+ * If _Channel is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns the NDXLVertex pointer currently at position _Idx in the channel's underlying vertex array.
  *
  * @note
  * The pointer refers to the original object in the channel, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.

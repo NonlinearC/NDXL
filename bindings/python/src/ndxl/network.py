@@ -11,98 +11,95 @@ NoneNCb = NDXLNetworkCallback(0)
 
 lib.ndxlCreateNetwork.restype = NDXLNetwork_p
 lib.ndxlCreateNetwork.argtypes = [ctypes.c_void_p]
+ndxlCreateNetwork = lib.ndxlCreateNetwork
 
 lib.ndxlDestroyNetwork.restype = ctypes.c_int
 lib.ndxlDestroyNetwork.argtypes = [ctypes.POINTER(NDXLNetwork_p)]
+ndxlDestroyNetwork = lib.ndxlDestroyNetwork
 
 # ^^^^^ Constructor and destructor | getters vvvvv
 
-lib.ndxlGetNetworkEdges.restype = ctypes.c_int
-lib.ndxlGetNetworkEdges.argtypes = [NDXLNetwork_p, ctypes.POINTER(NDXLEdge_p)]
+lib.ndxlGetNetworkNoiseDimension.restype = ctypes.c_size_t
+lib.ndxlGetNetworkNoiseDimension.argtypes = [NDXLNetwork_p]
+ndxlGetNetworkNoiseDimension = lib.ndxlGetNetworkNoiseDimension
 
 lib.ndxlGetNetworkOrder.restype = ctypes.c_size_t
 lib.ndxlGetNetworkOrder.argtypes = [NDXLNetwork_p]
+ndxlGetNetworkOrder = lib.ndxlGetNetworkOrder
 
 lib.ndxlGetNetworkParams.restype = ctypes.c_void_p
 lib.ndxlGetNetworkParams.argtypes = [NDXLNetwork_p]
+ndxlGetNetworkParams = lib.ndxlGetNetworkParams
 
 lib.ndxlGetNetworkSize.restype = ctypes.c_size_t
 lib.ndxlGetNetworkSize.argtypes = [NDXLNetwork_p]
+ndxlGetNetworkSize = lib.ndxlGetNetworkSize
 
 lib.ndxlGetNetworkTime.restype = ctypes.c_double
 lib.ndxlGetNetworkTime.argtypes = [NDXLNetwork_p]
-
-lib.ndxlGetNetworkVertices.restype = ctypes.c_int
-lib.ndxlGetNetworkVertices.argtypes = [NDXLNetwork_p, ctypes.POINTER(NDXLVertex_p)]
+ndxlGetNetworkTime = lib.ndxlGetNetworkTime
 
 # ^^^^^ Getters | setters vvvvv
 
 lib.ndxlSetNetworkParams.restype = ctypes.c_int
 lib.ndxlSetNetworkParams.argtypes = [NDXLNetwork_p, ctypes.c_void_p]
+ndxlSetNetworkParams = lib.ndxlSetNetworkParams
 
-# ^^^^^ Setters | traversal vvvvv
+# ^^^^^ Setters | functions vvvvv
 
-lib.ndxlGetNetworkFirstChannel.restype = NDXLChannel_p
-lib.ndxlGetNetworkFirstChannel.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkChannel.restype = NDXLChannel_p
+lib.ndxlNetworkChannel.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkChannel = lib.ndxlNetworkChannel
 
-lib.ndxlGetNetworkFirstEdge.restype = NDXLEdge_p
-lib.ndxlGetNetworkFirstEdge.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkChannelByIndex.restype = NDXLChannel_p
+lib.ndxlNetworkChannelByIndex.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkChannelByIndex = lib.ndxlNetworkChannelByIndex
 
-lib.ndxlGetNetworkFirstVertex.restype = NDXLVertex_p
-lib.ndxlGetNetworkFirstVertex.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkEdge.restype = NDXLEdge_p
+lib.ndxlNetworkEdge.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkEdge = lib.ndxlNetworkEdge
 
-lib.ndxlGetNetworkLastChannel.restype = NDXLChannel_p
-lib.ndxlGetNetworkLastChannel.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkEdgeByIndex.restype = NDXLEdge_p
+lib.ndxlNetworkEdgeByIndex.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkEdgeByIndex = lib.ndxlNetworkEdgeByIndex
 
-lib.ndxlGetNetworkLastEdge.restype = NDXLEdge_p
-lib.ndxlGetNetworkLastEdge.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkVertex.restype = NDXLVertex_p
+lib.ndxlNetworkVertex.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkVertex = lib.ndxlNetworkVertex
 
-lib.ndxlGetNetworkLastVertex.restype = NDXLVertex_p
-lib.ndxlGetNetworkLastVertex.argtypes = [NDXLNetwork_p]
+lib.ndxlNetworkVertexByIndex.restype = NDXLVertex_p
+lib.ndxlNetworkVertexByIndex.argtypes = [NDXLNetwork_p, ctypes.c_size_t]
+ndxlNetworkVertexByIndex = lib.ndxlNetworkVertexByIndex
 
-lib.ndxlGetNetworkNextChannel.restype = NDXLChannel_p
-lib.ndxlGetNetworkNextChannel.argtypes = [NDXLChannel_p]
-
-lib.ndxlGetNetworkNextEdge.restype = NDXLEdge_p
-lib.ndxlGetNetworkNextEdge.argtypes = [NDXLEdge_p]
-
-lib.ndxlGetNetworkNextVertex.restype = NDXLVertex_p
-lib.ndxlGetNetworkNextVertex.argtypes = [NDXLVertex_p]
-
-lib.ndxlGetNetworkPreviousChannel.restype = NDXLChannel_p
-lib.ndxlGetNetworkPreviousChannel.argtypes = [NDXLChannel_p]
-
-lib.ndxlGetNetworkPreviousEdge.restype = NDXLEdge_p
-lib.ndxlGetNetworkPreviousEdge.argtypes = [NDXLEdge_p]
-
-lib.ndxlGetNetworkPreviousVertex.restype = NDXLVertex_p
-lib.ndxlGetNetworkPreviousVertex.argtypes = [NDXLVertex_p]
-
-# ^^^^^ Traversal | simulation vvvvv
+# ^^^^^ Functions | simulation vvvvv
 
 lib.ndxlNetworkSimulateRalston.restype = ctypes.c_int
 lib.ndxlNetworkSimulateRalston.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, NDXLNetworkCallback]
+ndxlNetworkSimulateRalston = lib.ndxlNetworkSimulateRalston
 
 lib.ndxlNetworkSimulateNystrom.restype = ctypes.c_int
 lib.ndxlNetworkSimulateNystrom.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, NDXLNetworkCallback]
+ndxlNetworkSimulateNystrom = lib.ndxlNetworkSimulateNystrom
 
 lib.ndxlNetworkSimulateDopri.restype = ctypes.c_int
 lib.ndxlNetworkSimulateDopri.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.c_size_t, NDXLNetworkCallback]
+ndxlNetworkSimulateDopri = lib.ndxlNetworkSimulateDopri
 
 lib.ndxlNetworkSimulateRkck.restype = ctypes.c_int
 lib.ndxlNetworkSimulateRkck.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.c_size_t, NDXLNetworkCallback]
+ndxlNetworkSimulateRkck = lib.ndxlNetworkSimulateRkck
 
 lib.ndxlNetworkSimulateEuler.restype = ctypes.c_int
 lib.ndxlNetworkSimulateEuler.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, NDXLNetworkCallback]
+ndxlNetworkSimulateEuler = lib.ndxlNetworkSimulateEuler
 
 lib.ndxlNetworkSimulateHeun.restype = ctypes.c_int
 lib.ndxlNetworkSimulateHeun.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.c_size_t, NDXLNetworkCallback]
-
-lib.ndxlNetworkSimulateNorsett.restype = ctypes.c_int
-lib.ndxlNetworkSimulateNorsett.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, NDXLNetworkCallback]
+ndxlNetworkSimulateHeun = lib.ndxlNetworkSimulateHeun
 
 lib.ndxlNetworkSimulateRadau.restype = ctypes.c_int
 lib.ndxlNetworkSimulateRadau.argtypes = [NDXLNetwork_p, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.c_size_t, NDXLNetworkCallback]
+ndxlNetworkSimulateRadau = lib.ndxlNetworkSimulateRadau
 
 # ^^^^^ Simulation | Python wrappers vvvvv
 
@@ -178,6 +175,41 @@ class methods(metaclass=methodnames):
 	pass
 
 class network:
+	"""The core object in NDXL: a network is a host object representing a graph where vertices, edges, and noise channels can be added, and also provides the network simulation interface.
+
+	Parameters
+	----------
+	ptr : NDXLNetwork_p
+		Pointer to NDXLNetwork object.
+	args : ctypes.c_void_p
+		User-defined `void* params` associated with the network.
+
+	Attributes
+	----------
+	_ptr : NDXLNetwork_p
+		The underlying `C` NDXLNetwork pointer.
+	_pptr : ctypes.c_void_p
+		`C void*` pointing to the network's metadata.
+	_params : list
+		`Python list` containing the network's metadata.
+	_vdict : dict
+		Hashmap containing all vertices currently residing within the network.
+	_edict : dict
+		Hashmap containing all edges currently residing within the network.
+	_cdict : dict
+		Hashmap containing all noise channels currently residing within the network.
+
+	Examples
+	--------
+	>>> nwk = ndxl.create_network([], [])
+	>>> v = nwk.create_vertex(1., dynamics=lambda v, y, t: 2. * y * t)
+	>>> def cb(net, t, t_eval, y_eval):
+	>>>		t_eval.append(t)
+	>>>		y_eval.append(v.state[0])
+	>>> nwk.simulate(4., cb=cb)
+	>>> print(f"Times = {nwk.params[0]}")
+	>>> print(f"States = {nwk.params[1]}")
+	"""
 	nwkdict = dict()
 
 	def __init__(self, ptr, args):
@@ -191,6 +223,21 @@ class network:
 			network.nwkdict[self._Int_ptr] = self
 
 	def __del__(self):
+		"""Destroys the network wrapper without releasing the actual network memory.
+
+		Returns
+		-------
+		None
+
+		Notes
+		-----
+		This method should be used for destroying a network without affecting any of its associated vertices, edges, noise channels, or underlying memory associated with `self._ptr`.
+		If the goal is to destroy the objects and their underlying memory buffers, use `destroy()` instead.
+
+		See Also
+		--------
+		[`destroy`][ndxl.network.destroy] : Destroy the memory associated with this network, as well as all of its vertices, edges, and noise channels.
+		"""
 		self._ptr = None
 		self._pptr = None
 		self._params = None
@@ -212,154 +259,297 @@ class network:
 		return hash(self._Int_ptr)
 
 	def __str__(self):
-		return "'<ndxl.network object at " + f"{id(self._Int_ptr):#0{int(platform.architecture()[0][:-3]) // 4 + 2}X}" + " {'order': " + str(lib.ndxlGetNetworkOrder(self._ptr)) + ", 'size': " + str(lib.ndxlGetNetworkSize(self._ptr)) + ", 'time': " + str(lib.ndxlGetNetworkTime(self._ptr)) + "}>'"
+		return "'<ndxl.network object at " + f"{id(self._Int_ptr):#0{int(platform.architecture()[0][:-3]) // 4 + 2}X}" + " {'order': " + str(ndxlGetNetworkOrder(self._ptr)) + ", 'size': " + str(ndxlGetNetworkSize(self._ptr)) + ", 'time': " + str(ndxlGetNetworkTime(self._ptr)) + "}>'"
 
 	def __repr__(self):
-		return f"NDXL network\n============\n\nVertices (order): {lib.ndxlGetNetworkOrder(self._Int_ptr)}\nEdges (size): {lib.ndxlGetNetworkSize(self._ptr)}\nTime: {lib.ndxlGetNetworkTime(self._ptr)}\n"
+		return f"NDXL network\n============\n\nVertices (order): {ndxlGetNetworkOrder(self._Int_ptr)}\nEdges (size): {ndxlGetNetworkSize(self._ptr)}\nTime: {ndxlGetNetworkTime(self._ptr)}\n"
 
 	def _Deregister_channel(self, cid):
+		"""Deregisters a noise channel from this network.
+
+		Parameters
+		----------
+		cid : int
+			Integer representation of the NDXLChannel pointer to be removed.
+
+		Returns
+		-------
+		None
+
+		Notes
+		-----
+		This function is for internal use only, and should not be called by the user!
+		"""
 		del self._cdict[cid]
 
 	def _Deregister_edge(self, eid):
+		"""Deregisters an edge from this network.
+
+		Parameters
+		----------
+		eid : int
+			Integer representation of the NDXLEdge pointer to be removed.
+
+		Returns
+		-------
+		None
+
+		Notes
+		-----
+		This function is for internal use only, and should not be called by the user!
+		"""
 		del self._edict[eid]
 
 	def _Deregister_vertex(self, vid):
+		"""Deregisters a vertex from this network.
+
+		Parameters
+		----------
+		vid : int
+			Integer representation of the NDXLVertex pointer to be removed.
+
+		Returns
+		-------
+		None
+
+		Notes
+		-----
+		This function is for internal use only, and should not be called by the user!
+		"""
 		del self._vdict[vid]
 
 	def _Set_error(self, err):
+		"""Sets the internal error state of this network.
+
+		Parameters
+		----------
+		err : BaseException
+			The exception that should next be raised.
+
+		Returns
+		-------
+		None
+
+		Notes
+		-----
+		This function is for internal use only, and should not be called by the user!
+		"""
 		self._params[-2] = err
 
 	@property
 	def _Int_ptr(self)->int:
-		'''
-		Gets the raw C pointer associated with this network.
-		
-		:returns: The underlying C NDXLNetwork pointer wrapped by this network, as its integer representation.
-		'''
+		"""Gets the raw `C` pointer associated with this network.
+
+		Returns
+		-------
+		int
+			Integer representation of the underlying `C` NDXLNetwork pointer wrapped by this network.
+
+		Notes
+		-----
+		This function is for internal use only, and should not be called by the user!
+		"""
 		return ctypes.cast(self._ptr, ctypes.c_void_p).value
 
 	@property
 	def c_ptr(self)->LP_NDXLNetwork:
-		'''
-		Gets the ctypes object pointing to the underlying C object pointer.
-		
-		:returns: The NDXLNetwork pointer managed by this network.
-		'''
+		"""Gets the ctypes object pointing to the underlying C object pointer.
+
+		Returns
+		-------
+		LP_NDXLNetwork
+			The NDXLNetwork pointer managed by this network.
+		"""
 		return self._ptr
 
 	def destroy(self)->int:
-		'''
-		Destroys the NDXLNetwork pointer associated with this network.
-		
-		:returns: NDXL_OK if the network is successfully destroyed, or NDXL_ERR on failure.
-		'''
+		"""Destroys the network and its wrapped NDXLNetwork pointer.
+
+		Returns
+		-------
+		int
+			NDXL_OK if the network is successfully destroyed, or NDXL_ERR on failure.
+
+		Notes
+		-----
+		This method should be used for destroying a network and all its associated vertices, edges, and noise channels, as it calls the underlying `C` destructor and frees up the alloacted memory.
+		If the goal is to release the handle on the memory rather than outright destroy it, use `__del__` instead.
+
+		See Also
+		--------
+		[`__del__`][ndxl.network.__del__] : Destroy the `Python` wrapper without affecting the underlying memory allocations.
+		"""
 		del network.nwkdict[self._Int_ptr]
-		_res = lib.ndxlDestroyNetwork(ctypes.pointer(self._ptr))
+		_res = ndxlDestroyNetwork(ctypes.pointer(self._ptr))
 		del self._pptr
 		del self._params
 		return _res
 
 	@property
 	def channels(self):
-		from .channel import channel
-		_cnl = lib.ndxlGetNetworkFirstChannel(self._ptr)
-		while _cnl:
-			yield channel(_cnl, lib.ndxlGetChannelParams(_cnl))
-			_cnl = lib.ndxlGetNetworkNextChannel(_cnl)
+		"""Gets a list of all the noise channels in this network.
 
-	@property
-	def channel_list(self):
-		return list(self.channels)
+		Returns
+		-------
+		NumPy.ndarray
+			1D-NumPy array containing all the noise channels in the network.
+
+		Notes
+		-----
+		The returned array can be safely iterated over, its elements modified and/or destroyed, without affecting the array indexing.
+		"""
+		from .channel import channel
+		_nc = ndxlGetNetworkNoiseDimension(self._ptr)
+		_cnls = np.empty(_nc, dtype=channel)
+		for i in range(_nc):
+			_cnl = ndxlNetworkChannel(self._ptr, i)
+			_cnls[i] = channel(_cnl, ndxlGetChannelParams(_cnl))
+		return _cnls
 
 	@property
 	def edges(self):
+		"""Gets a list of all the edges in this network.
+
+		Returns
+		-------
+		NumPy.ndarray
+			1D-NumPy array containing all the edges in the network.
+
+		Notes
+		-----
+		The returned array can be safely iterated over, its elements modified and/or destroyed, without affecting the array indexing.
+		"""
 		from .edge import edge
-		_edge = lib.ndxlGetNetworkFirstEdge(self._ptr)
-		while _edge:
-			yield edge(_edge, lib.ndxlGetEdgeParams(_edge))
-			_edge = lib.ndxlGetNetworkNextEdge(_edge)
+		_ne = ndxlGetNetworkSize(self._ptr)
+		_edges = np.empty(_ne, dtype=edge)
+		for i in range(_ne)
+			_edge = ndxlNetworkEdge(self._ptr, i)
+			_edges[i] = edge(_edge, ndxlGetEdgeParams(_edge))
+		return _edges;
 
 	@property
-	def edge_list(self):
-		return list(self.edges)
+	def noise_dimension(self):
+		"""Gets the number of noise channels in this network.
 
-	@property
-	def first_channel(self):
-		from .channel import channel
-		_cnl = lib.ndxlGetNetworkFirstChannel(self._ptr)
-		if _cnl:
-			return channel(_cnl, lib.ndxlGetChannelParams(_cnl))
-		return None
-
-	@property
-	def first_edge(self):
-		from .edge import edge
-		_edge = lib.ndxlGetNetworkFirstEdge(self._ptr)
-		if _edge:
-			return edge(_edge, lib.ndxlGetEdgeParams(_edge))
-		return None
-
-	@property
-	def first_vertex(self):
-		from .vertex import vertex
-		_vert = lib.ndxlGetNetworkFirstVertex(self._ptr)
-		if _vert:
-			return vertex(_vert, lib.ndxlGetVertexParams(_vert))
-		return None
-
-	@property
-	def last_channel(self):
-		from .channel import channel
-		_cnl = lib.ndxlGetNetworkLastChannel(self._ptr)
-		if _cnl:
-			return channel(_cnl, lib.ndxlGetChannelParams(_cnl))
-		return None
-
-	@property
-	def last_edge(self):
-		from .edge import edge
-		_edge = lib.ndxlGetNetworkLastEdge(self._ptr)
-		if _edge:
-			return edge(_edge, lib.ndxlGetEdgeParams(_edge))
-		return None
-
-	@property
-	def last_vertex(self):
-		from .vertex import vertex
-		_vert = lib.ndxlGetNetworkLastVertex(self._ptr)
-		if _vert:
-			return vertex(_vert, lib.ndxlGetVertexParams(_vert))
-		return None
+		Returns
+		-------
+		int
+			The number of noise channels, used and unused, in the network.
+		"""
+		return ndxlGetNetworkOrder(self._ptr)
 
 	@property
 	def order(self):
-		return lib.ndxlGetNetworkOrder(self._ptr)
+		"""Gets the number of vertices in this network.
+
+		Returns
+		-------
+		int
+			The number of vertices, dynamic and static, in the network.
+		"""
+		return ndxlGetNetworkOrder(self._ptr)
 	
 	@property
 	def params(self):
+		"""Gets the extra parameters used by this network.
+
+		Returns
+		-------
+		tuple
+			Parameters tuple assigned to this network during creation.
+
+		See Also
+		--------
+		[`create_network`][ndxl.create_network] : Create a network.
+		"""
 		return self._params[-1]
 
 	@property
 	def size(self):
-		return lib.ndxlGetNetworkSize(self._ptr)
+		"""Gets the number of edges in this network.
+
+		Returns
+		-------
+		int
+			The number of edges, directed, undirected, dynamic, and static, in the network.
+		"""
+		return ndxlGetNetworkSize(self._ptr)
 
 	@property
 	def time(self):
-		return lib.ndxlGetNetworkTime(self._ptr)
+		"""Gets the local simulation time of this network.
+
+		Returns
+		-------
+		float
+			The current simulation time of this network, defined as the time after the most recently accepted simulation step.
+
+		Notes
+		-----
+		This time is initialised to zero when the network is created. It only updates on successful simulation steps, and does not update during step evaluations.
+		"""
+		return ndxlGetNetworkTime(self._ptr)
 
 	@property
 	def vertices(self):
-		from .vertex import vertex
-		_vert = lib.ndxlGetNetworkFirstVertex(self._ptr)
-		while _vert:
-			yield vertex(_vert, lib.ndxlGetVertexParams(_vert))
-			_vert = lib.ndxlGetNetworkNextVertex(_vert)
+		"""Gets a list of all the vertices in this network.
 
-	@property
-	def vertex_list(self):
-		return list(self.vertices)
+		Returns
+		-------
+		NumPy.ndarray
+			1D-NumPy array containing all the vertices in the network.
+
+		Notes
+		-----
+		The returned array can be safely iterated over, its elements modified and/or destroyed, without affecting the array indexing.
+		"""
+		from .vertex import vertex
+		_nv = ndxlGetNetworkOrder(self._ptr)
+		_verts = np.empty(_nv, dtype=vertex)
+		for i in range(_nv):
+			_vert = ndxlNetworkVertex(self._ptr, i)
+			_verts[i] = vertex(_vert, ndxlGetVertexParams(_vert))
+		return _verts
 
 	def simulate(self, tspan, method=None, **simkwargs):
+		"""Simulates a network over a given time span using a specified numerical method.
+
+		Parameters
+		----------
+		tspan : float
+			Duration of the simulation, starting at `self.time` (which is zero if no simulations have been run yet). Must be greater than zero.
+		method : str or simulationmethod, optional
+			Which numerical method to use. Default is 'dopri' (ndxl.methods.dopri).
+		**simkwargs : dict, optional
+			Method-specific arguments passed to the underlying solver; see 'Other Parameters'.
+
+		Other Parameters
+		----------------
+		h, step, stepsize, step_size : None or float
+			Fixed step-size used by static stepping algorithms like 'ralston' (ndxl.methods.ralston). If `None`, uses the default of `0.1`.
+		atol, abstol : None or float
+			Absolute tolerance (no. correct decimal places) used by adaptive algorithms like 'dopri' (ndxl.methods.dopri). If `None`, uses the default of `1e-6` for explicit methods, `1e-8` for implicit methods, and `1e-3` for stochastic methods.
+		rtol, reltol : None or float
+			Relative tolerance (no. correct digits) used by adaptive algorithms. If `None`, uses the default of `1e-3` for explicit methods, `1e-6` for implicit methods, and `1e-3` for stochastic methods.
+		tstops, t_stops, timestops, time_stops : None or float or iterable of float
+			Time points adaptive algorithms must evaluate, in addition to that which is automatically determined by the solver. Must be sorted and lie within `[self.time, self.time + tspan]`. Default is `None`.
+		cb, callback : None or callable
+			If provided, must have the signature `cb(net, t, *args)`, which is called once at `t=0`, then again after each successful time step. Repeated simulations on the same network do not perform the initial call again. Default is `None`.
+
+		Returns
+		-------
+		int
+			NDXL_OK if the simulation completed successfully, or NDXL_ERR if the simulation failed prematurely.
+
+		Raises
+		------
+		TypeError
+			If any of the parameters are not of the correct type (or of a type convertible to the required type).
+		ValueError
+			If an unkown method name is provided, or the simulation fails due to an external error.
+		KeyError
+			If an unknown or repeated keyword is passed to `**simkwargs`.
+		"""
 		# Ensure tspan is a numeric, non-complex value
 		if (not isinstance(tspan, float)) and (not isinstance(tspan, int)):
 			raise TypeError(f"Expected numeric value for tspan, got {tspan} of type {type(tspan)}.")
@@ -429,14 +619,49 @@ class network:
 		return _result
 
 	def create_channel(self, args=None):
+		"""Creates a new noise channel on this network, representing an independent Wiener process that can affect vertices and edges via a noise function.
+
+		Parameters
+		----------
+		args : None or scalar or iterable, optional
+			Extra parameters used by this channel, converted into a tuple before use. Default is `None`.
+		"""
 		from .channel import channel
 		_args = () if args is None else ((args,) if np.isscalar(args) else copy.deepcopy(args))
 		_pptr = ctypes.cast(ctypes.pointer(ctypes.py_object([_args])), ctypes.c_void_p)
-		_channel = channel(lib.ndxlCreateChannel(self._ptr, _pptr), _pptr)
+		_channel = channel(ndxlCreateChannel(self._ptr, _pptr), _pptr)
 		self._cdict[_channel._Int_ptr] = _channel
 		return _channel
 
-	def create_vertex(self, state=None, dynamics=None, noise=None, channels=None, cb=None, args=None, cplx=False):
+	def create_vertex(self, state=None, dynamics=None, noise=None, channels=None, cb=None, atol=0., rtol=0., args=None, cplx=False):
+		"""Creates a new vertex on this network, representing a node in a graph.
+
+		Parameters
+		----------
+		state : None or scalar or iterable, optional
+			Initial conditions of this vertex, converted to a NumPy.ndarray before use. Default is `None`, which assigns an initial value of `0` to the vertex.
+		dynamics : None or callable, optional
+			How the state vector of the agent evolves over time, subject to the initial conditions defined by `state`. If provided, must have the signature `dynamics(vert, y, t, *args)`, and return a scalar or iterable with the same shape as `state`. Default is `None`, meaning the state vector does not evolve over time (static vertex).
+		noise : None or callable, optional
+			Stochastic process driving the state vector of the vertex. If provided, must have the signature `noise(vert, y, t, *args)`, and return a scalar or iterable with shape `(len(state), len(channels))` corresponding to the local diffusion matrix. Default is `None`, meaning the state vector evolution is purely deterministic.
+		channels: None or channel or iterable of channel, optional
+			Noise channels driving the stochastic process defined by `noise`. If both `channels` and `noise` are `None`, then a new, independent channel assigned only to this vertex is created. If provided as an iterable, `None` elements are allowed, where each `None` entry also creates to a new, independent channel assigned to only this vertex. Default is `None`.
+		cb : None or callable, optional
+			If provided, must have the signature `cb(vert, y, t, *args)`, which is called once after each successful time step during simulation. Note that unlike network callbacks passed to `simulate()`, this callback is NOT called at `t=0`.
+		atol : float
+			Absolute tolerance (no. correct decimal places) used during simulation. If `0`, the absolute tolerance passed to the `simulate()` function is used. Default is `0`.
+		rtol : float
+			Relative tolerance (no. correct digits) used during simulation. If `0`, the relative tolerance passed to the `simulate()` function is used. Default is `0`.
+		args : None or scalar or iterable, optional
+			Extra parameters used by this vertex, converted to a tuple before use. Default is `None`.
+		cplx : Bool, optional
+			Whether the state vector of this vertex is (or ever will be) complex-valued. If `state` contains complex values, this argument is forced to `True`. If `state` does not contain complex values but the dynamics or noise of this vertex might result in complex values, set this to `True`. Default is `False`.
+
+		Returns
+		-------
+		vertex
+			A new vertex if creation thereof is successful, or `None` otherwise.
+		"""
 		from .vertex import vertex, _vfunc_bridge, _vnoise_bridge, _vcb_bridge, NoneVFn, NoneVNz, NoneVCb
 		_state = None
 		_nstate = 1
@@ -449,12 +674,12 @@ class network:
 			if np.issubdtype(_arr.dtype, np.complexfloating) or cplx:
 				_st = _arr.flatten().astype(complex)
 				_nstate = len(_st) * 2
-				_state = np.ctypeslib.as_ctypes(_st.view(float))
+				_state = np.ctypesas_ctypes(_st.view(float))
 				_cplx = True
 			else:
 				_st = _arr.flatten().astype(float)
 				_nstate = len(_st)
-				_state = np.ctypeslib.as_ctypes(_st)
+				_state = np.ctypesas_ctypes(_st)
 		if channels is None:
 			if noise is None:
 				_nchannels = 0
@@ -469,11 +694,54 @@ class network:
 			_nchannels = len(_carr)
 			_cn = (NDXLChannel_p * _nchannels)(*_carr)
 		_pptr = ctypes.cast(ctypes.pointer(ctypes.py_object([dynamics, noise, cb, _cplx, _sstate, _args])), ctypes.c_void_p)
-		_vert = vertex(lib.ndxlCreateVertex(self._ptr, _state, _nstate, NoneVFn if dynamics is None else _vfunc_bridge, NoneVNz if noise is None else _vnoise_bridge, _cn, _nchannels, NoneVCb if cb is None else _vcb_bridge, _pptr), _pptr)
+		_vert = vertex(ndxlCreateVertex(self._ptr, _state, _nstate, NoneVFn if dynamics is None else _vfunc_bridge, NoneVNz if noise is None else _vnoise_bridge, _cn, _nchannels, NoneVCb if cb is None else _vcb_bridge, _pptr), _pptr)
 		self._vdict[_vert._Int_ptr] = _vert
 		return _vert
 
-	def create_edge(self, v1, v2, state=None, delay=0., directed=False, dynamics=None, noise=None, channels=None, cb=None, args=None, cplx=False):
+	def create_edge(self, src, dest, state=None, delay=0., directed=False, dynamics=None, noise=None, channels=None, cb=None, atol=0., rtol=0., args=None, cplx=False):
+		"""Creates a new edge on this network, representing a coupling between two nodes in a graph.
+
+		Parameters
+		----------
+		src : vertex or NDXLVertex_p
+			The source vertex.
+		dest : vertex or NDXLVertex_p
+			The destination vertex.
+		state : None or scalar or iterable, optional
+			Initial conditions of this edge, converted to a NumPy.ndarray before use. Default is `None`, which assigns an initial value of `0` to the edge.
+		delay : float, optional
+			How long information takes to travel from `src` to `dest`. If `directed` is `False`, this is also the time taken for information to travel the opposite direction. Historical state information for `src` and `dest` is stored up to `t - delay`. Default is `0`.
+		directed : Bool, optional
+			If True, information only flows from `src` to `dest` (directed edge), and in both directions if `False` (undirected edge). Default is `False`.
+		dynamics : None or callable, optional
+			How the state vector of the agent evolves over time, subject to the initial conditions defined by `state`. If provided, must have the signature `dynamics(edge, y, t, *args)`, and return a scalar or iterable with the same shape as `state`. Default is `None`, meaning the state vector does not evolve over time (static edge).
+		noise : None or callable, optional
+			Stochastic process driving the state vector of the edge. If provided, must have the signature `noise(edge, y, t, *args)`, and return a scalar or iterable with shape `(len(state), len(channels))` corresponding to the local diffusion matrix. Default is `None`, meaning the state vector evolution is purely deterministic.
+		channels: None or channel or iterable of channel, optional
+			Noise channels driving the stochastic process defined by `noise`. If both `channels` and `noise` are `None`, then a new, independent channel assigned only to this edge is created. If provided as an iterable, `None` elements are allowed, where each `None` entry also creates to a new, independent channel assigned to only this edge. Default is `None`.
+		cb : None or callable, optional
+			If provided, must have the signature `cb(edge, y, t, *args)`, which is called once after each successful time step during simulation. Note that unlike network callbacks passed to `simulate()`, this callback is NOT called at `t=0`.
+		atol : float
+			Absolute tolerance (no. correct decimal places) used during simulation. If `0`, the absolute tolerance passed to the `simulate()` function is used. Default is `0`.
+		rtol : float
+			Relative tolerance (no. correct digits) used during simulation. If `0`, the relative tolerance passed to the `simulate()` function is used. Default is `0`.
+		args : None or scalar or iterable, optional
+			Extra parameters used by this edge, converted to a tuple before use. Default is `None`.
+		cplx : Bool, optional
+			Whether the state vector of this edge is (or ever will be) complex-valued. If `state` contains complex values, this argument is forced to `True`. If `state` does not contain complex values but the dynamics or noise of this edge might result in complex values, set this to `True`. Default is `False`.
+
+		Returns
+		-------
+		edge
+			A new edge if creation thereof is successful, or `None` otherwise.
+
+		Notes
+		-----
+		Edges can also be created directly on the source vertex using `src.create_edge(dest, ...)`.
+
+		See Also
+		[vertex.create_edge][vertex.create_edge] : Create an edge from the source vertex.
+		"""
 		from .edge import edge, _efunc_bridge, _enoise_bridge, _ecb_bridge, NoneEFn, NoneENz, NoneECb
 		_state = None
 		_nstate = 1
@@ -486,12 +754,12 @@ class network:
 			if np.issubdtype(_arr.dtype, np.complexfloating) or cplx:
 				_st = _arr.flatten().astype(complex)
 				_nstate = len(_st) * 2
-				_state = np.ctypeslib.as_ctypes(_st.view(float))
+				_state = np.ctypesas_ctypes(_st.view(float))
 				_cplx = True
 			else:
 				_st = _arr.flatten().astype(float)
 				_nstate = len(_st)
-				_state = np.ctypeslib.as_ctypes(_st)
+				_state = np.ctypesas_ctypes(_st)
 		if channels is None:
 			if noise is None:
 				_nchannels = 0
@@ -506,21 +774,26 @@ class network:
 			_nchannels = len(_carr)
 			_cn = (NDXLChannel_p * _nchannels)(*_carr)
 		_pptr = ctypes.cast(ctypes.pointer(ctypes.py_object([dynamics, noise, cb, _cplx, _sstate, _args])), ctypes.c_void_p)
-		_edge = edge(lib.ndxlCreateEdge(v1 if isinstance(v1, NDXLVertex_p) else v1.c_ptr, v2 if isinstance(v2, NDXLVertex_p) else v2.c_ptr, _state, _nstate, delay, 1 if directed else 0, NoneEFn if dynamics is None else _efunc_bridge, NoneENz if noise is None else _enoise_bridge, _cn, _nchannels, NoneECb if cb is None else _ecb_bridge, _pptr), _pptr)
+		_edge = edge(ndxlCreateEdge(src if isinstance(src, NDXLVertex_p) else src.c_ptr, dest if isinstance(dest, NDXLVertex_p) else dest.c_ptr, _state, _nstate, delay, 1 if directed else 0, NoneEFn if dynamics is None else _efunc_bridge, NoneENz if noise is None else _enoise_bridge, _cn, _nchannels, NoneECb if cb is None else _ecb_bridge, _pptr), _pptr)
 		self._edict[_edge._Int_ptr] = _edge
 		return _edge
 
-def create_network(args=None):
-	'''
-	Creates and returns an empty ndxl.network object.
-	
-	:param args: Tuple of extra information used by the network. Default is None.
-	
-	:returns: A new ndxl.network object.
-	'''
-	_args = () if args is None else ((args,) if np.isscalar(args) else copy.deepcopy(args))
+def create_network(*args):
+	"""Creates an empty network (no vertices, edges, or noise channels).
+
+	Parameters
+	----------
+	*args : tuple
+		Extra information used by the network.
+
+	Returns
+	-------
+	network
+		A new, empty network.
+	"""
+	_args = tuple([arg for arg in args])
 	_pptr = ctypes.cast(ctypes.pointer(ctypes.py_object([None, dict(), dict(), dict(), None, _args])), ctypes.c_void_p)
-	return network(lib.ndxlCreateNetwork(_pptr), _pptr)
+	return network(ndxlCreateNetwork(_pptr), _pptr)
 
 @NDXLNetworkCallback
 def _network_bridge(nwk, time, args):
