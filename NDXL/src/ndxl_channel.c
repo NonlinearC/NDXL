@@ -1,11 +1,15 @@
-//------------------------------------------\\
-// NDXL source file for noise channel class	\\
-// Copyright Ethan Codron 2026				\\
-// GNU GPL-3.0								\\
-//------------------------------------------\\
-// Source file providing all noise channel	\\
-// functions used by the user.				\\
-//------------------------------------------\\
+/**
+ * @file ndxl_channel.c
+ *
+ * @brief API source for NDXL user-level channel functions.
+ *
+ * Pre-checks as far as possible the input and output to all channel functions.
+ *
+ * @copyright Copyright (c) 2026, Ethan Codron.
+ *
+ * Licensed under the GNU General Public License v3.0 only.
+ * See the LICENSE file in the repository root.
+*/
 
 #include "internal/internal.h"
 
@@ -15,23 +19,20 @@ _NDXLEXP_ NDXLChannel* ndxlCreateChannel(NDXLNetwork* _Network, void* _Params)
 {
 	NDXLChannel* channel = 0;
 	if (!_Network)
-		__setLastError(NDXL_ARG_ERR, "ndxlCreateChannel: null parent network.");
+		__ndxlSetLastError(NDXL_ARG_ERR, "ndxlCreateChannel: null parent network.");
 	else
 		channel = __ndxlCreateChannel(_Network, _Params);
 	return channel;
 }
 
-_NDXLEXP_ const int ndxlDestroyChannel(NDXLChannel** _Channel)
+_NDXLEXP_ const int ndxlDestroyChannel(NDXLChannel* _Channel)
 {
 	int _Result = NDXL_ERR;
 	if (!_Channel)
-		__setLastError(NDXL_ARG_ERR, "ndxlDestroyChannel: null adress.");
-	else if (!*_Channel)
-		__setLastError(NDXL_VALUE_ERR, "ndxlDestroyChannel: null channel.");
+		__ndxlSetLastError(NDXL_ARG_ERR, "ndxlDestroyChannel: null channel.");
 	else
 	{
-		__ndxlDestroyChannel(*_Channel);
-		*_Channel = 0;
+		__ndxlDestroyChannel(_Channel);
 		_Result = NDXL_OK;
 	}
 	return _Result;
@@ -39,34 +40,19 @@ _NDXLEXP_ const int ndxlDestroyChannel(NDXLChannel** _Channel)
 
 // ^^^^^ Constructor and destructor | getters vvvvv
 
-_NDXLEXP_ const size_t ndxlGetChannelEdgeCount(NDXLChannel* _Channel)
+_NDXLEXP_ const size_t ndxlGetChannelEdgeDimension(NDXLChannel* _Channel)
 {
 	if (_Channel)
-		return __ndxlGetChannelEdgeCount(_Channel);
-	__setLastError(NDXL_ARG_ERR, "ndxlGetChannelEdgeCount: null channel.");
+		return __ndxlGetChannelEdgeDimension(_Channel);
+	__ndxlSetLastError(NDXL_ARG_ERR, "ndxlGetChannelEdgeDimension: null channel.");
 	return NDXL_ERR;
-}
-
-_NDXLEXP_ const int ndxlGetChannelEdges(NDXLChannel* _Channel, NDXLEdge** _Edges)
-{
-	int _Result = NDXL_ERR;
-	if (!_Channel)
-		__setLastError(NDXL_ARG_ERR, "ndxlGetChannelEdges: null channel.");
-	else if (!_Edges)
-		__setLastError(NDXL_ARG_ERR, "ndxlGetChannelEdges: null edge output.");
-	else
-	{
-		__ndxlGetChannelEdges(_Channel, _Edges);
-		_Result = NDXL_OK;
-	}
-	return _Result;
 }
 
 _NDXLEXP_ NDXLNetwork* ndxlGetChannelNetwork(NDXLChannel* _Channel)
 {
 	if (_Channel)
 		return __ndxlGetChannelNetwork(_Channel);
-	__setLastError(NDXL_ARG_ERR, "ndxlGetChannelNetwork: null channel.");
+	__ndxlSetLastError(NDXL_ARG_ERR, "ndxlGetChannelNetwork: null channel.");
 	return 0;
 }
 
@@ -74,31 +60,16 @@ _NDXLEXP_ void* ndxlGetChannelParams(NDXLChannel* _Channel)
 {
 	if (_Channel)
 		return __ndxlGetChannelParams(_Channel);
-	__setLastError(NDXL_ARG_ERR, "ndxlGetChannelParams: null channel.");
+	__ndxlSetLastError(NDXL_ARG_ERR, "ndxlGetChannelParams: null channel.");
 	return 0;
 }
 
-_NDXLEXP_ const size_t ndxlGetChannelVertexCount(NDXLChannel* _Channel)
+_NDXLEXP_ const size_t ndxlGetChannelVertexDimension(NDXLChannel* _Channel)
 {
 	if (_Channel)
-		return __ndxlGetChannelVertexCount(_Channel);
-	__setLastError(NDXL_ARG_ERR, "ndxlGetChannelVertexCount: null channel.");
+		return __ndxlGetChannelVertexDimension(_Channel);
+	__ndxlSetLastError(NDXL_ARG_ERR, "ndxlGetChannelVertexDimension: null channel.");
 	return NDXL_ERR;
-}
-
-_NDXLEXP_ const int ndxlGetChannelVertices(NDXLChannel* _Channel, NDXLVertex** _Vertices)
-{
-	int _Result = NDXL_ERR;
-	if (!_Channel)
-		__setLastError(NDXL_ARG_ERR, "ndxlGetChannelVertices: null channel.");
-	else if (!_Vertices)
-		__setLastError(NDXL_ARG_ERR, "ndxlGetChannelVertices: null vertex output.");
-	else
-	{
-		__ndxlGetChannelVertices(_Channel, _Vertices);
-		_Result = NDXL_OK;
-	}
-	return _Result;
 }
 
 // ^^^^^ Getters | setters vvvvv
@@ -107,7 +78,7 @@ _NDXLEXP_ const int ndxlSetChannelParams(NDXLChannel* _Channel, void* _Params)
 {
 	int _Result = NDXL_ERR;
 	if (!_Channel)
-		__setLastError(NDXL_ARG_ERR, "ndxlSetChannelParams: null channel.");
+		__ndxlSetLastError(NDXL_ARG_ERR, "ndxlSetChannelParams: null channel.");
 	else
 	{
 		__ndxlSetChannelParams(_Channel, _Params);
@@ -116,4 +87,34 @@ _NDXLEXP_ const int ndxlSetChannelParams(NDXLChannel* _Channel, void* _Params)
 	return _Result;
 }
 
-// ^^^^^ Setters
+// ^^^^^ Setters | functions vvvvv
+
+_NDXLEXP_ NDXLEdge* ndxlChannelEdge(NDXLChannel* _Channel, const size_t _Idx)
+{
+	NDXLEdge* edge = 0;
+	if (!_Channel)
+		__ndxlSetLastError(NDXL_ARG_ERR, "ndxlChannelEdge: null channel.");
+	else if (_Idx < 0)
+		__ndxlSetLastError(NDXL_VALUE_ERR, "ndxlChannelEdge: negative array index.");
+	else if (_Idx >= _Channel->ne)
+		__ndxlSetLastError(NDXL_VALUE_ERR, "ndxlChannelEdge: array index out of bounds.");
+	else
+		edge = __ndxlChannelEdge(_Channel, _Idx);
+	return edge;
+}
+
+_NDXLEXP_ NDXLVertex* ndxlChannelVertex(NDXLChannel* _Channel, const size_t _Idx)
+{
+	NDXLVertex* vertex = 0;
+	if (!_Channel)
+		__ndxlSetLastError(NDXL_ARG_ERR, "ndxlChannelVertex: null channel.");
+	else if (_Idx < 0)
+		__ndxlSetLastError(NDXL_VALUE_ERR, "ndxlChannelVertex: negative array index.");
+	else if (_Idx >= _Channel->nv)
+		__ndxlSetLastError(NDXL_VALUE_ERR, "ndxlChannelVertex: array index out of bounds.");
+	else
+		vertex = __ndxlChannelVertex(_Channel, _Idx);
+	return vertex;
+}
+
+// ^^^^^ Functions

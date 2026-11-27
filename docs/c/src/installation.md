@@ -142,6 +142,20 @@ NDXL_STATIC
 As before, if this field already contains text, append a semicolon before adding the above text.
 Click "OK" in the bottom right of the "Properties" window, and, assuming your file structure is correctly reflected in MSVC, the static version of NDXL should be successfully linked.
 
+Alternatively, in your source code file, you can add the preprocessor definition before including the library:
+
+```c
+#define NDXL_STATIC
+
+#include "path/to/ndxl.h"
+
+int main(int argc, char** argv)
+{
+	ndxlInit();
+	return 0;
+}
+```
+
 ### Linking against the dynamic version (.dll)
 Repeat the first step of the prebvious section, but under "Additional Library Directories", instead paste:
 
@@ -162,12 +176,34 @@ user@pc:~$ cd path/to/my-project
 
 Always remember to link against the standard math library `-lm`.
 
-### Linking against the static version (.a)
-In your terminal, type:
+### Linking against the static version (.a) on Unix
+In your source code file, add the `NDXL_STATIC` preprocessor definition before including the library:
+
+```c
+#define NDXL_STATIC
+
+#include "path/to/ndxl.h"
+
+int main(int argc, char** argv)
+{
+	ndxlInit();
+	return 0;
+}
+```
+
+Then in your terminal, type:
 
 ```
 gcc -o my-project.out src/main.c -Llib/Unix/Static -lNDXL -lm
 ```
+
+if on a Unix-like system such as Linux, or
+
+```
+gcc -o my-project.out src/main.c -Llib/x64/Static -lNDXL -lm
+```
+
+if on Windows.
 
 ### Linking against the dynamic version (.so)
 In your terminal, type:

@@ -6,7 +6,7 @@
  * Declares the NDXLEdge object, representing an edge in a network. Provides functions for edge construction, destruction, vertex inspection, and state and parameter querying.
  *
  * @copyright Copyright (c) 2026, Ethan Codron.
- * 
+ *
  * Licensed under the GNU General Public License v3.0 only.
  * See the LICENSE file in the repository root.
 */
@@ -14,7 +14,7 @@
 #ifndef _NDXL_EDGE_
 #define _NDXL_EDGE_
 
-#include "ndxl_vertex.h"
+#include "../ndxlcore.h"
 
 /**
  * @defgroup edge_dnc Dynamics, Noise, and Callbacks
@@ -49,7 +49,7 @@
  *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetEdgeOrder(calling_edge) elements can result in out-of-bounds writes and undefined behaviour.
  *
@@ -82,7 +82,7 @@ typedef int(*NDXLEdgeDynamics)(NDXLEdge* _Edge, double* _dY, const double* _Y, d
  *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetEdgeOrder(calling_edge) x ndxlGetEdgeChannelCount(calling_edge) elements can result in out-of-bounds writes and undefined behaviour.
  *
@@ -113,7 +113,7 @@ typedef int(*NDXLEdgeNoise)(NDXLEdge* _Edge, double* _dG, const double* _Y, doub
  *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * Writing beyond ndxlGetEdgeOrder(calling_edge) elements to the state vector can result in out-of-bounds writes and undefined behaviour.
  *
@@ -121,7 +121,7 @@ typedef int(*NDXLEdgeNoise)(NDXLEdge* _Edge, double* _dG, const double* _Y, doub
 */
 typedef int(*NDXLEdgeCallback)(NDXLEdge* _Edge, double* _Y, double _Time, void* _Params);
 
-///** @}*/
+/** @}*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -138,11 +138,11 @@ extern "C" {
 /**
  * @brief Creates an edge between two vertices in the same network and returns a pointer to it.
  *
- * @param[in] _Vert1
+ * @param[in] _Source
  * The `source` vertex.
  * 
- * @param[in] _Vert2
- * The `destination` vertex. Must be part of the same network as _Vert1 i.e., ndxlGetVertexNetwork(_Vert1) == ndxlGetVertexNetwork(_Vert2). May be the same vertex as _Vert1, which creates a self-loop.
+ * @param[in] _Destination
+ * The `destination` vertex. Must be part of the same network as _Source i.e., ndxlGetVertexNetwork(_Source) == ndxlGetVertexNetwork(_Destination). May be the same vertex as _Source, which creates a self-loop.
  * 
  * @param[in] _State
  * Flat initial state vector at time 0. May be NULL, in which case a zero-vector of size max(1, _Order) is assigned by default.
@@ -151,11 +151,11 @@ extern "C" {
  * Size of state vector. If _State is provided, must be nonzero.
  * 
  * @param[in] _Delay
- * The time taken for information to travel from _Vert1 to _Vert2. _Must be greater than or equal to 0. _Historical state information for _Vert1 is then stored up to t - _Delay.
- * If _Directed is falsey, this is also the time taken for information to travel from _Vert2 to _Vert1, and historical state information for _Vert2 is stored up to t - _Delay.
+ * The time taken for information to travel from _Source to _Destination. _Must be greater than or equal to 0. _Historical state information for _Source is then stored up to t - _Delay.
+ * If _Directed is falsey, this is also the time taken for information to travel from _Destination to _Source, and historical state information for _Destination is stored up to t - _Delay.
  * 
  * @param[in] _Directed
- * If truthy, information flows only from _Vert1 to _Vert2, otherwise information flow is bidirectional.
+ * If truthy, information flows only from _Source to _Destination, otherwise information flow is bidirectional.
  * 
  * @param[in] _Dynamics
  * The dynamics function describing how the state vector evolves over time. May be NULL, in which case the time derivative is zero (static edge).
@@ -163,17 +163,14 @@ extern "C" {
  * @param[in] _Noise
  * The noise function describing the noise amplitude over time. May be NULL, in which case _Channels must be NULL and _Nchannels must be 0.
  * 
- * @param[in] _Channels
- * Array of NDXLChannel pointers defining which noise channels affect this edge through _Noise. May be NULL unless _Nchannels is nonzero. If provided, any element may be NULL, which is interpreted as a new channel.
- * - If _Channels is NULL and _Nchannels is 0, creates _Order new noise channels and assigns them to this edge. The noise matrix has shape _Order x _Order.
- * - If _Channels is NULL and _Nchannels is nonzero, creates _Nchannels new noise channels and assigns them to this edge. The noise matrix has shape _Order x _Nchannels.
- * - If any element of _Channels is NULL, creates a new noise channel for that element and assigns it to this edge. The noise matrix has shape _Order x _Nchannels.
- * 
- * @param[in] _Nchannels
- * Size of channels array. Must be NULL if _Noise is NULL. If _Channels is provided, must match the length of the _Channels array exactly.
- * 
  * @param[in] _Callback
  * External discrete callback called once after each successful integration step. May be NULL.
+ * 
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places) the state of this edge must be calculated to during integration. Must be greater than or equal to zero; if zero, the owning network's absolute tolerance is used.
+ * 
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits) the state of this edge must be calculated to during integration. Must be greater than or equal to zero; if zero, the owning network's relative tolerance is used.
  * 
  * @param[in] _Params
  * Pointer to extra memory used by the edge. May be NULL.
@@ -182,10 +179,10 @@ extern "C" {
  * If successful, returns a new NDXLEdge pointer, otherwise returns NULL.
  *
  * @note
- * If _Vert1 and _Vert2 point to the same NDXLVertex, the edge forms a self-loop, which can be useful for defining delay differential equations (DDEs) where the state of the vertex depends on its own past state [see ndxlGetEdgeRelativeState()].
+ * If _Source and _Destination point to the same NDXLVertex, the edge forms a self-loop, which can be useful for defining delay differential equations (DDEs) where the state of the vertex depends on its own past state [see ndxlGetEdgeRelativeState()].
  * 
  * @note
- * Multiple edges can exist simultaneously between _Vert1 and _Vert2, and can have different delays, directedness, and state vectors. This is primarily useful for extending DDEs to depend on past states at different intervals. [see ndxlGetEdgeRelativeState()].
+ * Multiple edges can exist simultaneously between _Source and _Destination, and can have different delays, directedness, and state vectors. This is primarily useful for extending DDEs to depend on past states at different intervals. [see ndxlGetEdgeRelativeState()].
  * 
  * @note
  * In general, any edges in the network may be directed or undirected. However, the delay and directedness of an edge cannot be altered after creation.
@@ -197,7 +194,7 @@ extern "C" {
  * Unlike network callbacks, edge callbacks are NOT called at time 0.
  *
  * @warning
- * The function does not verify the capacity of the supplied state and channel arrays. Both arrays must contain at least _Order and _Nchannels elements, respectively, whenever they are used. Incorrect array sizes or inconsistent _Order and _Nchannels arguments can result in out-of-bounds reads and undefined behaviour.
+ * The function does not verify the capacity of the supplied state array, and expects it to contain at least _Dimension elements. Incorrect array sizes or an inconsistent _Dimension argument can result in out-of-bounds reads and undefined behaviour.
  * 
  * @warning
  * NDXL stores the supplied `void* _Params` pointer without copying the associated data or managing its lifetime. The pointed-to memory must remain valid for as long as the edge uses it. The user remains responsible for managing any allocations.
@@ -210,8 +207,8 @@ extern "C" {
  * @see ndxlGetEdgeRelativeState
 */
 _NDXLIMP_ NDXLEdge* _CDECL ndxlCreateEdge(
-	_In_ _Notnull_ NDXLVertex* _Vert1,
-	_In_ _Notnull_ NDXLVertex* _Vert2,
+	_In_ _Notnull_ NDXLVertex* _Source,
+	_In_ _Notnull_ NDXLVertex* _Destination,
 	_In_reads_bytes_opt_(_Order * sizeof(double)) const double* _State,
 	_In_ const size_t _Order,
 	_In_ const double _Delay,
@@ -221,35 +218,33 @@ _NDXLIMP_ NDXLEdge* _CDECL ndxlCreateEdge(
 	_In_reads_bytes_opt_(_Nchannels * sizeof(NDXLChannel*)) NDXLChannel** _Channels,
 	_In_ const size_t _Nchannels,
 	_In_ _Maybenull_ NDXLEdgeCallback _Callback,
+	_In_ const double _Atol,
+	_In_ const double _Rtol,
 	_In_ _Maybenull_ void* _Params
 ) _NOEXCEPT;
 
 /**
- * @brief Destroys an edge created using ndxlCreateEdge(), and zeroes the pointer.
+ * @brief Destroys an edge created using ndxlCreateEdge().
  *
  * @param[in,out] _Edge
  * Pointer to NDXLEdge pointer.
  *
  * @return
- * If _Edge or *_Edge are NULL, returns @ref NDXL_ERR, otherwise zeroes *_Edge, and returns NDXL_OK.
- *
- * @note
- * The edge pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the edge has been destroyed.
+ * If _Edge is NULL, returns @ref NDXL_ERR, otherwise destroys the edge and returns NDXL_OK.
  *
  * @warning
  * Destroying an edge also destroys the historical state information maintained by that edge for its connected vertices. The memory associated with the edge's user-defined `void* _Params` pointer is not handled by the destructor, and must be managed explicitly by the user.
  * 
  * @warning
- * Only the pointer variable passed to this function is zeroed. Any other pointers referencing the destroyed edge become invalid and must not be used.
+ * Using the edge after it has been destroyed can result in undefined behaviour. Discard all references!!
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- * - @ref NDXL_VALUE_ERR : *_Edge is NULL.
  *
  * @see ndxlCreateEdge
 */
 _NDXLIMP_ const int _CDECL ndxlDestroyEdge(
-	_In_ _Notnull_ NDXLEdge** _Edge
+	_In_ _Notnull_ NDXLEdge* _Edge
 ) _NOEXCEPT;
 
 /** @}*/
@@ -287,51 +282,6 @@ _NDXLIMP_ NDXLEdgeCallback _CDECL ndxlGetEdgeCallback(
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the number of noise channels affecting an edge.
- *
- * @param[in] _Edge
- * Target edge to retrieve the channel count of.
- *
- * @return
- * If _Edge is NULL, returns @ref NDXL_ERR, otherwise returns the number of noise channels affecting _Edge.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
-*/
-_NDXLIMP_ const size_t _CDECL ndxlGetEdgeChannelCount(
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the noise channels affecting an edge.
- *
- * @param[in] _Edge
- * Target edge to retrieve the noise channels of.
- *
- * @param[out] _Channels
- * Pointer to a user-allocated array of NDXLChannel pointers. The array must contain at least ndxlGetEdgeChannelCount(_Edge) elements. The function populates the array in-place.
- *
- * @return
- * If either _Edge or _Channels are NULL, returns @ref NDXL_ERR, otherwise populates _Channels with the noise channel pointers associated with _Edge, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLChannel objects referenced by its elements. These pointers refer to the original objects in the owning network of _Edge, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- * - @ref  NDXL_ARG_ERR : _Channels is NULL.
- *
- * @see ndxlGetEdgeChannelCount
-*/
-_NDXLIMP_ const int _CDECL ndxlGetEdgeChannels(
-	_In_ _Notnull_ NDXLEdge* _Edge,
-	_Out_ _Notnull_ NDXLChannel** _Channels
-) _NOEXCEPT;
-
-/**
  * @brief Gets the delay of an edge.
  *
  * @param[in] _Edge
@@ -352,6 +302,48 @@ _NDXLIMP_ const int _CDECL ndxlGetEdgeChannels(
  * @see ndxlVertexState
 */
 _NDXLIMP_ const double _CDECL ndxlGetEdgeDelay(
+	_In_ _Notnull_ NDXLEdge* _Edge
+) _NOEXCEPT;
+
+/**
+ * @brief Gets the `destination` vertex of an edge.
+ *
+ * @param[in] _Edge
+ * Target edge to retrieve the destination vertex of.
+ *
+ * @return
+ * If _Edge is NULL, returns NULL, otherwise returns the `destination` vertex of _Edge.
+ *
+ * @note
+ * If the edge is a self-loop, this is identical to calling ndxlGetEdgeSource(_Edge).
+ *
+ * @par Errors raised
+ * - @ref  NDXL_ARG_ERR : _Edge is NULL.
+ *
+ * @see ndxlGetEdgeSource
+*/
+_NDXLIMP_ NDXLVertex* _CDECL ndxlGetEdgeDestination(
+	_In_ _Notnull_ NDXLEdge* _Edge
+) _NOEXCEPT;
+
+/**
+ * @brief Gets the size of an edge's state vector.
+ *
+ * @param[in] _Edge
+ * Target edge to retrieve the dimension of.
+ *
+ * @return
+ * If _Edge is NULL, returns @ref NDXL_ERR, otherwise returns the size of the state vector of _Edge.
+ *
+ * @note
+ * If _State was NULL during construction, the edge is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in ndxlCreateEdge().
+ *
+ * @par Errors raised
+ * - @ref  NDXL_ARG_ERR : _Edge is NULL.
+ *
+ * @see ndxlCreateEdge
+*/
+_NDXLIMP_ const size_t _CDECL ndxlGetEdgeDimension(
 	_In_ _Notnull_ NDXLEdge* _Edge
 ) _NOEXCEPT;
 
@@ -396,27 +388,6 @@ _NDXLIMP_ const char _CDECL ndxlGetEdgeDirected(
  * @see ndxlSetEdgeDynamics
 */
 _NDXLIMP_ NDXLEdgeDynamics _CDECL ndxlGetEdgeDynamics(
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets the `source` vertex of an edge.
- *
- * @param[in] _Edge
- * Target edge to retrieve the first vertex of.
- *
- * @return
- * If _Edge is NULL, returns NULL, otherwise returns the `source` vertex of _Edge.
- *
- * @note
- * If the edge is a self-loop, this is identical to calling ndxlGetEdgeSecondVertex(_Edge).
- * 
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- *
- * @see ndxlGetEdgeSecondVertex
-*/
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetEdgeFirstVertex(
 	_In_ _Notnull_ NDXLEdge* _Edge
 ) _NOEXCEPT;
 
@@ -481,27 +452,6 @@ _NDXLIMP_ NDXLEdgeNoise _CDECL ndxlGetEdgeNoise(
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the size of an edge's state vector.
- *
- * @param[in] _Edge
- * Target edge to retrieve the order of.
- *
- * @return
- * If _Edge is NULL, returns @ref NDXL_ERR, otherwise returns the size of the state vector of _Edge.
- *
- * @note
- * If _State was NULL during construction, the edge is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in ndxlCreateEdge().
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- *
- * @see ndxlCreateEdge
-*/
-_NDXLIMP_ const size_t _CDECL ndxlGetEdgeOrder(
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
  * @brief Gets the user-defined `void* _Params` of an edge.
  *
  * @param[in] _Edge
@@ -554,23 +504,23 @@ _NDXLIMP_ const double* _CDECL ndxlGetEdgeRelativeState(
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the `destination` vertex of an edge.
+ * @brief Gets the `source` vertex of an edge.
  *
  * @param[in] _Edge
- * Target edge to retrieve the second vertex of.
+ * Target edge to retrieve the source vertex of.
  *
  * @return
- * If _Edge is NULL, returns NULL, otherwise returns the `destination` vertex of _Edge.
+ * If _Edge is NULL, returns NULL, otherwise returns the `source` vertex of _Edge.
  *
  * @note
- * If the edge is a self-loop, this is identical to calling ndxlGetEdgeFirstVertex(_Edge).
+ * If the edge is a self-loop, this is identical to calling ndxlGetEdgeDestination(_Edge).
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Edge is NULL.
  *
- * @see ndxlGetEdgeFirstVertex
+ * @see ndxlGetEdgeDestination
 */
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetEdgeSecondVertex(
+_NDXLIMP_ NDXLVertex* _CDECL ndxlGetEdgeSource(
 	_In_ _Notnull_ NDXLEdge* _Edge
 ) _NOEXCEPT;
 
@@ -620,7 +570,7 @@ _NDXLIMP_ const double _CDECL ndxlGetEdgeTime(
  * If _Edge is NULL, returns @ref NDXL_ERR, otherwise updates the callback of _Edge, and returns NDXL_OK.
  *
  * @warning
- * This function should never be used from within an existing callback function, as replacing a callback while it is executing can corrupt the calling stack. Additionally, this function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.
+ * This function should not be called from within a dynamics or noise function, as these may be invoked multiple times during a simulation step.
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Edge is NULL.
@@ -726,6 +676,38 @@ _NDXLIMP_ const int _CDECL ndxlSetEdgeParams(
 */
 
 /**
+ * @brief Provides directed access to an channel in an edge.
+ *
+ * @param[in] _Edge
+ * Target edge to retrieve the channel in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of channel in the array. Must be greater than or equal to zero, and less than ndxlGetEdgeNoiseDimension(_Edge).
+ *
+ * @return
+ * If _Edge is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLChannel pointer currently at position _Idx in the edge's underlying channel array.
+ *
+ * @note
+ * The pointer refers to the original object in the edge, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the edge could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Edge is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetEdgeNoiseDimension
+*/
+_NDXLIMP_ NDXLChannel* _CDECL ndxlEdgeChannel(
+	_In_ _Notnull_ NDXLEdge* _Edge,
+	_In_ const size_t _Idx
+) _NOEXCEPT;
+
+/**
  * @brief Checks if an edge is connected to a vertex.
  *
  * @param[in] _Edge
@@ -782,42 +764,5 @@ _NDXLIMP_ double* _CDECL ndxlEdgeState(
 #ifdef __cplusplus
 }
 #endif
-
-//#ifdef __cplusplus
-//_NDXL_BEGIN
-//
-//class edge
-//{
-//public:
-//	inline edge(NDXLEdge* _Edge) noexcept : _My_ptr(_Edge) {}
-//
-//	inline virtual ~edge() noexcept
-//	{
-//		this->_My_ptr = 0;
-//	}
-//
-//protected:
-//	NDXLEdge* _My_ptr;
-//
-//public:
-//	inline const int destroy() noexcept
-//	{
-//		this->parent()._Destroy_edge_params(this->_My_ptr);
-//		return ndxlDestroyEdge(&(this->_My_ptr));
-//	}
-//
-//	inline std::vector<any>& params() noexcept
-//	{
-//		return (*(std::vector<any>*)(ndxlEdgeParams(this->_My_ptr)))[-1];
-//	}
-//
-//	inline network parent() const noexcept
-//	{
-//		return network(ndxlGetEdgeParent(this->_My_ptr));
-//	}
-//};
-//
-//_NDXL_END
-//#endif // __cplusplus
 
 #endif // _NDXL_EDGE_

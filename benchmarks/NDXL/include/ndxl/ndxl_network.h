@@ -6,7 +6,7 @@
  * Declares the NDXLNetwork object and provides functions for network construction, destruction, traversal, parameter management, and numerical simulation.
  *
  * @copyright Copyright (c) 2026, Ethan Codron.
- * 
+ *
  * Licensed under the GNU General Public License v3.0 only.
  * See the LICENSE file in the repository root.
 */
@@ -14,7 +14,7 @@
 #ifndef _NDXL_NETWORK_
 #define _NDXL_NETWORK_
 
-#include "ndxl_edge.h"
+#include "../ndxlcore.h"
 
 /**
  * @defgroup network_callbacks Callbacks
@@ -40,7 +40,7 @@
  *
  * @return
  * Integer indicating callback success (zero) or failure (any nonzero value).
- * 
+ *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
 */
@@ -96,25 +96,21 @@ _NDXLIMP_ NDXLNetwork* _CDECL ndxlCreateNetwork(
  * Pointer to NDXLNetwork pointer.
  *
  * @return
- * If _Network or *_Network are NULL, returns @ref NDXL_ERR, otherwise zeroes *_Network, and returns NDXL_OK.
- *
- * @note
- * The network pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the network has been destroyed.
+ * If _Network is NULL, returns @ref NDXL_ERR, otherwise destroys the network and returns NDXL_OK.
  * 
  * @warning
  * Destroying a network also destroys all vertices, edges, and noise channels owned by that network. All pointers to the network and its owned objects become invalid. The memory associated with the relevant objects' user-defined `void* _Params` pointers is not handled by the destructors, and must be managed explicitly by the user.
  *
  * @warning
- * Only the pointer variable passed to this function is zeroed. Any other pointers referencing the destroyed network become invalid and must not be used.
+ * Using the network after it has been destroyed can result in undefined behaviour. Discard all references!!
  * 
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
- * - @ref NDXL_VALUE_ERR : *_Network is NULL.
  * 
  * @see ndxlCreateNetwork
 */
 _NDXLIMP_ const int _CDECL ndxlDestroyNetwork(
-	_In_ _Notnull_ NDXLNetwork** _Network
+	_In_ _Notnull_ NDXLNetwork* _Network
 ) _NOEXCEPT;
 
 /** @}*/
@@ -130,77 +126,25 @@ _NDXLIMP_ const int _CDECL ndxlDestroyNetwork(
 */
 
 /**
- * @brief Gets the number of noise channels a network.
+ * @brief Gets the number of noise channels in a network.
  *
  * @param[in] _Network
- * Target network to retrieve the channel count of.
+ * Target network to retrieve the noise dimension of.
  *
  * @return
  * If _Network is NULL, returns @ref NDXL_ERR, otherwise returns the number of noise channels in _Network.
  *
+ * @note
+ * Not to be confused with ndxlGetVertexNoiseDimension and ndxlGetEdgeNoiseDimension, which return the number of noise channels affecting a vertex and edge, respectively.
+ *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
+ *
+ * @see ndxlGetVertexNoiseDimension
+ * @see ndxlGetEdgeNoiseDimension
 */
-_NDXLIMP_ const size_t _CDECL ndxlGetNetworkChannelCount(
+_NDXLIMP_ const size_t _CDECL ndxlGetNetworkNoiseDimension(
 	_In_ _Notnull_ NDXLNetwork* _Network
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the noise channels in a network.
- *
- * @param[in] _Network
- * Target network to retrieve the noise channels of.
- *
- * @param[out] _Channels
- * Pointer to a user-allocated array of NDXLChannel pointers. The array must contain at least ndxlGetNetworkChannelCount(_Network) elements. The function populates the array in-place.
- *
- * @return
- * If either _Network or _Channels are NULL, returns @ref NDXL_ERR, otherwise populates _Channels with the noise channel pointers associated with _Network, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLChannel objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Network is NULL.
- * - @ref NDXL_ARG_ERR : _Channels is NULL.
- *
- * @see ndxlGetNetworkChannelCount
-*/
-_NDXLIMP_ const int _CDECL ndxlGetNetworkChannels(
-	_In_ _Notnull_ NDXLNetwork* _Network,
-	_Out_ _Notnull_ NDXLChannel** _Channels
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the edges in a network.
- *
- * @param[in] _Network
- * Target network to retrieve the edges of.
- *
- * @param[out] _Edges
- * Pointer to a user-allocated array of NDXLEdge pointers. The array must contain at least ndxlGetNetworkSize(_Network) elements. The function populates the array in-place.
- *
- * @return
- * If either _Network or _Edges are NULL, returns @ref NDXL_ERR, otherwise populates _Edges with the edge pointers associated with _Network, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLEdge objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Network is NULL.
- * - @ref NDXL_ARG_ERR : _Edges is NULL.
- *
- * @see ndxlGetNetworkSize
-*/
-_NDXLIMP_ const int _CDECL ndxlGetNetworkEdges(
-	_In_ _Notnull_ NDXLNetwork* _Network,
-	_Out_ _Notnull_ NDXLEdge** _Edges
 ) _NOEXCEPT;
 
 /**
@@ -286,35 +230,6 @@ _NDXLIMP_ const double _CDECL ndxlGetNetworkTime(
 	_In_ _Notnull_ NDXLNetwork* _Network
 ) _NOEXCEPT;
 
-/**
- * @brief Gets a list of all the vertices in a network.
- *
- * @param[in] _Network
- * Target network to retrieve the vertices of.
- *
- * @param[out] _Vertices
- * Pointer to a user-allocated array of NDXLVertex pointers. The array must contain at least ndxlGetNetworkOrder(_Network) elements. The function populates the array in-place.
- *
- * @return
- * If either _Network or _Vertices are NULL, returns @ref NDXL_ERR, otherwise populates _Vertices with the vertex pointers associated with _Network, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLVertex objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Network is NULL.
- * - @ref NDXL_ARG_ERR : _Vertices is NULL.
- *
- * @see ndxlGetNetworkOrder
-*/
-_NDXLIMP_ const int _CDECL ndxlGetNetworkVertices(
-	_In_ _Notnull_ NDXLNetwork* _Network,
-	_Out_ _Notnull_ NDXLVertex** _Vertices
-) _NOEXCEPT;
-
 /** @}*/
 
 
@@ -360,346 +275,201 @@ _NDXLIMP_ const int _CDECL ndxlSetNetworkParams(
 
 
 /**
- * @defgroup network_traversal Traversal
+ * @defgroup network_functions Functions
  * @ingroup ndxl_network
- * @brief Functions for traversing network agents and noise channels.
+ * @brief Functions for operating on networks.
  *
  * @{
 */
 
 /**
- * @brief Gets the first noise channel in a network.
+ * @brief Provides directed access to an channel in a network.
  *
  * @param[in] _Network
- * Target network to retrieve the first noise channel of.
+ * Target network to retrieve the channel in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of channel in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkNoiseDimension(_Network).
  *
  * @return
- * If _Network is either NULL or has no noise channels, returns NULL, otherwise returns the first NDXLChannel pointer created on _Network.
+ * If _Network is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLChannel pointer currently at position _Idx in the network's underlying channel array.
  *
  * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkNextChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
- * 
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
  * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
  *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Network is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkNextChannel
- * @see ndxlGetNetworkPreviousChannel
- * @see ndxlGetNetworkLastChannel
-*/
-_NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkFirstChannel(
-	_In_ _Notnull_ NDXLNetwork* _Network
-) _NOEXCEPT;
-
-/**
- * @brief Gets the first edge in a network.
- *
- * @param[in] _Network
- * Target network to retrieve the first edge of.
- *
- * @return
- * If _Network is either NULL or has no edges, returns NULL, otherwise returns the first NDXLEdge pointer created on _Network.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkNextEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
- * 
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Network is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkNextEdge
- * @see ndxlGetNetworkPreviousEdge
- * @see ndxlGetNetworkLastEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkFirstEdge(
-	_In_ _Notnull_ NDXLNetwork* _Network
-) _NOEXCEPT;
-
-/**
- * @brief Gets the first vertex in a network.
- *
- * @param[in] _Network
- * Target network to retrieve the first vertex of.
- *
- * @return
- * If _Network is either NULL or has no vertices, returns NULL, otherwise returns the first NDXLVertex pointer created on _Network.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkNextVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
  *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
  *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkNextVertex
- * @see ndxlGetNetworkPreviousVertex
- * @see ndxlGetNetworkLastVertex
+ * @see ndxlGetNetworkNoiseDimension
+ * @see ndxlNetworkChannelByIndex
 */
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkFirstVertex(
-	_In_ _Notnull_ NDXLNetwork* _Network
+_NDXLIMP_ NDXLChannel* _CDECL ndxlNetworkChannel(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the last noise channel in a network.
+ * @brief Provides directed access to an channel in a network.
  *
  * @param[in] _Network
- * Target network to retrieve the last noise channel of.
+ * Target network to retrieve the channel in.
+ *
+ * @param[in] _Idx
+ * Absolute index (id) of channel in the array. Equivalent to calling ndxlGetChannelIndex(_Channel).
  *
  * @return
- * If _Network is either NULL or has no noise channels, returns NULL, otherwise returns the last NDXLChannel pointer created on _Network.
+ * If _Network is NULL or contains no channels, or no channel exists with the id _Idx, returns NULL, otherwise returns NDXLChannel pointer currently in the network's underlying channel array whose id is _Idx.
  *
  * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkPreviousChannel to iterate over network noise channels.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the network could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
  *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : No channel with id _Idx was found.
  *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstChannel
- * @see ndxlGetNetworkNextChannel
- * @see ndxlGetNetworkPreviousChannel
+ * @see ndxlGetChannelIndex
+ * @see ndxlNetworkChannel
 */
-_NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkLastChannel(
-	_In_ _Notnull_ NDXLNetwork* _Network
+_NDXLIMP_ NDXLChannel* _CDECL ndxlNetworkChannelByIndex(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the last edge in a network.
+ * @brief Provides directed access to an edge in a network.
  *
  * @param[in] _Network
- * Target network to retrieve the last edge of.
+ * Target network to retrieve the edge in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of edge in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkSize(_Network).
  *
  * @return
- * If _Network is either NULL or has no edges, returns NULL, otherwise returns the last NDXLEdge pointer created on _Network.
+ * If _Network is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLEdge pointer currently at position _Idx in the network's underlying edge array.
  *
  * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkPreviousEdge to iterate over network edges.
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
  * 
  * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
  *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
  *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstEdge
- * @see ndxlGetNetworkNextEdge
- * @see ndxlGetNetworkPreviousEdge
+ * @see ndxlGetNetworkSize
+ * @see ndxlNetworkEdgeByIndex
 */
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkLastEdge(
-	_In_ _Notnull_ NDXLNetwork* _Network
+_NDXLIMP_ NDXLEdge* _CDECL ndxlNetworkEdge(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the last vertex in a network.
+ * @brief Provides directed access to an edge in a network.
  *
  * @param[in] _Network
- * Target network to retrieve the last vertex of.
+ * Target network to retrieve the edge in.
+ *
+ * @param[in] _Idx
+ * Absolute index (id) of edge in the array. Equivalent to calling ndxlGetEdgeIndex(_Edge).
  *
  * @return
- * If _Network is either NULL or has no vertices, returns NULL, otherwise returns the last NDXLVertex pointer created on _Network.
+ * If _Network is NULL or contains no edges, or no edge exists with the id _Idx, returns NULL, otherwise returns NDXLEdge pointer currently in the network's underlying edge array whose id is _Idx.
  *
  * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkPreviousVertex to iterate over network vertices.
- * 
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : No edge with id _Idx was found.
+ *
+ * @see ndxlGetEdgeIndex
+ * @see ndxlNetworkEdge
+*/
+_NDXLIMP_ NDXLEdge* _CDECL ndxlNetworkEdgeByIndex(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
+) _NOEXCEPT;
+
+/**
+ * @brief Provides directed access to an vertex in a network.
+ *
+ * @param[in] _Network
+ * Target network to retrieve the vertex in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of vertex in the array. Must be greater than or equal to zero, and less than ndxlGetNetworkOrder(_Network).
+ *
+ * @return
+ * If _Network is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLVertex pointer currently at position _Idx in the network's underlying vertex array.
+ *
+ * @note
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
  * @note
  * A return value of NULL does not necessarily indicate an error, as the network could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
  *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
  *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstVertex
- * @see ndxlGetNetworkNextVertex
- * @see ndxlGetNetworkPreviousVertex
+ * @see ndxlGetNetworkOrder
+ * @see ndxlNetworkVertexByIndex
 */
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkLastVertex(
-	_In_ _Notnull_ NDXLNetwork* _Network
+_NDXLIMP_ NDXLVertex* _CDECL ndxlNetworkVertex(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the next channel in the network noise channel sequence.
+ * @brief Provides directed access to an vertex in a network.
  *
- * @param[in] _Channel
- * Current NDXLChannel pointer in network noise channel sequence.
+ * @param[in] _Network
+ * Target network to retrieve the vertex in.
  *
- * @return
- * If _Channel is either NULL or is the last noise channel in the network's channel sequence, returns NULL, otherwise returns the next NDXLChannel pointer in the host network's sequence.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkPreviousChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the channel could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Channel is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstChannel
- * @see ndxlGetNetworkPreviousChannel
- * @see ndxlGetNetworkLastChannel
-*/
-_NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkNextChannel(
-	_In_ _Notnull_ NDXLChannel* _Channel
-) _NOEXCEPT;
-
-/**
- * @brief Gets the next edge in the network edge sequence.
- *
- * @param[in] _Edge
- * Current NDXLEdge pointer in network edge sequence.
+ * @param[in] _Idx
+ * Absolute index (id) of vertex in the array. Equivalent to calling ndxlGetVertexIndex(_Vertex).
  *
  * @return
- * If _Edge is either NULL or is the last edge in the network's edge sequence, returns NULL, otherwise returns the next NDXLEdge pointer in the host network's sequence.
+ * If _Network is NULL or contains no vertices, or no vertex exists with the id _Idx, returns NULL, otherwise returns NDXLVertex pointer currently in the network's underlying vertex array whose id is _Idx.
  *
  * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkPreviousEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the edge could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
+ * The pointer refers to the original object in the network, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
  *
  * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Edge is NULL.
+ * - @ref NDXL_ARG_ERR : _Network is NULL.
+ * - @ref NDXL_VALUE_ERR : No vertex with id _Idx was found.
  *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstEdge
- * @see ndxlGetNetworkPreviousEdge
- * @see ndxlGetNetworkLastEdge
+ * @see ndxlGetVertexIndex
+ * @see ndxlNetworkVertex
 */
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkNextEdge(
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets the next vertex in the network vertex sequence.
- *
- * @param[in] _Vertex
- * Current NDXLVertex pointer in network vertex sequence.
- *
- * @return
- * If _Vertex is either NULL or is the last vertex in the network's vertex sequence, returns NULL, otherwise returns the next NDXLVertex pointer in the host network's sequence.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkPreviousVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the vertex could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Vertex is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstVertex
- * @see ndxlGetNetworkPreviousVertex
- * @see ndxlGetNetworkLastVertex
-*/
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkNextVertex(
-	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets the previous channel in the network noise channel sequence.
- *
- * @param[in] _Channel
- * Current NDXLChannel pointer in network noise channel sequence.
- *
- * @return
- * If _Channel is either NULL or is the first noise channel in the network's channel sequence, returns NULL, otherwise returns the previous NDXLChannel pointer in the host network's sequence.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstChannel, ndxlGetNetworkNextChannel, and/or ndxlGetNetworkLastChannel to iterate over network noise channels.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the channel could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Channel is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstChannel
- * @see ndxlGetNetworkNextChannel
- * @see ndxlGetNetworkLastChannel
-*/
-_NDXLIMP_ NDXLChannel* _CDECL ndxlGetNetworkPreviousChannel(
-	_In_ _Notnull_ NDXLChannel* _Channel
-) _NOEXCEPT;
-
-/**
- * @brief Gets the previous edge in the network edge sequence.
- *
- * @param[in] _Edge
- * Current NDXLEdge pointer in network edge sequence.
- *
- * @return
- * If _Edge is either NULL or is the first edge in the network's edge sequence, returns NULL, otherwise returns the previous NDXLEdge pointer in the host network's sequence.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstEdge, ndxlGetNetworkNextEdge, and/or ndxlGetNetworkLastEdge to iterate over network edges.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the edge could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Edge is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstEdge
- * @see ndxlGetNetworkNextEdge
- * @see ndxlGetNetworkLastEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetNetworkPreviousEdge(
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets the previous vertex in the network vertex sequence.
- *
- * @param[in] _Vertex
- * Current NDXLVertex pointer in network vertex sequence.
- *
- * @return
- * If _Vertex is either NULL or is the first vertex in the network's vertex sequence, returns NULL, otherwise returns the previous NDXLVertex pointer in the host network's sequence.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetNetworkFirstVertex, ndxlGetNetworkNextVertex, and/or ndxlGetNetworkLastVertex to iterate over network vertices.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the vertex could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref NDXL_ARG_ERR : _Vertex is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetNetworkFirstVertex
- * @see ndxlGetNetworkNextVertex
- * @see ndxlGetNetworkLastVertex
-*/
-_NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
-	_In_ _Notnull_ NDXLVertex* _Vertex
+_NDXLIMP_ NDXLVertex* _CDECL ndxlNetworkVertexByIndex(
+	_In_ _Notnull_ NDXLNetwork* _Network,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /** @}*/
-
 
 
 /**
  * @defgroup network_simulation Simulation
  * @ingroup ndxl_network
  * @brief Functions for simulating networks.
- * 
+ *
  * @par Simulation Behaviour
  * Simulation starts at the local simulation time of a network i.e., the first simulation starts at t = 0, and subsequent simulations on the same network start at whatever time the previous simulation finished.
  * Each network essentially functions as its own state machine, and because networks can dynamically change during simulation, only the current simulation state is preserved. Any errors encountered during simulation thus leave the network in the state it was in before the error occured.
@@ -712,11 +482,11 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
  * @par External Failure
  * Any callback, dynamics, or noise function returning any nonzero value indicates failure. NDXL immediately terminates the simulation upon receiving this signal.
  * The network state is not rolled back following a callback failure. Instead, it remains at the state reached when the callback was invoked, with all previously completed integration steps and the network configuration preserved.
- * 
- * @see ndxlGetNetworkFirstVertex
- * @see ndxlGetNetworkLastVertex
- * @see ndxlGetNetworkFirstEdge
- * @see ndxlGetNetworkLastEdge
+ *
+ * @see ndxlGetNetworkVertices
+ * @see ndxlGetNetworkVertices
+ * @see ndxlGetNetworkEdges
+ * @see ndxlGetNetworkEdges
  * @see NDXLNetworkCallback
  * @see NDXLVertexDynamics
  * @see NDXLVertexNoise
@@ -724,7 +494,7 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetNetworkPreviousVertex(
  * @see NDXLEdgeDynamics
  * @see NDXLEdgeNoise
  * @see NDXLEdgeCallback
- * 
+ *
  * @{
 */
 
@@ -769,7 +539,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRalston(
 ) _NOEXCEPT;
 
 /**
- * @brief Simulates a network using the static explicit Nystrom method of order 5.
+ * @brief Simulates a network using the static explicit Nystr&ouml;m method of order 5.
  *
  * @param[in] _Network
  * Target network to simulate.
@@ -837,7 +607,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateNystrom(
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
- * 
+ *
  * @warning
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
@@ -894,7 +664,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateDopri(
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
- * 
+ *
  * @warning
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
@@ -994,7 +764,7 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateEuler(
  *
  * @note
  * This method cannot be used if _Network contains no stochastic agents as it is a stochastic method.
- * 
+ *
  * @warning
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
  *
@@ -1061,11 +831,11 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateHeun(
  *
  * @note
  * This method cannot be used if _Network contains stochastic agents as it is a purely deterministic method.
- * 
+ *
  * @warning
  * The function does not verify the capacity of the _Tstops array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- * 
- * This method relies on network-wide Jacobian evaluations, meaning memory usage scales with the number of agents squared, as opposed to the linear scaling seen in explicit methods. 
+ *
+ * This method relies on network-wide Jacobian evaluations, meaning memory usage scales with the number of agents squared, as opposed to the linear scaling seen in explicit methods.
  *
  * @par Errors raised
  * - @ref NDXL_ARG_ERR : _Network is NULL.
@@ -1096,165 +866,5 @@ _NDXLIMP_ const int _CDECL ndxlNetworkSimulateRadau(
 #ifdef __cplusplus
 }
 #endif
-
-//#ifdef __cplusplus
-//_NDXL_BEGIN
-//
-//using network_callback = std::function<void(const network&, double, const std::vector<any>&)>;
-//
-//int _nwk_bridge(NDXLNetwork* _Network, const double _Time, void* _Params);
-//
-//class network
-//{
-//public:
-//	inline network(NDXLNetwork* _Ptr) noexcept : _My_ptr(_Ptr) {}
-//
-//	inline virtual ~network() noexcept
-//	{
-//		this->_My_ptr = 0;
-//	}
-//
-//	inline const int destroy() noexcept
-//	{
-//		network::_Nwkargs.erase(this->_My_ptr);
-//		return ndxlDestroyNetwork(&(this->_My_ptr));
-//	}
-//
-//protected:
-//	NDXLNetwork* _My_ptr;
-//
-//public:
-//	static std::unordered_map<NDXLNetwork*, std::vector<std::any>> _Nwkargs;
-//
-//public:
-//	inline void _Destroy_vertex_params(NDXLVertex* _Vertex) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][1].erase(_Vertex);
-//		ndxlSetVertexParams(_Vertex, 0);
-//	}
-//
-//	inline void _Destroy_edge_params(NDXLEdge* _Edge) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][2].erase(_Edge);
-//		ndxlSetEdgeParams(_Edge, 0);
-//	}
-//
-//	inline NDXLNetwork* c_ptr() const noexcept
-//	{
-//		return this->_My_ptr;
-//	}
-//
-//	inline const std::vector<edge>& edges() const noexcept
-//	{
-//		std::vector<edge> _Edges(ndxlGetNetworkSize(this->_My_ptr));
-//		ndxlGetNetworkEdges(this->_My_ptr, &(_Edges->data));
-//		return _Edges;
-//	}
-//
-//	inline const std::size_t order() const noexcept
-//	{
-//		return ndxlGetNetworkOrder(this->_My_ptr);
-//	}
-//
-//	inline std::vector<any>& params() noexcept
-//	{
-//		return network::_Nwkargs[this->_My_ptr][3];
-//	}
-//
-//	inline const std::size_t size() const noexcept
-//	{
-//		return ndxlGetNetworkSize(this->_My_ptr);
-//	}
-//
-//	inline const double time() const noexcept
-//	{
-//		return ndxlGetNetworkTime(this->_My_ptr);
-//	}
-//
-//	inline const std::vector<vertex>& vertices() const noexcept
-//	{
-//		std::vector<vertex> _Vertices(ndxlGetNetworkOrder(this->_My_ptr));
-//		ndxlGetNetworkVertices(this->_My_ptr, &(_Vertices->data));
-//		return _Vertices;
-//	}
-//
-//	inline const int reset() noexcept
-//	{
-//		return ndxlNetworkReset(this->_My_ptr);
-//	}
-//
-//	inline const int simulate_ralston(const double _Tspan, const double _Step = 0.1, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		return ndxlNetworkSimulateRalston(this->_My_ptr, _Tspan, _Step, _nwk_bridge);
-//	}
-//
-//	inline const int simulate_nystrom(const double _Tspan, const double _Step = 0.1, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		return ndxlNetworkSimulateNystrom(this->_My_ptr, _Tspan, _Step, _nwk_bridge);
-//	}
-//
-//	inline const int simulate_dopri(const double _Tspan, const double _Atol = 1e-6, const double _Rtol = 1e-3, const std::vector<double>& _Tstops = {}, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		const std::size_t _Nstops = _Tstops.size();
-//		const double* _Stops = (_Nstops ? _Tstops.data() : 0);
-//		return ndxlNetworkSimulateDopri(this->_My_ptr, _Tspan, _Atol, _Rtol, _Stops, _Nstops, _nwk_bridge);
-//	}
-//
-//	inline const int simulate_rkck(const double _Tspan, const double _Atol = 1e-6, const double _Rtol = 1e-3, const std::vector<double>& _Tstops = {}, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		const std::size_t _Nstops = _Tstops.size();
-//		const double* _Stops = (_Nstops ? _Tstops.data() : 0);
-//		return ndxlNetworkSimulateRkck(this->_My_ptr, _Tspan, _Atol, _Rtol, _Stops, _Nstops, _nwk_bridge);
-//	}
-//
-//	inline const int simulate_norsett(const double _Tspan, const double _Step = 0.1, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		//network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		//return ndxlNetworkSimulateNorsett(this->_My_ptr, _Tspan, _Step, _nwk_bridge);
-//		return @ref NDXL_ERR;
-//	}
-//
-//	inline const int simulate_radau(const double _Tspan, const double _Atol = 1e-10, const double _Rtol = 1e-8, const std::vector<double>& _Tstops = {}, const network_callback& _Cb = nullptr) noexcept
-//	{
-//		//network::_Nwkargs[this->_My_ptr][0] = _Cb;
-//		//const std::size_t _Nstops = _Tstops.size();
-//		//const double* _Stops = (_Nstops ? _Tstops.data() : 0);
-//		//return ndxlNetworkSimulateRadau(this->_My_ptr, _Tspan, _Atol, _Rtol, _Stops, _Nstops, _nwk_bridge);
-//		return @ref NDXL_ERR;
-//	}
-//};
-//
-//std::unordered_map<NDXLNetwork*, std::vector<any>> network::_Nwkargs = {};
-//
-//inline network create_network(const std::vector<any>& _Args = {})
-//{
-//	NDXLNetwork* _Nwk = ndxlCreateNetwork(0);
-//	network::_Nwkargs[_Nwk] = { network_callback(nullptr), std::unordered_map<NDXLVertex*, std::vector<std::any>>(), std::unordered_map<NDXLEdge*, std::vector<std::any>>(), _Args };
-//	ndxlSetNetworkParams(_Nwk, _Nwk);
-//	return network(_Nwk);
-//}
-//
-//int _nwk_bridge(NDXLNetwork* _Network, const double _Time, void* _Params)
-//{
-//	try
-//	{
-//		const std::vector<any>& _Args = network::_Nwkargs[(NDXLNetwork*)_Params];
-//		const network_callback& _Cb = _Args[0];
-//		if (_Cb)
-//			_Cb(network(_Network), _Time, _Args[3]);
-//		return 0;
-//	}
-//	catch (std::exception& _Exc)
-//	{
-//		return -1;
-//	}
-//}
-//
-//_NDXL_END
-//#endif
 
 #endif // _NDXL_NETWORK_

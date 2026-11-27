@@ -6,7 +6,7 @@
  * Declares the NDXLVertex object, representing a node in a network. Provides functions for vertex construction, destruction, nearest neighbour traversal, and state and parameter querying.
  *
  * @copyright Copyright (c) 2026, Ethan Codron.
- * 
+ *
  * Licensed under the GNU General Public License v3.0 only.
  * See the LICENSE file in the repository root.
 */
@@ -14,7 +14,7 @@
 #ifndef _NDXL_VERTEX_
 #define _NDXL_VERTEX_
 
-#include "ndxl_channel.h"
+#include "../ndxlcore.h"
 
 /**
  * @defgroup vertex_dnc Dynamics, Noise, and Callbacks
@@ -34,10 +34,10 @@
  *
  * @param[out] _dY
  * Flat output vector containing the time derivative of the calling vertex. ndxlGetVertexOrder(calling_vertex) total elements must be written to it, even if those elements are zero.
- * 
+ *
  * @param[in] _Y
  * Flat input vector containing the current Runge-Kutta stage of the calling vertex. Is guaranteed to have ndxlGetVertexOrder(calling_vertex) elements.
- * 
+ *
  * @param[in] _Time
  * Local simulation time of the calling vertex, offset by a fraction of the step size corresponding to the next Runge-Kutta stage. Note that this is generally NOT equivalent to ndxlGetVertexTime(calling_vertex), which only updates on a successful step.
  *
@@ -46,13 +46,13 @@
  *
  * @return
  * Integer indicating function success (zero) or failure (any nonzero value).
- * 
+ *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetVertexOrder(calling_vertex) elements can result in out-of-bounds writes and undefined behaviour.
- * 
+ *
  * @see ndxlGetVertexOrder
 */
 typedef int(*NDXLVertexDynamics)(NDXLVertex* _Vertex, double* _dY, const double* _Y, double _Time, void* _Params);
@@ -67,10 +67,10 @@ typedef int(*NDXLVertexDynamics)(NDXLVertex* _Vertex, double* _dY, const double*
  *
  * @param[out] _dG
  * Flat output matrix containing the noise amplitudes, where element ij (at index i * ndxlGetVertexChannelCount(calling_vertex) + j) represents the amplitude of the j-th Wiener process on the i-th state-vector element. ndxlGetVertexOrder(calling_vertex) x ndxlGetVertexChannelCount(calling_vertex) total elements must be written to it, even if those elements are zero.
- * 
+ *
  * @param[in] _Y
  * Flat input vector containing the current Runge-Kutta stage of the calling vertex. Is guaranteed to have ndxlGetVertexOrder(calling_vertex) elements.
- * 
+ *
  * @param[in] _Time
  * Local simulation time of the calling vertex, offset by a fraction of the step size corresponding to the next Runge-Kutta stage. Note that this is generally NOT equivalent to ndxlGetVertexTime(calling_vertex), which only updates on a successful step.
  *
@@ -79,13 +79,13 @@ typedef int(*NDXLVertexDynamics)(NDXLVertex* _Vertex, double* _dY, const double*
  *
  * @return
  * Integer indicating function success (zero) or failure (any nonzero value).
- * 
+ *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * The function does not verify the number of elements written to the output array. Not writing to each element can result in garbage values or stale states being propagated. Writing beyond ndxlGetVertexOrder(calling_vertex) x ndxlGetVertexChannelCount(calling_vertex) elements can result in out-of-bounds writes and undefined behaviour.
- * 
+ *
  * @see ndxlGetVertexOrder
  * @see ndxlGetVertexChannelCount
 */
@@ -113,7 +113,7 @@ typedef int(*NDXLVertexNoise)(NDXLVertex* _Vertex, double* _dG, const double* _Y
  *
  * @note
  * If this function returns a nonzero value during simulation, NDXL terminates the simulation, and internally raises a @ref NDXL_SIM_ERR.
- * 
+ *
  * @warning
  * Writing beyond ndxlGetVertexOrder(calling_vertex) elements to the state vector can result in out-of-bounds writes and undefined behaviour.
  *
@@ -142,9 +142,9 @@ extern "C" {
  * Network that will own this vertex. This also dictates which noise channels can affect this vertex.
  * 
  * @param[in] _State
- * Flat initial state vector at time 0. May be NULL, in which case a zero-vector of size max(1, _Order) is assigned by default.
+ * Flat initial state vector at time 0. May be NULL, in which case a zero-vector of size max(1, _Dimension) is assigned by default.
  * 
- * @param[in] _Order
+ * @param[in] _Dimension
  * Size of state vector. If _State is provided, must be nonzero.
  * 
  * @param[in] _Dynamics
@@ -153,17 +153,14 @@ extern "C" {
  * @param[in] _Noise
  * The noise function describing the noise amplitude over time. May be NULL, in which case _Channels must be NULL and _Nchannels must be 0.
  * 
- * @param[in] _Channels
- * Array of NDXLChannel pointers defining which noise channels affect this vertex through _Noise. May be NULL unless _Nchannels is nonzero. If provided, any element may be NULL, which is interpreted as a new channel.
- * - If _Channels is NULL and _Nchannels is 0, creates _Order new noise channels and assigns them to this vertex. The noise matrix has shape _Order x _Order.
- * - If _Channels is NULL and _Nchannels is nonzero, creates _Nchannels new noise channels and assigns them to this vertex. The noise matrix has shape _Order x _Nchannels.
- * - If any element of _Channels is NULL, creates a new noise channel for that element and assigns it to this vertex. The noise matrix has shape _Order x _Nchannels.
- * 
- * @param[in] _Nchannels
- * Size of channels array. Must be NULL if _Noise is NULL. If _Channels is provided, must match the length of the _Channels array exactly.
- * 
  * @param[in] _Callback
  * External discrete callback called once after each successful integration step. May be NULL.
+ * 
+ * @param[in] _Atol
+ * Absolute tolerance (number of correct decimal places) the state of this vertex must be calculated to during integration. Must be greater than or equal to zero; if zero, the owning network's absolute tolerance is used.
+ * 
+ * @param[in] _Rtol
+ * Relative tolerance (number of correct digits) the state of this vertex must be calculated to during integration. Must be greater than or equal to zero; if zero, the owning network's relative tolerance is used.
  * 
  * @param[in] _Params
  * Pointer to extra memory used by the vertex. May be NULL.
@@ -178,7 +175,7 @@ extern "C" {
  * Unlike network callbacks, vertex callbacks are NOT called at time 0.
  *
  * @warning
- * The function does not verify the capacity of the supplied state and channel arrays. Both arrays must contain at least _Order and _Nchannels elements, respectively, whenever they are used. Incorrect array sizes or inconsistent _Order and _Nchannels arguments can result in out-of-bounds reads and undefined behaviour.
+ * The function does not verify the capacity of the supplied state array, and expects it to contain at least _Dimension elements. Incorrect array sizes or an inconsistent _Dimension argument can result in out-of-bounds reads and undefined behaviour.
  * 
  * @warning
  * NDXL stores the supplied `void* _Params` pointer without copying the associated data or managing its lifetime. The pointed-to memory must remain valid for as long as the vertex uses it. The user remains responsible for managing any allocations.
@@ -190,42 +187,40 @@ extern "C" {
 */
 _NDXLIMP_ NDXLVertex* _CDECL ndxlCreateVertex(
 	_In_ _Notnull_ NDXLNetwork* _Network,
-	_In_reads_bytes_opt_(_Order * sizeof(double)) const double* _State,
-	_In_ const size_t _Order,
+	_In_reads_bytes_opt_(_Dimension * sizeof(double)) const double* const _State,
+	_In_ const size_t _Dimension,
 	_In_ _Maybenull_ NDXLVertexDynamics _Dynamics,
 	_In_ _Maybenull_ NDXLVertexNoise _Noise,
 	_In_reads_bytes_opt_(_Nchannels * sizeof(NDXLChannel*)) NDXLChannel** _Channels,
 	_In_ const size_t _Nchannels,
 	_In_ _Maybenull_ NDXLVertexCallback _Callback,
+	_In_ const double _Atol,
+	_In_ const double _Rtol,
 	_In_ _Maybenull_ void* _Params
 ) _NOEXCEPT;
 
 /**
- * @brief Destroys a vertex created using ndxlCreateVertex(), and zeroes the pointer.
+ * @brief Destroys a vertex created using ndxlCreateVertex().
  *
  * @param[in,out] _Vertex
  * Pointer to NDXLVertex pointer.
  *
  * @return
- * If _Vertex or *_Vertex are NULL, returns @ref NDXL_ERR, otherwise zeroes *_Vertex, and returns NDXL_OK.
- *
- * @note
- * The vertex pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the vertex has been destroyed.
+ * If _Vertex is NULL, returns @ref NDXL_ERR, otherwise destroys the vertex and returns NDXL_OK.
  * 
  * @warning
  * Destroying a vertex also destroys all edges connected to that vertex. All pointers to the vertex and its edges become invalid. The memory associated with the relevant objects' user-defined `void* _Params` pointers is not handled by the destructors, and must be managed explicitly by the user.
- *
+ * 
  * @warning
- * Only the pointer variable passed to this function is zeroed. Any other pointers referencing the destroyed vertex become invalid and must not be used.
+ * Using the vertex after it has been destroyed can result in undefined behaviour. Discard all references!!
  * 
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref NDXL_VALUE_ERR : *_Vertex is NULL.
  * 
  * @see ndxlCreateVertex
 */
 _NDXLIMP_ const int _CDECL ndxlDestroyVertex(
-	_In_ _Notnull_ NDXLVertex** _Vertex
+	_In_ _Notnull_ NDXLVertex* _Vertex
 ) _NOEXCEPT;
 
 /** @}*/
@@ -260,51 +255,6 @@ _NDXLIMP_ const int _CDECL ndxlDestroyVertex(
 */
 _NDXLIMP_ NDXLVertexCallback _CDECL ndxlGetVertexCallback(
 	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets the number of noise channels affecting a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the channel count of.
- *
- * @return
- * If _Vertex is NULL, returns @ref NDXL_ERR, otherwise returns the number of noise channels affecting _Vertex.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
-*/
-_NDXLIMP_ const size_t _CDECL ndxlGetVertexChannelCount(
-	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the noise channels affecting a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the noise channels of.
- *
- * @param[out] _Channels
- * Pointer to a user-allocated array of NDXLChannel pointers. The array must contain at least ndxlGetVertexChannelCount(_Vertex) elements. The function populates the array in-place.
- *
- * @return
- * If either _Vertex or _Channels are NULL, returns @ref NDXL_ERR, otherwise populates _Channels with the noise channel pointers associated with _Vertex, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLChannel objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref  NDXL_ARG_ERR : _Channels is NULL.
- *
- * @see ndxlGetVertexChannelCount
-*/
-_NDXLIMP_ const int _CDECL ndxlGetVertexChannels(
-	_In_ _Notnull_ NDXLVertex* _Vertex,
-	_Out_ _Notnull_ NDXLChannel** _Channels
 ) _NOEXCEPT;
 
 /**
@@ -377,6 +327,27 @@ _NDXLIMP_ const size_t _CDECL ndxlGetVertexDegreeOut(
 ) _NOEXCEPT;
 
 /**
+ * @brief Gets the size of a vertex's state vector.
+ *
+ * @param[in] _Vertex
+ * Target vertex to retrieve the dimension of.
+ *
+ * @return
+ * If _Vertex is NULL, returns @ref NDXL_ERR, otherwise returns the size of the state vector of _Vertex.
+ *
+ * @note
+ * If _State was NULL during construction, the vertex is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in ndxlCreateVertex().
+ *
+ * @par Errors raised
+ * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
+ *
+ * @see ndxlCreateVertex
+*/
+_NDXLIMP_ const size_t _CDECL ndxlGetVertexDimension(
+	_In_ _Notnull_ NDXLVertex* _Vertex
+) _NOEXCEPT;
+
+/**
  * @brief Gets the dynamics function associated with a vertex.
  *
  * @param[in] _Vertex
@@ -396,35 +367,6 @@ _NDXLIMP_ const size_t _CDECL ndxlGetVertexDegreeOut(
 */
 _NDXLIMP_ NDXLVertexDynamics _CDECL ndxlGetVertexDynamics(
 	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the edges affecting a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the edges of.
- *
- * @param[out] _Edges
- * Pointer to a user-allocated array of NDXLEdge pointers. The array must contain at least ndxlGetVertexDegree(_Vertex) elements. The function populates the array in-place with all edges that are connected to _Vertex, regardless of edge directionality.
- *
- * @return
- * If either _Vertex or _Edges are NULL, returns @ref NDXL_ERR, otherwise populates _Edges with the edge pointers associated with _Vertex, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLEdge objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref  NDXL_ARG_ERR : _Edges is NULL.
- *
- * @see ndxlGetVertexDegree
-*/
-_NDXLIMP_ const int _CDECL ndxlGetVertexEdges(
-	_In_ _Notnull_ NDXLVertex* _Vertex,
-	_Out_ _Notnull_ NDXLEdge** _Edges
 ) _NOEXCEPT;
 
 /**
@@ -474,16 +416,16 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetVertexNeighbour(
 ) _NOEXCEPT;
 
 /**
- * @brief Gets the order of a neighbouring vertex along a specified edge.
+ * @brief Gets the dimension of a neighbouring vertex along a specified edge.
  *
  * @param[in] _Vertex
- * Target vertex to retrieve the neighbour order of.
+ * Target vertex to retrieve the neighbour dimension of.
  *
  * @param[in] _Edge
- * The edge along which to query the order of the neighbouring vertex.
+ * The edge along which to query the dimension of the neighbouring vertex.
  *
  * @return
- * If either _Vertex or _Edge are NULL, or _Vertex is not connected to _Edge, returns @ref NDXL_ERR, otherwise returns the order of the vertex that is connected to _Vertex by _Edge.
+ * If either _Vertex or _Edge are NULL, or _Vertex is not connected to _Edge, returns @ref NDXL_ERR, otherwise returns the dimension of the vertex that is connected to _Vertex by _Edge.
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
@@ -492,38 +434,9 @@ _NDXLIMP_ NDXLVertex* _CDECL ndxlGetVertexNeighbour(
  *
  * @see ndxlCreateEdge
 */
-_NDXLIMP_ const size_t _CDECL ndxlGetVertexNeighbourOrder(
+_NDXLIMP_ const size_t _CDECL ndxlGetVertexNeighbourDimension(
 	_In_ _Notnull_ NDXLVertex* _Vertex,
 	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the nearest neighbour vertices of a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the neighbours of.
- *
- * @param[out] _Neighbours
- * Pointer to a user-allocated array of NDXLVertex pointers. The array must contain at least ndxlGetVertexDegree(_Vertex) elements. The function populates the array in-place.
- *
- * @return
- * If either _Vertex or _Neighbours are NULL, returns @ref NDXL_ERR, otherwise populates _Neighbours with the nearest neighbour vertex pointers of _Vertex, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLVertex objects referenced by its elements. These pointers refer to the original objects in the owning network of _Vertex, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref  NDXL_ARG_ERR : _Neighbours is NULL.
- *
- * @see ndxlGetVertexDegree
-*/
-_NDXLIMP_ const int _CDECL ndxlGetVertexNeighbours(
-	_In_ _Notnull_ NDXLVertex* _Vertex,
-	_Out_ _Notnull_ NDXLVertex** _Neighbours
 ) _NOEXCEPT;
 
 /**
@@ -594,27 +507,6 @@ _NDXLIMP_ NDXLNetwork* _CDECL ndxlGetVertexNetwork(
  * @see ndxlSetVertexNoise
 */
 _NDXLIMP_ NDXLVertexNoise _CDECL ndxlGetVertexNoise(
-	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets the size of a vertex's state vector.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the order of.
- *
- * @return
- * If _Vertex is NULL, returns @ref NDXL_ERR, otherwise returns the size of the state vector of _Vertex.
- * 
- * @note
- * If _State was NULL during construction, the vertex is assigned a zero-initialised state vector whose length is determined by the default-state allocation behaviour described in ndxlCreateVertex().
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * 
- * @see ndxlCreateVertex
-*/
-_NDXLIMP_ const size_t _CDECL ndxlGetVertexOrder(
 	_In_ _Notnull_ NDXLVertex* _Vertex
 ) _NOEXCEPT;
 
@@ -784,154 +676,76 @@ _NDXLIMP_ const int _CDECL ndxlSetVertexParams(
 
 
 /**
- * @defgroup vertex_traversal Edge Traversal
- * @ingroup ndxl_vertex
- * @brief Functions for traversing the edges and nearest neighbours of vertices.
- *
- * @{
-*/
-
-/**
- * @brief Gets the first edge connected to a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the first edge of.
- *
- * @return
- * If _Vertex is either NULL or has no edges, returns NULL, otherwise returns the first NDXLEdge pointer connected to _Vertex.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetVertexNextEdge, ndxlGetVertexPreviousEdge, and/or ndxlGetVertexLastEdge to iterate over a vertex's edges. The nearest neighbour vertices can subsequently be retrieved using the appropriate edge getter.
- * 
- * @note
- * A return value of NULL does not necessarily indicate an error, as the vertex could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetVertexNextEdge
- * @see ndxlGetVertexPreviousEdge
- * @see ndxlGetVertexLastEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetVertexFirstEdge(
-	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets the last edge connected to a vertex.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the last edge of.
- *
- * @return
- * If _Vertex is either NULL or has no edges, returns NULL, otherwise returns the last NDXLEdge pointer connected to _Vertex.
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetVertexFirstEdge, ndxlGetVertexNextEdge, and/or ndxlGetVertexPreviousEdge to iterate over a vertex's edges. The nearest neighbour vertices can subsequently be retrieved using the appropriate edge getter.
- *
- * @note
- * A return value of NULL does not necessarily indicate an error, as the vertex could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetVertexFirstEdge
- * @see ndxlGetVertexNextEdge
- * @see ndxlGetVertexPreviousEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetVertexLastEdge(
-	_In_ _Notnull_ NDXLVertex* _Vertex
-) _NOEXCEPT;
-
-/**
- * @brief Gets the next edge in the vertex's nearest neighbour sequence.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the next edge of.
- * 
- * @param[in] _Edge
- * Current NDXLEdge pointer in vertex's nearest neighbour sequence.
- *
- * @return
- * Returns the next NDXLEdge pointer in the vertex's edge sequence, or NULL if:
- * - _Vertex is NULL
- * - _Edge is NULL
- * - _Vertex has no edges
- * - _Edge is not connected to _Vertex
- * - _Edge is the last edge in the edge sequence of _Vertex
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetVertexFirstEdge, ndxlGetVertexPreviousEdge, and/or ndxlGetVertexLastEdge to iterate over a vertex's edges. The nearest neighbour vertices can subsequently be retrieved using the appropriate edge getter.
- *
- * @note
- * A return value of NULL does not necessarily indicate an error, as the edge could have no successors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- * - NDXL_VELUE_ERR : _Edge is not connected to _Vertex.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetVertexFirstEdge
- * @see ndxlGetVertexPreviousEdge
- * @see ndxlGetVertexLastEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetVertexNextEdge(
-	_In_ _Notnull_ NDXLVertex* _Vertex,
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/**
- * @brief Gets the previous edge in the vertex's nearest neighbour sequence.
- *
- * @param[in] _Vertex
- * Target vertex to retrieve the previous edge of.
- * 
- * @param[in] _Edge
- * Current NDXLEdge pointer in vertex's nearest neighbour sequence.
- *
- * @return
- * Returns the previous NDXLEdge pointer in the vertex's edge sequence, or NULL if:
- * - _Vertex is NULL
- * - _Edge is NULL
- * - _Vertex has no edges
- * - _Edge is not connected to _Vertex
- * - _Edge is the first edge in the edge sequence of _Vertex
- *
- * @note
- * This function is most commonly used in conjunction with ndxlGetVertexFirstEdge, ndxlGetVertexNextEdge, and/or ndxlGetVertexLastEdge to iterate over a vertex's edges. The nearest neighbour vertices can subsequently be retrieved using the appropriate edge getter.
- *
- * @note
- * A return value of NULL does not necessarily indicate an error, as the edge could have no predecessors. If unsure, use ndxlGetLastErrorCode() to check.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Vertex is NULL.
- * - @ref  NDXL_ARG_ERR : _Edge is NULL.
- * - NDXL_VELUE_ERR : _Edge is not connected to _Vertex.
- *
- * @see ndxlGetLastErrorCode
- * @see ndxlGetVertexFirstEdge
- * @see ndxlGetVertexNextEdge
- * @see ndxlGetVertexLastEdge
-*/
-_NDXLIMP_ NDXLEdge* _CDECL ndxlGetVertexPreviousEdge(
-	_In_ _Notnull_ NDXLVertex* _Vertex,
-	_In_ _Notnull_ NDXLEdge* _Edge
-) _NOEXCEPT;
-
-/** @}*/
-
-
-
-/**
  * @defgroup vertex_functions Functions
  * @ingroup ndxl_vertex
  * @brief Functions for operating on vertices.
  *
  * @{
 */
+
+/**
+ * @brief Provides directed access to an channel in a vertex.
+ *
+ * @param[in] _Vertex
+ * Target vertex to retrieve the channel in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of channel in the array. Must be greater than or equal to zero, and less than ndxlGetVertexNoiseDimension(_Vertex).
+ *
+ * @return
+ * If _Vertex is NULL or contains no channels, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLChannel pointer currently at position _Idx in the vertex's underlying channel array.
+ *
+ * @note
+ * The pointer refers to the original object in the vertex, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the vertex could have no channels. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Vertex is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetVertexNoiseDimension
+*/
+_NDXLIMP_ NDXLChannel* _CDECL ndxlVertexChannel(
+	_In_ _Notnull_ NDXLVertex* _Vertex,
+	_In_ const size_t _Idx
+) _NOEXCEPT;
+
+/**
+ * @brief Provides directed access to an edge in a vertex.
+ *
+ * @param[in] _Vertex
+ * Target vertex to retrieve the edge in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of edge in the array. Must be greater than or equal to zero, and less than ndxlGetVertexDegree(_Vertex).
+ *
+ * @return
+ * If _Vertex is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLEdge pointer currently at position _Idx in the vertex's underlying edge array.
+ *
+ * @note
+ * The pointer refers to the original object in the vertex, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the vertex could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Vertex is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetVertexDegree
+*/
+_NDXLIMP_ NDXLEdge* _CDECL ndxlVertexEdge(
+	_In_ _Notnull_ NDXLVertex* _Vertex,
+	_In_ const size_t _Idx
+) _NOEXCEPT;
 
 /**
  * @brief Checks if an edge exists between two vertices.
@@ -993,48 +807,5 @@ _NDXLIMP_ double* _CDECL ndxlVertexState(
 #ifdef __cplusplus
 }
 #endif
-
-//#ifdef __cplusplus
-//_NDXL_BEGIN
-//
-//class vertex
-//{
-//public:
-//	inline vertex(NDXLVertex* _Vertex) noexcept : _My_ptr(_Vertex) {}
-//
-//	inline virtual ~vertex() noexcept
-//	{
-//		this->_My_ptr = 0;
-//	}
-//
-//protected:
-//	NDXLVertex* _My_ptr;
-//
-//	inline NDXLVertex* c_ptr() const noexcept
-//	{
-//		return this->_My_ptr;
-//	}
-//
-//	inline const int destroy() noexcept
-//	{
-//		this->parent()._Destroy_vertex_params(this->_My_ptr);
-//		for (NDXLEdge* _Edge = ndxlGetVertexFirstEdge(this->_My_ptr); _Edge; _Edge = ndxlGetVertexNextEdge(this->_My_ptr, _Edge))
-//			this->parent()._Destroy_edge_params(_Edge);
-//		return ndxlDestroyVertex(&(this->_My_ptr));
-//	}
-//
-//	inline std::vector<any>& params() noexcept
-//	{
-//		return (*(std::vector<any>*)(ndxlVertexParams(this->_My_ptr)))[-1];
-//	}
-//
-//	inline network parent() const noexcept
-//	{
-//		return network(ndxlGetVertexParent(this->_My_ptr));
-//	}
-//};
-//
-//_NDXL_END
-//#endif // __cplusplus
 
 #endif // _NDXL_VERTEX_

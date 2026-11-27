@@ -1,516 +1,416 @@
-//--------------------------------------\\
-// NDXL source file for vertex class	\\
-// Copyright Ethan Codron 2026			\\
-// GNU GPL-3.0							\\
-//--------------------------------------\\
-// Source file providing all vertex		\\
-// functions used internally by the		\\
-// API.									\\
-//--------------------------------------\\
-
 #include "internal.h"
 
-// Vertex constructors and destructor vvvvv
+// Constructors and destructors vvvvv
 
 NDXLVertexChannel* __ndxlCreateVertexChannel(NDXLVertex* _Vertex, NDXLChannel* _Channel)
 {
-	NDXLVertexChannel* vchannel = (NDXLVertexChannel*)malloc(sizeof(NDXLVertexChannel));
-	vchannel->channel = _Channel;
-	vchannel->channel->nv++;
-	vchannel->prev = _Vertex->ctail;
-	vchannel->next = 0;
-	if (_Vertex->chead)
-		_Vertex->ctail->next = vchannel;
-	else
-		_Vertex->chead = vchannel;
-	_Vertex->ctail = vchannel;
-	return vchannel;
+    NDXLVertexChannel* vchannel = (NDXLVertexChannel*)malloc(sizeof(NDXLVertexChannel));
+    vchannel->channel = _Channel;
+    vchannel->vidx = _Channel->nv;
+    return vchannel;
 }
 
 void __ndxlDestroyVertexChannel(NDXLVertexChannel* _Vchannel)
 {
-	_Vchannel->channel->nv--;
-	if (_Vchannel->prev)
-		_Vchannel->prev->next = _Vchannel->next;
-	else
-		_Vchannel->cvert->vertex->chead = _Vchannel->cvert->vertex->chead->next;
-	if (_Vchannel->next)
-		_Vchannel->next->prev = _Vchannel->prev;
-	else
-		_Vchannel->cvert->vertex->ctail = _Vchannel->cvert->vertex->ctail->prev;
-	free(_Vchannel);
+    free(_Vchannel);
 }
 
-NDXLVertex* __ndxlCreateVertex(NDXLNetwork* _Network, const double* _State, const size_t _Order, NDXLVertexDynamics _Func, NDXLVertexNoise _Noise, NDXLChannel** _Channels, const size_t _Nchannels, NDXLVertexCallback _Callback, void* _Params)
+NDXLVertex* __ndxlCreateVertex(NDXLNetwork* _Network, const double* const _State, const size_t _Dimension, NDXLVertexDynamics _Dynamics, NDXLVertexNoise _Noise, NDXLChannel** _Channels, const size_t _Nchannels, NDXLVertexCallback _Callback, const double _Atol, const double _Rtol, void* _Params)
 {
-	const size_t _Datsz = _Order * sizeof(double);
-
-	// Initialise explicit values
+	// Initialise explicit variables
 	NDXLVertex* vert = (NDXLVertex*)malloc(sizeof(NDXLVertex));
 	vert->network = _Network;
-	if (_Noise)
-		vert->network->nsv++;
-	else
-		vert->network->ndv++;
-	vert->order = _Order;
-	vert->state = (double*)malloc(_Datsz);
-	vert->func = _Func;
+	vert->dimension = _Dimension;
+	vert->datsz = _Dimension * sizeof(double);
+	vert->state0 = (double*)malloc(vert->datsz);
+	vert->interp_state = (double*)calloc(_Dimension, sizeof(double));
+	vert->dynamics = _Dynamics;
 	vert->noise = _Noise;
-	vert->m = ((_Noise && !_Nchannels) ? _Order : _Nchannels);
 	vert->callback = _Callback;
+	vert->atol = _Atol;
+	vert->rtol = _Rtol;
 	vert->params = _Params;
 
-	// Initialise implicit values
-	vert->network->jacn += _Order;
-	vert->state0 = (double*)malloc(_Datsz);
-	vert->stage_state[0] = (double*)malloc(_Datsz);
-	vert->stage_state[1] = (double*)malloc(_Datsz);
-	vert->null_state = (double*)calloc(_Order, sizeof(double));
-	vert->interp_state = (double*)malloc(_Datsz);
-	vert->stage = 0;
-	vert->rkf[0] = (double*)malloc(_Datsz);
-	vert->rkf[1] = (double*)malloc(_Datsz);
-	vert->rkf[2] = (double*)malloc(_Datsz);
-	vert->rkf[3] = (double*)malloc(_Datsz);
-	vert->rkf[4] = (double*)malloc(_Datsz);
-	vert->rkf[5] = (double*)malloc(_Datsz);
-	vert->rkf[6] = (double*)malloc(_Datsz);
-	vert->rkf[7] = (double*)malloc(_Datsz);
-	vert->rkf[8] = (double*)malloc(_Datsz);
-	vert->rkg[0] = (double*)malloc(_Datsz * _Nchannels);
-	vert->rkg[1] = (double*)malloc(_Datsz * _Nchannels);
+	// Initialise implicit variables
+	vert->idx = _Network->vidx;
+    vert->vidx = _Network->nv;
+    vert->aidx = _Network->aidx;
+	vert->nidx = _Network->jacn;
+	vert->ne = 0;
+	vert->ecap = 3;
+    vert->nc = 0;
+    vert->ccap = 1;
+	vert->indeg = 0;
+	vert->outdeg = 0;
 	vert->time = 0.0;
-	vert->in_degree = 0;
-	vert->out_degree = 0;
-	vert->degree = 0;
-	vert->chead = 0;
-	vert->ctail = 0;
-	vert->edge_head = 0;
-	vert->edge_tail = 0;
-	vert->prev = _Network->vertex_tail;
-	vert->next = 0;
+    vert->rkg[0] = (double*)malloc(_Nchannels * vert->datsz);
+    vert->rkg[1] = (double*)malloc(_Nchannels * vert->datsz);
+	vert->edges = (NDXLEdge**)calloc(vert->ecap, sizeof(NDXLEdge*));
+	vert->channels = (NDXLVertexChannel**)calloc(vert->ccap, sizeof(NDXLVertexChannel*));
 
-	// Initialise state vectors
-	if (_State)
-	{
-		memcpy(vert->state, _State, _Datsz);
-		memcpy(vert->state0, _State, _Datsz);
-		memcpy(vert->stage_state[0], _State, _Datsz);
-	}
-	else
-	{
-		memset(vert->state, 0, _Datsz);
-		memset(vert->state0, 0, _Datsz);
-		memset(vert->stage_state[0], 0, _Datsz);
-	}
+	// Add to network vertices array
+	_Network->vidx++;
+	__ndxlNetworkResizeArrays(_Network);
+	_Network->vertices[_Network->nv++] = vert;
 
-	// Add to noise channels' and own stacks
-	NDXLChannel* channel;
-	NDXLChannelVertex* cvert;
-	NDXLVertexChannel* vchannel;
-	for (size_t i = 0; i < vert->m; i++)
-	{
-		channel = (!_Channels || !_Channels[i]) ? __ndxlCreateChannel(_Network, 0) : _Channels[i];
-		cvert = __ndxlCreateChannelVertex(channel, vert);
-		vchannel = __ndxlCreateVertexChannel(vert, channel);
-		cvert->vchannel = vchannel;
-		vchannel->cvert = cvert;
-	}
+	// Add to network stage vectors
+    _Network->aidx++;
+	_Network->jacn += _Dimension;
+	__ndxlNetworkResizeVectors(_Network);
+    if (_State)
+        memcpy(_Network->state + vert->nidx, _State, vert->datsz);
+    else
+        memset(_Network->state + vert->nidx, 0, vert->datsz);
 
-	// Add to network vertex stack
-	if (_Network->vertex_head)
-	{
-		_Network->vertex_tail->next = vert;
-		_Network->vertex_tail = _Network->vertex_tail->next;
-	}
-	else
-	{
-		_Network->vertex_head = vert;
-		_Network->vertex_tail = vert;
-	}
+    // Add noise channels
+    if (_Noise)
+    {
+        _Network->nsv++;
+        NDXLChannel* channel;
+        NDXLChannelVertex* cvert;
+        NDXLVertexChannel* vchannel;
+        for (size_t i = 0; i < _Nchannels; i++)
+        {
+            channel = (!_Channels || !_Channels[i]) ? __ndxlCreateChannel(_Network, 0) : _Channels[i];
+            cvert = __ndxlCreateChannelVertex(channel, vert);
+            vchannel = __ndxlCreateVertexChannel(vert, channel);
+            cvert->vchannel = vchannel;
+            vchannel->cvert = cvert;
+            __ndxlVertexResizeChannelArray(vert);
+            vert->channels[vert->nc++] = vchannel;
+            __ndxlChannelResizeVertexArray(channel);
+            channel->vertices[channel->nv++] = cvert;
+        }
+    }
 
-	// ...what exactly do you want me to say here, it's the end of the function. We're done. Vertex is made. Go away now. Value already returned
+	// Return created vertex
 	return vert;
 }
 
 void __ndxlDestroyVertex(NDXLVertex* _Vertex)
 {
-	// Decrement network Jacobian and vertex counts
-	_Vertex->network->jacn -= _Vertex->order;
-	if (_Vertex->noise)
-		_Vertex->network->nsv--;
-	else
-		_Vertex->network->ndv--;
+	// Grab handle to owning network
+	NDXLNetwork* _Network = _Vertex->network;
 
-	// Remove all associated edges
-	NDXLEdgeNode* node = _Vertex->edge_head;
-	while (node)
-	{
-		NDXLEdgeNode* tmp = node;
-		node = node->next;
-		__ndxlDestroyEdge(tmp->edge);
-	}
+    // Destroy connected edges
+    size_t i = 0;
+    while (_Vertex->ne)
+        __ndxlDestroyEdge(_Vertex->edges[0]);
 
-	// De-link from channel stacks
-	NDXLVertexChannel* vchannel = _Vertex->chead;
-	while (vchannel)
-	{
-		NDXLVertexChannel* tmp = vchannel;
-		vchannel = vchannel->next;
-		__ndxlDestroyChannelVertex(tmp->cvert);
-		__ndxlDestroyVertexChannel(tmp);
-	}
+    // Update agent state and array indices
+    for (i = _Vertex->vidx + 1; i < _Network->nv; i++)
+    {
+        _Network->vertices[i]->nidx -= _Vertex->dimension;
+        _Network->vertices[i]->vidx--;
+        _Network->vertices[i]->aidx--;
+        _Network->vertices[i - 1] = _Network->vertices[i];
+    }
+    for (i = _Network->ne; i > 0; i--)
+    {
+        if (_Network->edges[i - 1]->aidx > _Vertex->aidx)
+        {
+            _Network->edges[i - 1]->nidx -= _Vertex->dimension;
+            _Network->edges[i - 1]->aidx--;
+        }
+        else
+            break;
+    }
+    _Network->aidx--;
 
-	// De-link from vertex stack
-	if (_Vertex->prev)
-		_Vertex->prev->next = _Vertex->next;
-	else
-		_Vertex->network->vertex_head = _Vertex->network->vertex_head->next;
-	if (_Vertex->next)
-		_Vertex->next->prev = _Vertex->prev;
-	else
-		_Vertex->network->vertex_tail = _Vertex->network->vertex_tail->prev;
+    // Decrement vertex counts
+    _Network->vertices[--_Network->nv] = 0;
+    if (_Vertex->noise)
+    {
+        // Remove from channel arrays
+        _Network->nsv--;
+        size_t j;
+        NDXLVertexChannel* vchannel;
+        while (_Vertex->nc)
+        {
+            vchannel = _Vertex->channels[0];
+            for (j = vchannel->vidx + 1; j < vchannel->channel->nv; j++)
+            {
+                vchannel->channel->vertices[j]->cidx--;
+                vchannel->channel->vertices[j - 1] = vchannel->channel->vertices[j];
+            }
+            vchannel->channel->vertices[--vchannel->channel->nv] = 0;
+            _Vertex->nc--;
+        }
+    }
+
+    // Back-shift state array
+    _Network->jacn -= _Vertex->dimension;
+    memcpy(_Network->state + _Vertex->nidx, _Network->state + _Vertex->nidx + _Vertex->dimension, (_Network->jacn - _Vertex->nidx) * sizeof(double));
 
 	// Finally, free vertex memory
-	free(_Vertex->state);
 	free(_Vertex->state0);
-	free(_Vertex->stage_state[0]);
-	free(_Vertex->stage_state[1]);
 	free(_Vertex->interp_state);
-	free(_Vertex->rkf[0]);
-	free(_Vertex->rkf[1]);
-	free(_Vertex->rkf[2]);
-	free(_Vertex->rkf[3]);
-	free(_Vertex->rkf[4]);
-	free(_Vertex->rkf[5]);
-	free(_Vertex->rkf[6]);
-	free(_Vertex->rkf[7]);
-	free(_Vertex->rkf[8]);
-	free(_Vertex->rkg[0]);
-	free(_Vertex->rkg[1]);
+    free(_Vertex->rkg[0]);
+    free(_Vertex->rkg[1]);
+	free(_Vertex->edges);
+    free(_Vertex->channels);
 	free(_Vertex);
 }
 
-// ^^^^^ Vertex constructor and destructor | vertex functions vvvvv
-
-const int __ndxlVertexProcessCallback(NDXLVertex* _Vertex)
-{
-	if (_Vertex->callback)
-		return _Vertex->callback(_Vertex, _Vertex->state, _Vertex->time, _Vertex->params);
-	return 0;
-}
-
-const int __ndxlVertexTickRalston(NDXLVertex* _Vertex, const double _Delta)
-{
-	return __ndxlIntegrateRalstonVertex(_Vertex, _Delta);
-}
-
-const int __ndxlVertexTickNystrom(NDXLVertex* _Vertex, const double _Delta)
-{
-	return __ndxlIntegrateNystromVertex(_Vertex, _Delta);
-}
-
-const int __ndxlVertexTickDopri(NDXLVertex* _Vertex, const double _Delta, const double _Atol, const double _Rtol, double* _Errsum)
-{
-	return __ndxlIntegrateDopriVertex(_Vertex, _Delta, _Atol, _Rtol, _Errsum);
-}
-
-const int __ndxlVertexTickRkck(NDXLVertex* _Vertex, const double _Delta, const double _Atol, const double _Rtol, double* _Errsum)
-{
-	return __ndxlIntegrateRkckVertex(_Vertex, _Delta, _Atol, _Rtol, _Errsum);
-}
-
-const int __ndxlVertexTickEuler(NDXLVertex* _Vertex, const double _Delta)
-{
-	return __ndxlIntegrateEulerVertex(_Vertex, _Delta);
-}
-
-const int __ndxlVertexTickHeun(NDXLVertex* _Vertex, const double _Delta, const double _Atol, const double _Rtol, double* _Errsum)
-{
-	return __ndxlIntegrateHeunVertex(_Vertex, _Delta, _Atol, _Rtol, _Errsum);
-}
-
-const int __ndxlVertexTickNorsett(NDXLVertex* _Vertex, const double _Delta)
-{
-	return 0;
-}
-
-// ^^^^^ Vertex functions | vertes getters vvvvv
+// ^^^^^ Constructors and destructors | getters vvvvv
 
 NDXLVertexCallback __ndxlGetVertexCallback(NDXLVertex* _Vertex)
 {
 	return _Vertex->callback;
 }
 
-const size_t __ndxlGetVertexChannelCount(NDXLVertex* _Vertex)
-{
-	return _Vertex->m;
-}
-
-void __ndxlGetVertexChannels(NDXLVertex* _Vertex, NDXLChannel** _Channels)
-{
-	size_t i = 0;
-	for (NDXLVertexChannel* vchannel = _Vertex->chead; vchannel; i++, vchannel = vchannel->next)
-		_Channels[i] = vchannel->channel;
-}
-
 const size_t __ndxlGetVertexDegree(NDXLVertex* _Vertex)
 {
-	return _Vertex->degree;
+	return _Vertex->ne;
 }
 
 const size_t __ndxlGetVertexDegreeIn(NDXLVertex* _Vertex)
 {
-	return _Vertex->in_degree;
+	return _Vertex->indeg;
 }
 
 const size_t __ndxlGetVertexDegreeOut(NDXLVertex* _Vertex)
 {
-	return _Vertex->out_degree;
+	return _Vertex->outdeg;
+}
+
+const size_t __ndxlGetVertexDimension(NDXLVertex* _Vertex)
+{
+    return _Vertex->dimension;
 }
 
 NDXLVertexDynamics __ndxlGetVertexDynamics(NDXLVertex* _Vertex)
 {
-	return _Vertex->func;
+	return _Vertex->dynamics;
 }
 
-void __ndxlGetVertexEdges(NDXLVertex* _Vertex, NDXLEdge** _Edges)
-{
-	size_t i = 0;
-	NDXLEdgeNode* node = _Vertex->edge_head;
-	while (node)
-	{
-		_Edges[i++] = node->edge;
-		node = node->next;
-	}
-}
-
-NDXLEdge* __ndxlGetVertexFirstEdge(NDXLVertex* _Vertex)
-{
-	return (_Vertex->edge_head ? _Vertex->edge_head->edge : 0);
-}
-
-NDXLEdge* __ndxlGetVertexLastEdge(NDXLVertex* _Vertex)
-{
-	return (_Vertex->edge_tail ? _Vertex->edge_tail->edge : 0);
-}
-
-NDXLVertex* __ndxlGetVertexNeighbour(NDXLVertex* _Vertex, NDXLEdge* _Edge)
-{
-	return (_Vertex == _Edge->vert1 ? _Edge->vert2 : _Edge->vert1);
-}
-
-const size_t __ndxlGetVertexNeighbourOrder(NDXLVertex* _Vertex, NDXLEdge* _Edge)
-{
-	return (_Vertex == _Edge->vert1 ? _Edge->vert2->order : _Edge->vert1->order);
-}
-
-void __ndxlGetVertexNeighbours(NDXLVertex* _Vertex, NDXLVertex** _Neigbours)
-{
-	size_t i = 0;
-	NDXLEdgeNode* node = _Vertex->edge_head;
-	while (node)
-	{
-		if (_Vertex == node->edge->vert1)
-			_Neigbours[i++] = node->edge->vert2;
-		else
-			_Neigbours[i++] = node->edge->vert1;
-		node = node->next;
-	}
-}
- 
-const double* __ndxlGetVertexNeighbourState(NDXLVertex* _Vertex, NDXLEdge* _Edge)
-{
-	// Directed edges have information flow from vertex 1 to vertex 2
-	if (_Vertex == _Edge->vert2)
-	{
-		// If there is a delay...
-		if (_Edge->delay)
-		{
-			// ...and the initial state hasn't yet propagated, return y0, interpolate otherwise
-			const double _Rtime = _Edge->vert1->time + _Vertex->network->h * (_Vertex->network->butcher ? _Vertex->network->butcher[_Vertex->stage] : _Vertex->stage) - _Edge->delay;
-			if (_Rtime < 0.0)
-				return _Edge->vert1->state0;
-
-			// Find interval in state history where retarded time is
-			NDXLVertexState* state = _Edge->vert1_head;
-			while (state->next && (_Rtime >= state->time))
-				state = state->next;
-
-			// state and state->prev now contain the times surrounding _Rtime, or the nearest interval that can be used for extrapolation
-			const double _Dtime = state->time - state->prev->time;
-
-			// Cubic Hermite terms
-			const double _T = (_Rtime - state->prev->time) / _Dtime;
-			const double _T2 = _T * _T;
-			const double _T3 = _T2 * _T;
-			const double _H00 = 2.0 * _T3 - 3.0 * _T2 + 1.0;
-			const double _H01 = _T3 - 2.0 * _T2 + _T;
-			const double _H10 = -2.0 * _T3 + 3.0 * _T2;
-			const double _H11 = _T3 - _T2;
-
-			// Interpolation
-			for (size_t i = 0; i < _Edge->vert1->order; i++)
-				_Edge->vert1->interp_state[i] = _H00 * state->prev->state[i] + _H01 * _Dtime * state->prev->slope[i] + _H10 * state->state[i] + _H11 * _Dtime * state->slope[i];
-			return _Edge->vert1->interp_state;
-		}
-
-		// If delayless, return neighbour state at previous (current) RK stage for explicit (implicit) algorithms
-		if (_Vertex->network->method_explicit)
-			return _Edge->vert1->func ? (_Vertex->stage ? _Edge->vert1->stage_state[_Vertex->stage % 2] : _Edge->vert1->state) : _Edge->vert1->state;
-		return _Edge->vert1->rkf[_Vertex->stage];
-	}
-	else
-	{
-		// If directed, return null
-		if (_Edge->directed)
-			return _Edge->vert2->null_state;
-
-		// If there is a delay...
-		if (_Edge->delay)
-		{
-			// ...and the initial state hasn't yet propagated, return y0, interpolate otherwise
-			const double _Rtime = _Edge->vert2->time + _Vertex->network->h * (_Vertex->network->butcher ? _Vertex->network->butcher[_Vertex->stage] : _Vertex->stage) - _Edge->delay;
-			if (_Rtime < 0.0)
-				return _Edge->vert2->state0;
-
-			// Find interval in state history where retarded time is
-			NDXLVertexState* state = _Edge->vert2_head;
-			while (state->next && (_Rtime >= state->time))
-				state = state->next;
-
-			// state and state->prev now contain the times surrounding _Rtime, or the nearest interval that can be used for extrapolation
-			const double _Dtime = state->time - state->prev->time;
-
-			// Cubic Hermite terms
-			const double _T = (_Rtime - state->prev->time) / _Dtime;
-			const double _T2 = _T * _T;
-			const double _T3 = _T2 * _T;
-			const double _H00 = 2.0 * _T3 - 3.0 * _T2 + 1.0;
-			const double _H01 = _T3 - 2.0 * _T2 + _T;
-			const double _H10 = -2.0 * _T3 + 3.0 * _T2;
-			const double _H11 = _T3 - _T2;
-
-			// Interpolation
-			for (size_t i = 0; i < _Edge->vert2->order; i++)
-				_Edge->vert2->interp_state[i] = _H00 * state->prev->state[i] + _H01 * _Dtime * state->prev->slope[i] + _H10 * state->state[i] + _H11 * _Dtime * state->slope[i];
-			return _Edge->vert2->interp_state;
-		}
-
-		// If delayless, return neighbour state at previous (current) RK stage for explicit (implicit) algorithms
-		if (_Vertex->network->method_explicit)
-			return _Edge->vert2->func ? (_Vertex->stage ? _Edge->vert2->stage_state[_Vertex->stage % 2] : _Edge->vert2->state) : _Edge->vert2->state;
-		return _Edge->vert2->rkf[_Vertex->stage];
-	}
-}
-
-NDXLNetwork* __ndxlGetVertexNetwork(NDXLVertex* _Vertex)
-{
-	return _Vertex->network;
-}
-
-NDXLEdge* __ndxlGetVertexNextEdge(NDXLVertex* _Vertex, NDXLEdge* _Edge)
-{
-	if (_Vertex == _Edge->vert1)
-		return (_Edge->node1->next ? _Edge->node1->next->edge : 0);
-	return (_Edge->node2->next ? _Edge->node2->next->edge : 0);
-}
-
-NDXLVertexNoise __ndxlGetVertexNoise(NDXLVertex* _Vertex)
-{
-	return _Vertex->noise;
-}
-
-const size_t __ndxlGetVertexOrder(NDXLVertex* _Vertex)
-{
-	return _Vertex->order;
-}
-
-void* __ndxlGetVertexParams(NDXLVertex* _Vertex)
-{
-	return _Vertex->params;
-}
-
-NDXLEdge* __ndxlGetVertexPreviousEdge(NDXLVertex* _Vertex, NDXLEdge* _Edge)
-{
-	if (_Vertex == _Edge->vert1)
-		return (_Edge->node1->prev ? _Edge->node1->prev->edge : 0);
-	return (_Edge->node2->prev ? _Edge->node2->prev->edge : 0);
-}
-
-const double* __ndxlGetVertexState(NDXLVertex* _Vertex)
-{
-	return _Vertex->state;
-}
-
-const double* __ndxlGetVertexState0(NDXLVertex* _Vertex)
+const double* __ndxlGetVertexInitialState(NDXLVertex* _Vertex)
 {
 	return _Vertex->state0;
 }
 
-const double __ndxlGetVertexTime(NDXLVertex* _Vertex)
+NDXLVertex* __ndxlGetVertexNeighbour(NDXLVertex* _Vertex, NDXLEdge* _Edge)
 {
-	return _Vertex->time;
+	if (_Vertex == _Edge->src)
+		return _Edge->dest;
+	return _Edge->src;
 }
 
-// ^^^^^ Vertex getters | vertex setters vvvvv
+const size_t __ndxlGetVertexNeighbourDimension(NDXLVertex* _Vertex, NDXLEdge* _Edge)
+{
+	if (_Vertex == _Edge->src)
+		return _Edge->dest->dimension;
+	return _Edge->src->dimension;
+}
+
+const size_t __ndxlGetVertexNeighbourNoiseDimension(NDXLVertex* _Vertex, NDXLEdge* _Edge)
+{
+    if (_Vertex == _Edge->src)
+        return _Edge->dest->nc;
+    return _Edge->src->nc;
+}
+
+const double* __ndxlGetVertexNeighbourState(NDXLVertex* _Vertex, NDXLEdge* _Edge)
+{
+    // Get handle to owning network
+    NDXLNetwork* _Network = _Vertex->network;
+
+    // Directed edges have information flow from src to dest
+    if (_Vertex == _Edge->dest)
+    {
+        // If there is a delay...
+        if (_Edge->delay)
+        {
+            // ...and the initial state hasn't yet propagated, return initial state, interpolate otherwise
+            const double _Rtime = _Edge->src->time + _Network->h * (_Network->butcher ? _Network->butcher[_Network->stage] : _Network->stage) - _Edge->delay;
+            if (_Rtime < 0.0)
+                return _Edge->src->state0;
+
+            // Find interval in state history where retarded time is
+            NDXLVertexState* state = _Edge->src_head;
+            while (state->next && (_Rtime >= state->time))
+                state = state->next;
+
+            // state and state->prev now contain the times surrounding _Rtime, or the nearest interval that can be used for extrapolation
+            const double _Dtime = state->time - state->prev->time;
+
+            // Cubic Hermite terms
+            const double _T = (_Rtime - state->prev->time) / _Dtime;
+            const double _T2 = _T * _T;
+            const double _T3 = _T2 * _T;
+            const double _H00 = 2.0 * _T3 - 3.0 * _T2 + 1.0;
+            const double _H01 = _T3 - 2.0 * _T2 + _T;
+            const double _H10 = -2.0 * _T3 + 3.0 * _T2;
+            const double _H11 = _T3 - _T2;
+
+            // Interpolation
+            for (size_t i = 0; i < _Edge->src->dimension; i++)
+                _Edge->src->interp_state[i] = _H00 * state->prev->state[i] + _H01 * _Dtime * state->prev->slope[i] + _H10 * state->state[i] + _H11 * _Dtime * state->slope[i];
+            return _Edge->src->interp_state;
+        }
+
+        // If delayless, return neighbour state at previous (current) RK stage for explicit (implicit) algorithms
+        if (_Network->method_explicit)
+            return (_Network->stage ? _Network->stage_state[_Network->stage % 2] : _Network->state) + _Edge->src->nidx;
+        return _Network->rkf[_Network->stage] + _Edge->src->nidx;
+    }
+    else
+    {
+        // If directed, return zero vector
+        if (_Edge->directed)
+        {
+            memset(_Edge->dest->interp_state, 0, _Edge->dest->datsz);
+            return _Edge->dest->interp_state;
+        }
+
+        // If there is a delay...
+        if (_Edge->delay)
+        {
+            // ...and the initial state hasn't yet propagated, return initial state, interpolate otherwise
+            const double _Rtime = _Edge->dest->time + _Network->h * (_Network->butcher ? _Network->butcher[_Network->stage] : _Network->stage) - _Edge->delay;
+            if (_Rtime < 0.0)
+                return _Edge->dest->state0;
+
+            // Find interval in state history where retarded time is
+            NDXLVertexState* state = _Edge->dest_head;
+            while (state->next && (_Rtime >= state->time))
+                state = state->next;
+
+            // state and state->prev now contain the times surrounding _Rtime, or the nearest interval that can be used for extrapolation
+            const double _Dtime = state->time - state->prev->time;
+
+            // Cubic Hermite terms
+            const double _T = (_Rtime - state->prev->time) / _Dtime;
+            const double _T2 = _T * _T;
+            const double _T3 = _T2 * _T;
+            const double _H00 = 2.0 * _T3 - 3.0 * _T2 + 1.0;
+            const double _H01 = _T3 - 2.0 * _T2 + _T;
+            const double _H10 = -2.0 * _T3 + 3.0 * _T2;
+            const double _H11 = _T3 - _T2;
+
+            // Interpolation
+            for (size_t i = 0; i < _Edge->dest->dimension; i++)
+                _Edge->dest->interp_state[i] = _H00 * state->prev->state[i] + _H01 * _Dtime * state->prev->slope[i] + _H10 * state->state[i] + _H11 * _Dtime * state->slope[i];
+            return _Edge->dest->interp_state;
+        }
+
+        // If delayless, return neighbour state at previous (current) RK stage for explicit (implicit) algorithms
+        if (_Network->method_explicit)
+            return (_Network->stage ? _Network->stage_state[_Network->stage % 2] : _Network->state) + _Edge->dest->nidx;
+        return _Network->rkf[_Network->stage] + _Edge->dest->nidx;
+    }
+}
+
+NDXLNetwork* __ndxlGetVertexNetwork(NDXLVertex* _Vertex)
+{
+    return _Vertex->network;
+}
+
+NDXLVertexNoise __ndxlGetVertexNoise(NDXLVertex* _Vertex)
+{
+    return _Vertex->noise;
+}
+
+const size_t __ndxlGetVertexNoiseDimension(NDXLVertex* _Vertex)
+{
+    return _Vertex->nc;
+}
+
+void* __ndxlGetVertexParams(NDXLVertex* _Vertex)
+{
+    return _Vertex->params;
+}
+
+const double __ndxlGetVertexTime(NDXLVertex* _Vertex)
+{
+    return _Vertex->time;
+}
+
+// ^^^^^ Getters | setters vvvvv
 
 void __ndxlSetVertexCallback(NDXLVertex* _Vertex, NDXLVertexCallback _Callback)
 {
-	_Vertex->callback = _Callback;
+    _Vertex->callback = _Callback;
 }
 
 void __ndxlSetVertexDynamics(NDXLVertex* _Vertex, NDXLVertexDynamics _Dynamics)
 {
-	_Vertex->func = _Dynamics;
+    _Vertex->dynamics = _Dynamics;
 }
 
 void __ndxlSetVertexNoise(NDXLVertex* _Vertex, NDXLVertexNoise _Noise)
 {
-	if (_Vertex->noise && !_Noise)
-	{
-		_Vertex->network->nsv--;
-		_Vertex->network->ndv++;
-	}
-	else if (!_Vertex->noise && _Noise)
-	{
-		_Vertex->network->ndv--;
-		_Vertex->network->nsv++;
-	}
-	_Vertex->noise = _Noise;
+    if (_Vertex->noise && !_Noise)
+        _Vertex->network->nsv--;
+    else if (!_Vertex->noise && _Noise)
+        _Vertex->network->nsv++;
+    _Vertex->noise = _Noise;
 }
 
 void __ndxlSetVertexParams(NDXLVertex* _Vertex, void* _Params)
 {
-	_Vertex->params = _Params;
+    _Vertex->params = _Params;
 }
 
-// ^^^^^ Vertex setters | vertex functions vvvvv
+// ^^^^^ Setters | functions vvvvv
 
-char __ndxlVertexHasNeighbour(NDXLVertex* _Source, NDXLVertex* _Destination)
+NDXLChannel* __ndxlVertexChannel(NDXLVertex* _Vertex, const size_t _Idx)
 {
-	char _Flags = 0;
-	for (NDXLEdgeNode* node = _Source->edge_head; node; node = node->next)
-	{
-		if (__ndxlEdgeConnectsVertex(node->edge, _Destination))
-		{
-			if (node->edge->directed)
-			{
-				if (_Source == node->edge->vert1)
-					_Flags |= 2;
-				else
-					_Flags |= 4;
-			}
-			else
-				_Flags |= 1;
-		}
-	}
-	return _Flags;
+    return _Vertex->channels[_Idx]->channel;
+}
+
+NDXLEdge* __ndxlVertexEdge(NDXLVertex* _Vertex, const size_t _Idx)
+{
+    return _Vertex->edges[_Idx];
+}
+
+const char __ndxlVertexHasNeighbour(NDXLVertex* _Source, NDXLVertex* _Destination)
+{
+    char _Flags = 0;
+    NDXLEdge* edge;
+    for (size_t i = 0; i < _Source->ne; i++)
+    {
+        edge = _Source->edges[i];
+        if (__ndxlEdgeConnectsVertex(edge, _Destination))
+        {
+            if (edge->directed)
+            {
+                if (_Source == edge->src)
+                    _Flags |= 2;
+                else
+                    _Flags |= 4;
+            }
+            else
+                _Flags |= 1;
+        }
+    }
+    return _Flags;
+}
+
+void __ndxlVertexResizeChannelArray(NDXLVertex* _Vertex)
+{
+    // Verify capacity of channel array
+    if (_Vertex->nc == _Vertex->ccap)
+    {
+        _Vertex->ccap = (_Vertex->ccap << 1) + 1;
+        _Vertex->channels = (NDXLVertexChannel**)realloc(_Vertex->channels, _Vertex->ccap * sizeof(NDXLVertexChannel*));
+    }
+}
+
+void __ndxlVertexResizeEdgeArray(NDXLVertex* _Vertex)
+{
+    // Verify capacity of edge array
+    if (_Vertex->ne == _Vertex->ecap)
+    {
+        _Vertex->ecap = (_Vertex->ecap << 1) + 1;
+        _Vertex->edges = (NDXLEdge**)realloc(_Vertex->edges, _Vertex->ecap * sizeof(NDXLEdge*));
+    }
 }
 
 double* __ndxlVertexState(NDXLVertex* _Vertex)
 {
-	return _Vertex->func ? (_Vertex->stage ? _Vertex->stage_state[_Vertex->stage % 2] : _Vertex->state) : _Vertex->state;
+    NDXLNetwork* _Network = _Vertex->network;
+    return (_Network->stage ? _Network->stage_state[_Network->stage % 2] : _Network->state) + _Vertex->nidx;
 }
 
-// ^^^^^ Vertex functions
+// ^^^^^ Functions

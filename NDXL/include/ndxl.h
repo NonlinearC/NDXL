@@ -6,7 +6,7 @@
  * Includes all files, objects, functions, and symbols defined and exported by the library.
  *
  * @copyright Copyright (c) 2026, Ethan Codron.
- * 
+ *
  * Licensed under the GNU General Public License v3.0 only.
  * See the LICENSE file in the repository root.
 */

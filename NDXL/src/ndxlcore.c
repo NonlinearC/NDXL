@@ -1,20 +1,64 @@
-//------------------------------------------\\
-// NDXL source file for core functionality	\\
-// Copyright Ethan Codron 2026				\\
-// GNU GPL-3.0								\\
-//------------------------------------------\\
-// Source file providing all core internal	\\
-// functions like error raising.			\\
-//------------------------------------------\\
-
 #include "internal/internal.h"
 
-bool __ndxlIsInitialised = 0;
-NDXLNetwork* __ndxlNetworkHead = 0;
-NDXLNetwork* __ndxlNetworkTail = 0;
-size_t __ndxlNetworkCount = 0;
+char __ndxlIsInitialised = 0;
 int __ndxlLastErrorCode = 0;
 char* __ndxlLastErrorMsg = 0;
+double __ndxlSqrtEpsilon = 1.4901161193847656e-08;
+NDXLNetwork** __ndxlNetworks = 0;
+size_t __ndxlNetworkCount = 0;
+size_t __ndxlNetworkCap = 3;
+
+// Internal functions vvvvv
+
+static inline void __onExit()
+{
+	if (__ndxlLastErrorMsg) free(__ndxlLastErrorMsg);
+	while (__ndxlNetworkCount)
+		__ndxlDestroyNetwork(__ndxlNetworks[0]);
+	if (__ndxlNetworks) free(__ndxlNetworks);
+	__ndxlIsInitialised = 0;
+}
+
+void __ndxlInit()
+{
+	atexit(__onExit);
+	__ndxlNetworks = (NDXLNetwork**)malloc(__ndxlNetworkCap * sizeof(NDXLNetwork*));
+	__ndxlSetLastError(NDXL_OK, "Successfully initialised Network Dynamics eXperimentation Library.");
+	__ndxlIsInitialised = 1;
+}
+
+const double __ndxlRandomDouble()
+{
+	double _Time = uniTime();
+	size_t _Sec = (size_t)_Time;
+	srand(_Sec ^ (size_t)((_Time - _Sec) * 1e9));
+	return ((double)rand()) / ((double)RAND_MAX);
+}
+
+void __ndxlResizeNetworkArray()
+{
+	// Verify capacity of network array
+	if (__ndxlNetworkCount > __ndxlNetworkCap)
+	{
+		__ndxlNetworkCap = (__ndxlNetworkCap << 1) + 1;
+		__ndxlNetworks = (NDXLNetwork**)realloc(__ndxlNetworks, __ndxlNetworkCap * sizeof(NDXLNetwork*));
+	}
+}
+
+void __ndxlSetLastError(const int _Code, const char* const _Msg)
+{
+	__ndxlLastErrorCode = _Code;
+	const size_t _Len = (strlen(_Msg) + 1) * sizeof(char);
+	__ndxlLastErrorMsg = (char*)realloc(__ndxlLastErrorMsg, _Len);
+	memcpy(__ndxlLastErrorMsg, _Msg, _Len);
+}
+
+const double __ndxlSquare(const double _X)
+{
+	return _X * _X;
+}
+
+// ^^^^^ Internal functions | external functions vvvvv
 
 _NDXLEXP_ const int ndxlGetLastErrorCode()
 {
@@ -48,22 +92,7 @@ _NDXLEXP_ void ndxlPrintError()
 
 _NDXLEXP_ void ndxlRaiseError(const int _Code, const char* const _Msg)
 {
-	__setLastError(_Code, _Msg);
+	__ndxlSetLastError(_Code, _Msg);
 }
 
-_NDXLEXP_ const int ndxlInit()
-{
-	if (!__ndxlIsInitialised)
-	{
-		atexit(__onExit);
-		atexit(__ndxlCleanupNetworks);
-		__setLastError(NDXL_OK, "Successfully initialised Network Dynamics eXperimentation Library.");
-		__ndxlIsInitialised = 1;
-	}
-	return NDXL_OK;
-}
-
-_NDXLEXP_ const size_t ndxlGetNetworkCount()
-{
-	return __ndxlNetworkCount;
-}
+// ^^^^^ External functions

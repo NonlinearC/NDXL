@@ -41,7 +41,27 @@
 		GetCurrentThreadStackLimits(&stack_low, &stack_high);
 		return (((uintptr_t)ptr < stack_low) || ((uintptr_t)ptr >= stack_high));
 	}
+
+    static inline double uniTime()
+    {
+        static LARGE_INTEGER freq = { 0 };
+        if (freq.QuadPart == 0) {
+            QueryPerformanceFrequency(&freq);
+        }
+        LARGE_INTEGER count;
+        QueryPerformanceCounter(&count);
+        return (double)(count.QuadPart) / (double)(freq.QuadPart);
+    }
 #else
+    #include <time.h>
+
+    static inline double uniTime()
+    {
+        static struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return (double)(ts.tv_sec) + 1e-9 * ts.tv_nsec;
+    }
+
 	#if defined(__APPLE__) && defined(__MACH__)
 		#include <pthread.h>
 		#include <TargetConditionals.h>

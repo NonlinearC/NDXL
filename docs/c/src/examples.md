@@ -1,7 +1,8 @@
 # Examples {#examples}
 This page documents the `C` versions of the example simulations used in the NDXL publication, together illustrating the capabilities of NDXL.
 For a brief introductory example using the Kuramoto model, see the <b>[NDXL source repository](https://github.com/NonlinearC/NDXL/tree/main/NDXL)</b>.
-We recommend reading through the @ref installation guide before writing any code, as this section assumes a similar file structure, and that call source code is placed in `main.c`.
+
+We recommend reading through the @ref installation guide before writing any code, as this section assumes a similar file structure, familiarity with library linking, and that call source code is placed in `main.c`.
 We also strongly recommend first reading through the @ref concepts page, as we will assume you are familiar with the network dynamics-specific terminology.
 
 \note This is NOT a replacement for the <b>[API documentation](topics.html)</b>, which provides detailed explanations on functions, objects, and typedefs used. The sections should be absorbed in tandem.

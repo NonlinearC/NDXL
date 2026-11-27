@@ -1,6 +1,3 @@
-# Personal build script
-/NDXL/build.py
-
 # Visual Studio and MSBuild project/configuration files
 .vs/
 *.sln

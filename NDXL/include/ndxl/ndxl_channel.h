@@ -64,10 +64,7 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlCreateChannel(
  * Pointer to NDXLChannel pointer.
  *
  * @return
- * If _Channel or *_Channel are NULL, returns @ref NDXL_ERR, otherwise zeroes *_Channel, and returns NDXL_OK.
- *
- * @note
- * The channel pointer is zeroed after the associated memory is freed, so that subsequent operations using the pointer variable passed to this function can detect that the channel has been destroyed.
+ * If _Channel is NULL, returns NULL, otherwise destroys the channel and returns NDXL_OK.
  *
  * @warning
  * Destroying a noise channel also destroys its associated Wiener path. Any vertices and edges referencing the channel automatically remove their references to it and continue to exist without using that channel. The memory associated with the relevant objects' user-defined `void* _Params` pointers is not handled by the destructors, and must be managed explicitly by the user.
@@ -83,12 +80,11 @@ _NDXLIMP_ NDXLChannel* _CDECL ndxlCreateChannel(
  *
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Channel is NULL.
- * - @ref NDXL_VALUE_ERR : *_Channel is NULL.
  *
  * @see ndxlCreateChannel
 */
 _NDXLIMP_ const int _CDECL ndxlDestroyChannel(
-	_In_ _Notnull_ NDXLChannel** _Channel
+	_In_ _Notnull_ NDXLChannel* _Channel
 ) _NOEXCEPT;
 
 /** @}*/
@@ -107,7 +103,7 @@ _NDXLIMP_ const int _CDECL ndxlDestroyChannel(
  * @brief Gets the number of edges affected by a noise channel.
  *
  * @param[in] _Channel
- * Target channel to retrieve the edge count of.
+ * Target channel to retrieve the edge dimension of.
  *
  * @return
  * If _Channel is NULL, returns @ref NDXL_ERR, otherwise returns the number of edges affected by _Channel.
@@ -115,37 +111,8 @@ _NDXLIMP_ const int _CDECL ndxlDestroyChannel(
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Channel is NULL.
 */
-_NDXLIMP_ const size_t _CDECL ndxlGetChannelEdgeCount(
+_NDXLIMP_ const size_t _CDECL ndxlGetChannelEdgeDimension(
 	_In_ _Notnull_ NDXLChannel* _Channel
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the edges affected by a noise channel.
- *
- * @param[in] _Channel
- * Target noise channel to retrieve the affected edges of.
- *
- * @param[out] _Edges
- * Pointer to a user-allocated array of NDXLEdge pointers. The array must contain at least ndxlGetChannelEdgeCount(_Channel) elements. The function populates the array in-place.
- *
- * @return
- * If either _Channel or _Edges are NULL, returns @ref NDXL_ERR, otherwise populates _Edges with the edge pointers affected by _Channel, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLEdge objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Channel is NULL.
- * - @ref  NDXL_ARG_ERR : _Edges is NULL.
- *
- * @see ndxlGetChannelEdgeCount
-*/
-_NDXLIMP_ const int _CDECL ndxlGetChannelEdges(
-	_In_ _Notnull_ NDXLChannel* _Channel,
-	_Out_ _Notnull_ NDXLEdge** _Edges
 ) _NOEXCEPT;
 
 /**
@@ -190,7 +157,7 @@ _NDXLIMP_ void* _CDECL ndxlGetChannelParams(
  * @brief Gets the number of vertices affected by a noise channel.
  *
  * @param[in] _Channel
- * Target channel to retrieve the vertex count of.
+ * Target channel to retrieve the vertex dimension of.
  *
  * @return
  * If _Channel is NULL, returns @ref NDXL_ERR, otherwise returns the number of vertices affected by _Channel.
@@ -198,37 +165,8 @@ _NDXLIMP_ void* _CDECL ndxlGetChannelParams(
  * @par Errors raised
  * - @ref  NDXL_ARG_ERR : _Channel is NULL.
 */
-_NDXLIMP_ const size_t _CDECL ndxlGetChannelVertexCount(
+_NDXLIMP_ const size_t _CDECL ndxlGetChannelVertexDimension(
 	_In_ _Notnull_ NDXLChannel* _Channel
-) _NOEXCEPT;
-
-/**
- * @brief Gets a list of all the vertices affected by a noise channel.
- *
- * @param[in] _Channel
- * Target noise channel to retrieve the affected vertices of.
- *
- * @param[out] _Vertices
- * Pointer to a user-allocated array of NDXLVertex pointers. The array must contain at least ndxlGetChannelVertexCount(_Channel) elements. The function populates the array in-place.
- *
- * @return
- * If either _Channel or _Vertices are NULL, returns @ref NDXL_ERR, otherwise populates _Vertices with the vertex pointers affected by _Channel, and returns NDXL_OK.
- *
- * @note
- * The caller retains ownership of the array, but not of the NDXLVertex objects referenced by its elements. These pointers refer to the original objects in the network, so modifications through them affect those objects directly. The returned list can be used to modify or destroy its referenced objects without invalidating the array itself.
- *
- * @warning
- * The function does not verify the capacity of the supplied array. Providing an inadequately sized array can result in out-of-bounds writes and undefined behaviour.
- *
- * @par Errors raised
- * - @ref  NDXL_ARG_ERR : _Channel is NULL.
- * - @ref  NDXL_ARG_ERR : _Vertices is NULL.
- *
- * @see ndxlGetChannelVertexCount
-*/
-_NDXLIMP_ const int _CDECL ndxlGetChannelVertices(
-	_In_ _Notnull_ NDXLChannel* _Channel,
-	_Out_ _Notnull_ NDXLVertex** _Vertices
 ) _NOEXCEPT;
 
 /** @}*/
@@ -268,6 +206,82 @@ _NDXLIMP_ const int _CDECL ndxlGetChannelVertices(
 _NDXLIMP_ const int _CDECL ndxlSetChannelParams(
 	_In_ _Notnull_ NDXLChannel* _Channel,
 	_In_ _Maybenull_ void* _Params
+) _NOEXCEPT;
+
+/** @}*/
+
+
+
+/**
+ * @defgroup channel_functions Functions
+ * @ingroup ndxl_channel
+ * @brief Functions for operating on noise channels.
+ *
+ * @{
+*/
+
+/**
+ * @brief Provides directed access to an edge in a channel.
+ *
+ * @param[in] _Channel
+ * Target channel to retrieve the edge in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of edge in the array. Must be greater than or equal to zero, and less than ndxlGetChannelEdgeDimension(_Channel).
+ *
+ * @return
+ * If _Channel is NULL or contains no edges, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLEdge pointer currently at position _Idx in the channel's underlying edge array.
+ *
+ * @note
+ * The pointer refers to the original object in the channel, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the channel could have no edges. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Channel is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetChannelEdgeDimension
+*/
+_NDXLIMP_ NDXLEdge* _CDECL ndxlChannelEdge(
+	_In_ _Notnull_ NDXLChannel* _Channel,
+	_In_ const size_t _Idx
+) _NOEXCEPT;
+
+/**
+ * @brief Provides directed access to an vertex in a channel.
+ *
+ * @param[in] _Channel
+ * Target channel to retrieve the vertex in.
+ *
+ * @param[in] _Idx
+ * Relative index (position) of vertex in the array. Must be greater than or equal to zero, and less than ndxlGetChannelVertexDimension(_Channel).
+ *
+ * @return
+ * If _Channel is NULL or contains no vertices, or _Idx is out of bounds of the underlying array, returns NULL, otherwise returns NDXLVertex pointer currently at position _Idx in the channel's underlying vertex array.
+ *
+ * @note
+ * The pointer refers to the original object in the channel, so modifications through it affect the object directly. The returned object can be used to modify or destroy its referenced object without invalidating the object itself.
+ *
+ * @note
+ * A return value of NULL does not necessarily indicate an error, as the channel could have no vertices. If unsure, use ndxlGetLastErrorCode() to check.
+ *
+ * @warning
+ * Relative indices are shuffled when agents are destroyed to save memory. Repeated calls with the same index will not necessarily return the same object.
+ *
+ * @par Errors raised
+ * - @ref NDXL_ARG_ERR : _Channel is NULL.
+ * - @ref NDXL_VALUE_ERR : _Idx is out of bounds.
+ *
+ * @see ndxlGetChannelVertexDimension
+*/
+_NDXLIMP_ NDXLVertex* _CDECL ndxlChannelVertex(
+	_In_ _Notnull_ NDXLChannel* _Channel,
+	_In_ const size_t _Idx
 ) _NOEXCEPT;
 
 /** @}*/

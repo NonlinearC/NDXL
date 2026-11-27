@@ -59,14 +59,14 @@ typedef struct NDXLNetwork NDXLNetwork;
 
 /**
  * @defgroup ndxl_channel NDXLChannel
- * @ingroup ndxl_objects 
+ * @ingroup ndxl_objects
  * @brief Noise channel object representing a Wiener process.
  *
  * Each channel defines an independent Wiener process. Noise channels can be shared between multiple agents, and are associated with agents through their noise functions.
- * 
+ *
  * @warning
  * Destroying a channel does not affect any other objects in the network, but may disrupt Wiener path preservation and introduce statistical bias. See ndxlCreateChannel() and ndxlDestroyChannel() for further details.
- * 
+ *
  * @see ndxlCreateChannel
  * @see ndxlDestroyChannel
  * @see ndxlCreateVertex
@@ -298,32 +298,6 @@ _NDXLIMP_ void _CDECL ndxlRaiseError(_In_ const int _Code, _In_z_ const char* co
 /** @}*/
 
 
-
-/**
- * @defgroup lib_mgmt Library Management
- *
- * @brief Core library functions for using and managing the API.
- *
- * @{
-*/
-
-/**
- * @brief Initialises the NDXL library.
- *
- * Initialises the library's internal variables and garbage collection.
- *
- * @return
- * NDXL_OK.
- *
- * @warning
- * This function must be called before using any other NDXL functionality. Failure to initialise the library can lead to memory leaks, segmentation faults, and other memory-related errors.
- *
- * @note
- * Registers cleanup functions to be executed when the program terminates. These functions release NDXL-managed resources that have not been explicitly freed by the user.
- *
- * External memory allocations, such as those made using malloc() or calloc(), remain the responsibility of the user, and must be freed explicitly.
-*/
-_NDXLIMP_ const int _CDECL ndxlInit() _NOEXCEPT;
 
 /**
  * @brief Gets the number of individual NDXLNetwork objects currently alive.
