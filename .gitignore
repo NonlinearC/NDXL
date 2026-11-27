@@ -66,6 +66,9 @@ htmlcov/
 docs/c/build/
 docs/python/build/
 
+# Benchmarks build files
+/benchmarks/NDXL/*.exe
+
 # Examples build files
 /NDXL/examples/*/NDXL.dll
 /NDXL/examples/*/ndxl.exe
